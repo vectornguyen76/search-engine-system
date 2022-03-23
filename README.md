@@ -1,4 +1,4 @@
-# Shopee Search Engine Project
+# Search Engine on Shopee
 This is a project about Image Retrieval.
 
 # Model
