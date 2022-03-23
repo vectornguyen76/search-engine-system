@@ -1,6 +1,3 @@
-"""
-Write by Quang Van
-"""
 from tensorflow.keras.applications.resnet50 import ResNet50, preprocess_input
 import tensorflow.keras as keras
 
