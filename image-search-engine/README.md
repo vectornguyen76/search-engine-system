@@ -41,7 +41,7 @@ Development environment that uses PostgreSQL in local and uses the server flask 
     ```
 ### Run
 ```
-uvicorn app:app --reload
+uvicorn main:app
 ```
 
 
@@ -55,3 +55,14 @@ To store a FAISS index and its associated data (vectors), you have a few options
 
 ### Problem
 - Issue update faiss store with multiple workers or multiple pods.
+
+### Improve
+- Use BentoML to serving batching and search batching
+
+<p align="center">
+<img src="./assets/batching-architecture.png" alt="animated" />
+<em>Batching Architecture</em>
+</p>
+<br>
+
+- [BentoML](https://docs.bentoml.org/en/latest/guides/batching.html)
