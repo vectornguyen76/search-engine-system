@@ -1,5 +1,49 @@
 # Image Search Engine on Shopee
-This is a project about Image Retrieval. You can search Men Clothes on Shopee by image. It is the same as google image search
+
+## Environments
+### Develop
+Development environment that uses PostgreSQL in local and uses the server flask in debug mode.
+1. **Create environment and install packages**
+    ```shell
+    conda create -n image-search python=3.9
+    ```
+    ```shell
+    conda activate image-search
+    ```
+    ```shell
+    pip install -r requirements.txt
+    ```
+
+2. **Create PosgresSQL on Ubuntu 20.04**
+    Install PosgresSQL
+    ```shell
+    sudo apt-get install postgresql-12
+    ```
+
+    Go in PosgresSQL
+    ```shell
+    sudo -u postgres psql
+    ```
+
+    Create user and password
+    ```shell
+    CREATE USER db_user WITH PASSWORD 'db_password';
+    ```
+    
+    Create Database shopee
+    ```shell
+    CREATE DATABASE db_shopee;
+    ```
+
+    Add permission User to Database
+    ```shell
+    GRANT ALL PRIVILEGES ON DATABASE db_shopee TO db_user;
+    ```
+### Run
+```
+uvicorn app:app --reload
+```
+
 
 ### Faiss 
 To store a FAISS index and its associated data (vectors), you have a few options depending on your requirements:
