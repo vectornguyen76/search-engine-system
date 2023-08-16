@@ -1,1 +1,6 @@
 .env
+data
+*.npz
+*.faiss
+test*
+*.ipynb
