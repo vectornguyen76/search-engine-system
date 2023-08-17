@@ -66,3 +66,4 @@ To store a FAISS index and its associated data (vectors), you have a few options
 <br>
 
 - [BentoML](https://docs.bentoml.org/en/latest/guides/batching.html)
+- https://www.bentoml.com/blog/bentoml-or-triton-inference-server-choose-both
