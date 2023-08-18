@@ -5,7 +5,9 @@ index.faiss
 test*
 *.ipynb
 NOTE.md
+
 image-search-engine/assets/uploaded_images/*
+!image-search-engine/assets/uploaded_images/.gitkeep
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

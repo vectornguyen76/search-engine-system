@@ -26,8 +26,8 @@ RUN python download_model.py
 # Copy all files from the host into the container's /app directory
 COPY . /app
 
-# Expose port 5000 to the host machine
-EXPOSE 5000
+# Expose port 7000 to the host machine
+EXPOSE 7000
 
 # Run the uvicorn server to start the application when the container is started
-CMD uvicorn app:app --port 5000
+CMD uvicorn app:app --port 7000 --host 0.0.0.0

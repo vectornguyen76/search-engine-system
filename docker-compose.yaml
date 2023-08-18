@@ -46,7 +46,7 @@ services:
       context: ./image-search-engine
       dockerfile: Dockerfile
     ports:
-      - 5000:5000
+      - 7000:7000
 
   text_search:
     container_name: text_search_container
