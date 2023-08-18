@@ -44,6 +44,14 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}  
           password: ${{ secrets.DOCKERHUB_PASSWORD }}  
 
+      - name: Cache Docker layers
+        id: cache-docker
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.docker
+          key: ${{ runner.os }}-docker-${{ hashFiles('**/image-search-engine/Dockerfile') }}
+
       - name: Build Docker Image
         id: build_docker
         run: |
