@@ -1,0 +1,3 @@
+from torchvision.models import efficientnet_b3, EfficientNet_B3_Weights
+
+efficientnet_b3(weights=EfficientNet_B3_Weights.IMAGENET1K_V1)

@@ -16,11 +16,11 @@ async def upload_image(file: UploadFile = File(...)):
     """
     Endpoint to upload an image, extract features, and perform a search.
 
-    Parameters:
+    Args:
         file (UploadFile): The image file to be uploaded.
 
     Returns:
-        dict: A dictionary containing the uploaded filename.
+        dict: A dictionary containing search results, including item information.
     """
     # Prepend the current datetime to the filename
     file.filename = datetime.now().strftime("%Y%m%d-%H%M%S-") + file.filename
@@ -39,7 +39,6 @@ async def upload_image(file: UploadFile = File(...)):
     feature = feature_extractor.extract_feature(image_path=image_path)
     
     # Perform a search using the extracted feature vector
-    result = faiss_search.search(query_vector=feature, top_k=3)
+    search_results = faiss_search.search(query_vector=feature, top_k=20)
     
-    # Return a dictionary with the uploaded filename
-    return {"filename": file.filename}
+    return search_results

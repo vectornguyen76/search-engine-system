@@ -13,8 +13,11 @@ def main():
     # Read data from a CSV file into a Pandas DataFrame
     df = pd.read_csv("./data/data.csv", header=None)
 
-    # Extract the column with item names from the DataFrame
-    item_name_data = df.values[:, 2]
+    # Extract the columns from the DataFrame
+    item_url = df.values[:, 0]
+    item_image = df.values[:, 1]
+    item_name = df.values[:, 2]
+    item_price = df.values[:, 3]
 
     index_name = 'text_search_index'
 
@@ -29,7 +32,10 @@ def main():
                             "type": "completion"
                         }
                     }
-                }
+                },
+                "item_url": {"type": "text"},
+                "item_image": {"type": "text"},
+                "item_price": {"type": "text"},
             }
         }
     }
@@ -42,9 +48,14 @@ def main():
         {
             "_index": index_name,
             "_id": id,
-            "_source": {'item_name': value}
+            "_source": {
+                'item_name': item_name[id],
+                'item_url': item_url[id],
+                'item_image': item_image[id],
+                'item_price': item_price[id],
+            }
         }
-        for id, value in enumerate(item_name_data)
+        for id in range(len(item_name))
     ]
 
     # Perform bulk indexing

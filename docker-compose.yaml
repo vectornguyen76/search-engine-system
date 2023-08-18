@@ -39,6 +39,29 @@ services:
       elasticsearch:
         condition: service_healthy
 
+  image_search:
+    container_name: image_search_container
+    image: image_search_img
+    build:
+      context: ./image-search-engine
+      dockerfile: Dockerfile
+    ports:
+      - 5000:5000
+
+  text_search:
+    container_name: text_search_container
+    image: text_search_img
+    build:
+      context: ./text-search-engine
+      dockerfile: Dockerfile
+    ports:
+      - 8000:8000
+    networks:
+      - elastic
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+
 volumes:
   data-elastic-search:
     driver: local
