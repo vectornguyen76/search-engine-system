@@ -1,5 +1,6 @@
-import pandas as pd
 from elasticsearch import Elasticsearch, helpers
+from config import settings
+import pandas as pd
 
 def main():
     """
@@ -8,7 +9,7 @@ def main():
     """
     
     # Connect to Elasticsearch
-    elastic_search = Elasticsearch("http://localhost:9200")
+    elastic_search = Elasticsearch(settings.ELASTICSEARCH_HOST)
 
     # Read data from a CSV file into a Pandas DataFrame
     df = pd.read_csv("./data/data.csv", header=None)
