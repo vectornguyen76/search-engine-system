@@ -7,8 +7,13 @@ WORKDIR /app
 # Copy the requirements.txt file from the host into the container's /app directory
 COPY requirements.txt /app
 
-# Upgrade pip and install the Python dependencies from requirements.txt
+# Upgrade pip 
 RUN pip install --upgrade pip
+
+# Download pytorch CPU
+RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+
+# Install the Python dependencies from requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Download the faiss index from a Google Drive link
