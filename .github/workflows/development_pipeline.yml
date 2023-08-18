@@ -16,32 +16,44 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
       - name: Login to Docker Hub
         id: docker_hub_auth
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}  
           password: ${{ secrets.DOCKERHUB_PASSWORD }}  
 
-      - name: Cache Docker layers
-        id: cache-docker
-        uses: actions/cache@v2
+      - name: Build and push
+        uses: docker/build-push-action@v4
         with:
-          path: |
-            ~/.docker
-          key: ${{ runner.os }}-docker-${{ hashFiles('**/image-search-engine/Dockerfile') }}
+          context: ./image-search-engine
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/image_search_img:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
-      - name: Build Docker Image
-        id: build_docker
-        run: |
-          docker compose build image_search
+      # - name: Cache Docker layers
+      #   id: cache-docker
+      #   uses: actions/cache@v2
+      #   with:
+      #     path: |
+      #       ~/.docker
+      #     key: ${{ runner.os }}-docker-${{ hashFiles('**/image-search-engine/Dockerfile') }}
+
+      # - name: Build Docker Image
+      #   id: build_docker
+      #   run: |
+      #     docker compose build image_search
           
-          # Add tag
-          docker tag image_search_img:latest ${{ secrets.DOCKERHUB_USERNAME }}/image_search_img:latest
+      #     # Add tag
+      #     docker tag image_search_img:latest ${{ secrets.DOCKERHUB_USERNAME }}/image_search_img:latest
 
-      - name: Push Docker Image
-        id: push_images
-        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/image_search_img:latest
+      # - name: Push Docker Image
+      #   id: push_images
+      #   run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/image_search_img:latest
 
   build-push-text-search:
     runs-on: ubuntu-latest
