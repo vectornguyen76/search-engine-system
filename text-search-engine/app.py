@@ -6,7 +6,7 @@ from config import settings
 app = FastAPI(title=settings.APP_NAME)
 
 # Initialize Elasticsearch
-elastic_search = Elasticsearch()
+elastic_search = Elasticsearch(settings.ELASTICSEARCH_HOST)
 
 @app.post("/full-text-search")
 async def full_text_search(query: str, size: int):

@@ -1,0 +1,10 @@
+name: production
+on: 
+  pull_request:
+    branches: master
+jobs:
+  my-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: my-step
+        run: echo "Hello World with Github Actions"
