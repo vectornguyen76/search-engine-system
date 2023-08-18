@@ -15,7 +15,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 RUN gdown https://drive.google.com/uc?id=1-3CH-0PZbNziCH3JYwZcOTyqhThhe8wg
 
 # Move the downloaded index to a directory named /faiss_store
-RUN mv index.faiss /faiss_store
+RUN mkdir --parents /app/faiss_store && mv index.faiss /app/faiss_store
 
 # Copy the download_model.py script from the host into the container's /app directory
 COPY download_model.py /app
