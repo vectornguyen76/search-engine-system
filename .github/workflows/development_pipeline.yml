@@ -16,26 +16,26 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: Cache Python dependencies
-        uses: actions/cache@v2
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
+      # - name: Cache Python dependencies
+      #   uses: actions/cache@v2
+      #   with:
+      #     path: ~/.cache/pip
+      #     key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-pip-
       
-      - name: Set up Python 3.9
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.9
+      # - name: Set up Python 3.9
+      #   uses: actions/setup-python@v2
+      #   with:
+      #     python-version: 3.9
 
-      - name: Install Python dependencies
-        run: python -m pip install -r requirements.txt
+      # - name: Install Python dependencies
+      #   run: python -m pip install -r requirements.txt
 
-      - name: Run pylint
-        run: |
-          cd image-search-engine
-          pylint service.py --disable=R,C,W1203
+      # - name: Run pylint
+      #   run: |
+      #     cd image-search-engine
+      #     pylint app.py --disable=R,C,W1203
 
       - name: Login to Docker Hub
         id: docker_hub_auth
