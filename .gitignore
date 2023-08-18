@@ -1,12 +1,11 @@
 .env
-data
+dataset
 *.npz
-*.faiss
+index.faiss
 test*
 *.ipynb
 NOTE.md
-
-images
+image-search-engine/assets/uploaded_images/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

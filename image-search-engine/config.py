@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     DATE_FMT: str = '%Y-%m-%d %H:%M:%S'
     LOG_DIR: str = f'{basedir}/logs/api.log'
     
-    IMAGEDIR:str = "images/"
+    IMAGEDIR:str = "assets/uploaded_images/"
     
 
 settings = Settings()
