@@ -22,8 +22,8 @@ export default function Home() {
 
   const handleClickSearch = async () => {
     setLoading(true)
-    const apiUrl = `${NEXT_PUBLIC_TEXT_SEARCH}/full-text-search/?query=${searchValue}&size=20`
-    fetch(apiUrl, { method: 'POST' })
+    const apiUrl = `${NEXT_PUBLIC_TEXT_SEARCH}/full-text-search?query=${searchValue}&size=20`
+    fetch(apiUrl, { method: 'GET' })
       .then((response) => response.json())
       .then((data) => {
         setDataSearch(data.results)

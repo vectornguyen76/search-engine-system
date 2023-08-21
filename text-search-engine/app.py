@@ -18,7 +18,7 @@ app.add_middleware(
 # Initialize Elasticsearch
 elastic_search = Elasticsearch(settings.ELASTICSEARCH_HOST)
 
-@app.post("/full-text-search")
+@app.get("/full-text-search")
 async def full_text_search(query: str, size: int):
     """
     Endpoint to perform a full-text search based on the query.
@@ -51,7 +51,7 @@ async def full_text_search(query: str, size: int):
 
     return {"results": results}
 
-@app.post("/auto-complete-search")
+@app.get("/auto-complete-search")
 async def auto_complete_search(query: str, size: int):
     """
     Endpoint to provide auto-complete suggestions based on the query.
