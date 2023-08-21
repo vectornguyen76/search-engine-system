@@ -17,9 +17,12 @@ export default function Home() {
   const [loading, setLoading] = useState<boolean>(false);
   const [showUpload, setShowUpload] = useState<boolean>(false);
 
+  const NEXT_PUBLIC_IMAGE_SEARCH = process.env.NEXT_PUBLIC_IMAGE_SEARCH!;
+  const NEXT_PUBLIC_TEXT_SEARCH = process.env.NEXT_PUBLIC_TEXT_SEARCH!;
+
   const handleClickSearch = async () => {
     setLoading(true)
-    const apiUrl = `http://localhost:8000/full-text-search/?query=${searchValue}&size=20`
+    const apiUrl = `${NEXT_PUBLIC_TEXT_SEARCH}/full-text-search/?query=${searchValue}&size=20`
     fetch(apiUrl, { method: 'POST' })
       .then((response) => response.json())
       .then((data) => {
@@ -48,7 +51,7 @@ export default function Home() {
       formData.append('file', selectedFile);
 
       try {
-        const response = await fetch('http://localhost:7000/search-image', {
+        const response = await fetch(`${NEXT_PUBLIC_IMAGE_SEARCH}/search-image`, {
           method: 'POST',
           body: formData,
         });
