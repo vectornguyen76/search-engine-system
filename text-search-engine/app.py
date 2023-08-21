@@ -1,14 +1,24 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from elasticsearch import Elasticsearch
 from config import settings
 
 # Create a FastAPI app instance with the specified title from settings
 app = FastAPI(title=settings.APP_NAME)
 
+# Config CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 # Initialize Elasticsearch
 elastic_search = Elasticsearch(settings.ELASTICSEARCH_HOST)
 
-@app.post("/full-text-search")
+@app.get("/full-text-search")
 async def full_text_search(query: str, size: int):
     """
     Endpoint to perform a full-text search based on the query.
@@ -41,7 +51,7 @@ async def full_text_search(query: str, size: int):
 
     return {"results": results}
 
-@app.post("/auto-complete-search")
+@app.get("/auto-complete-search")
 async def auto_complete_search(query: str, size: int):
     """
     Endpoint to provide auto-complete suggestions based on the query.

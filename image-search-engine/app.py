@@ -1,4 +1,5 @@
 from fastapi import FastAPI, File, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
 from feature_extractor import FeatureExtractor
 from faiss_search import FaissSearch
 from datetime import datetime
@@ -6,6 +7,15 @@ from config import settings
 
 # Create a FastAPI app instance with the specified title from settings
 app = FastAPI(title=settings.APP_NAME)
+
+# Config CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Initialize the feature extractor and FaissSearch instances
 feature_extractor = FeatureExtractor()
