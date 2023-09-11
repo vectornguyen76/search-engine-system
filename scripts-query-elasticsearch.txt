@@ -1,0 +1,221 @@
+GET text_search_index/_search
+{
+  "suggest": {
+      "item-suggest": {
+          "prefix": "Áo",
+          "completion": {
+              "field": "item_name.edgengram",
+              "size": 10
+          }
+      }
+  }
+}
+
+GET text_search_index/_search
+{
+  "query": {
+    "prefix": {
+      "item_name.keywordstring": "ao"
+    }
+  }
+}
+
+GET text_search_index/_search
+{
+  "query": {
+    "match": {
+      "item_name.edgengram": "Áo sơ"
+    }
+  }
+}
+
+
+GET text_search_index/_search
+{
+  "suggest": {
+    "item-suggest": {
+      "prefix": "Áo sơ",
+      "completion": {
+        "field": "item_name.completion"
+      }
+    }
+  }
+}
+
+
+##"_source": false,
+
+GET text_search_index/_search
+{
+  "suggest": {
+    "item-completion": {
+      "prefix": "áo so mi",
+      "completion": {
+        "field": "item_name.completion",
+        "size": 3,
+        "fuzzy": {
+          "fuzziness": "auto"
+        }
+      }
+    }
+  }
+}
+
+PUT /index_clothing
+{
+    "settings": {
+        "analysis": {
+            "analyzer": {
+                "autocomplete_analyzer": {
+                    "type": "custom",
+                    "tokenizer": "edge_ngram_tokenizer"
+                }
+            },
+            "tokenizer": {
+                "edge_ngram_tokenizer": {
+                    "type": "edge_ngram",
+                    "min_gram": 1,
+                    "max_gram": 20,
+                    "token_chars": "letter"
+                }
+            }
+        }
+    },
+    "mappings": {
+        "properties": {
+            "name": {
+                "type": "text",
+                "analyzer": "autocomplete_analyzer",
+                "search_analyzer": "standard"
+            }
+        }
+    }
+}
+
+
+PUT index_clothing
+{
+  "settings": {
+    "index": {
+      "analysis": {
+        "analyzer": {
+          "trigram": {
+            "type": "custom",
+            "tokenizer": "standard",
+            "filter": ["lowercase","shingle"]
+          }
+        },
+        "filter": {
+          "shingle": {
+            "type": "shingle",
+            "min_shingle_size": 2,
+            "max_shingle_size": 3
+          }
+        }
+      }
+    }
+  },
+  "mappings": {
+    "properties": {
+      "item_name": {
+        "type": "text",
+        "fields": {
+          "trigram": {
+            "type": "text",
+            "analyzer": "trigram"
+          },
+          "completion": {
+            "type": "completion"
+          }
+        }
+      }
+    }
+  }
+}
+
+POST /index_clothing/_doc/_bulk
+{"index":{"_id":1}}
+{"item_name": "Quần short nam năng động DETERMINANT"}
+{"index":{"_id":2}}
+{"item_name": "Quần nỉ nam DETERMINANT ống dài"}
+{"index":{"_id":3}}
+{"item_name": "Quần short thun nam năng động DETERMINANT"}
+{"index":{"_id":4}}
+{"item_name": "Quần short cao cấp"}
+{"index":{"_id":5}}
+{"item_name": "Áo sơ mi nam công sở DETERMINANT tay dài"}
+{"index":{"_id":6}}
+{"item_name": "Áo sơ mi nam tay ngắn"}
+{"index":{"_id":7}}
+{"item_name": "Áo sơ mi nam tay dài"}
+{"index":{"_id":8}}
+{"item_name": "Áo sơ mi nam trắng"}
+{"index":{"_id":9}}
+{"item_name": "Áo sơ mi nam đen"}
+{"index":{"_id":10}}
+{"item_name": "Áo khoác nam đa năng DETERMINANT mũ liền"}
+{"index":{"_id":11}}
+{"item_name": "Áo thun polo nam cao cấp DETERMINANT tay dài"}
+{"index":{"_id":12}}
+{"item_name": "Premium men's polo t-shirt"}
+{"index":{"_id":13}}
+{"item_name": "Men's shirt black"}
+{"index":{"_id":14}}
+{"item_name": "Men's shirt while"}
+{"index":{"_id":15}}
+{"item_name": "Men's shirt blue"}
+
+
+GET index_clothing/_search
+{
+  "suggest": {
+    "term-suggester" : {
+      "text" : "a",
+      "term" : {
+        "field" : "item_name"
+      }
+    },
+    "phrase-suggester" : {
+      "text" : "Men's shir",
+      "phrase" : {
+        "field" : "item_name.trigram",
+        "confidence": 0
+      }
+    },
+    "completion-suggester": {
+      "prefix": "Áo mi",
+      "completion": {
+        "field": "item_name.completion",
+        "fuzzy": {
+          "fuzziness": "auto"
+        }
+      }
+    }
+  }
+}
+
+GET index_clothing/_analyze
+{
+  "text": "Áo sơ mi",
+  "field": "item_name.trigram"
+}
+
+GET index_clothing/_search
+{
+  "query": {
+    "multi_match": {
+      "query": "Áo sơ mi",
+      "type": "bool_prefix",
+      "fields": [
+        "name",
+        "name._2gram",
+        "name._3gram"
+        ]
+    }
+  }
+}
+
+
+
+# Delete index
+DELETE index_clothing

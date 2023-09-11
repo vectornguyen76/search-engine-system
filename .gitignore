@@ -1,4 +1,4 @@
-.env
+# .env
 dataset
 *.npz
 index.faiss
