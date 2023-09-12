@@ -110,7 +110,14 @@
 3. **Disadvance**
     - Not support GPU
 
-4. **Refrence**
+4. **Beachmarks**
+<p align="center">
+<img src="./assets/benchmarks.jpg" alt="animated" />
+<br>
+<em>Batching Architecture</em>
+</p>
+
+5. **Refrence**
     - https://qdrant.tech/benchmarks/
     - https://blog.qdrant.tech/batch-vector-search-with-qdrant-8c4d598179d5
 
@@ -119,7 +126,6 @@
 
 ## Environments
 ### Develop
-Development environment that uses PostgreSQL in local and uses the server flask in debug mode.
 1. **Create environment and install packages**
     ```shell
     conda create -n image-search python=3.9
@@ -131,34 +137,9 @@ Development environment that uses PostgreSQL in local and uses the server flask 
     pip install -r requirements.txt
     ```
 
-2. **Create PosgresSQL on Ubuntu 20.04**
-    Install PosgresSQL
-    ```shell
-    sudo apt-get install postgresql-12
+2. **Run app**
     ```
-
-    Go in PosgresSQL
-    ```shell
-    sudo -u postgres psql
-    ```
-
-    Create user and password
-    ```shell
-    CREATE USER db_user WITH PASSWORD 'db_password';
-    ```
-    
-    Create Database shopee
-    ```shell
-    CREATE DATABASE db_shopee;
-    ```
-
-    Add permission User to Database
-    ```shell
-    GRANT ALL PRIVILEGES ON DATABASE db_shopee TO db_user;
-    ```
-### Run
-    ```
-    uvicorn main:app
+    uvicorn app:app
     ```
 
 ### Improve
