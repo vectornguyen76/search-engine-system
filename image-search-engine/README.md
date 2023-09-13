@@ -1,7 +1,9 @@
 # Image Search Engine on Shopee
+### About solution
+- Use qdrant instead of faiss because I want to start with small server. It run on CPU and scale when has a lot traffic
+
 
 ## Vector Database - Vector Search
-
 ### Faiss
 1. **Overview**
     - Faiss is a library for efficient similarity search and clustering of dense vectors. It contains algorithms that search in sets of vectors of any size, up to ones that possibly do not fit in RAM. Faiss is written in C++ with complete wrappers for Python/numpy. 
@@ -105,10 +107,11 @@
 
 2. **Advance**
     - Implement a unique custom modification of the HNSW algorithm for Approximate Nearest Neighbor Search. Search with a State-of-the-Art speed and apply search filters without compromising on results.
+    - QDrant supports both CPU and GPU-based computing, making it highly flexible and adaptable to different hardware configurations.
+    - It is highly scalable, is able to handle large-scale data and high user concurrency.
     - Support batch search API
 
 3. **Disadvance**
-    - Not support GPU
 
 4. **Beachmarks**
 <p align="center">
