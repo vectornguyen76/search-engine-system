@@ -2,7 +2,6 @@
 ### About solution
 - Use qdrant instead of faiss because I want to start with small server. It run on CPU and scale when has a lot traffic
 
-
 ## Vector Database - Vector Search
 ### Faiss
 1. **Overview**
@@ -30,6 +29,7 @@
 2. **Disadvantage**
     - Not support GPU but can use plugin of third party.
     - Elasticsearch is typically way slower than all the competitors, no matter the dataset and metric.
+    - Not support to batch vector search
 
 3. **Pricing** 
     - Store embeddings and Search embeddings are free
@@ -109,23 +109,20 @@
     - Implement a unique custom modification of the HNSW algorithm for Approximate Nearest Neighbor Search. Search with a State-of-the-Art speed and apply search filters without compromising on results.
     - QDrant supports both CPU and GPU-based computing, making it highly flexible and adaptable to different hardware configurations.
     - It is highly scalable, is able to handle large-scale data and high user concurrency.
-    - Support batch search API
+    - Support to batch vector search
 
 3. **Disadvance**
 
 4. **Beachmarks**
-<p align="center">
-<img src="./assets/benchmarks.jpg" alt="animated" />
-<br>
-<em>Batching Architecture</em>
-</p>
+    <p align="center">
+    <img src="./assets/benchmarks.jpg" alt="animated" />
+    <br>
+    <em>Batching Architecture</em>
+    </p>
 
 5. **Refrence**
     - https://qdrant.tech/benchmarks/
     - https://blog.qdrant.tech/batch-vector-search-with-qdrant-8c4d598179d5
-
-### Problem
-- Issue update faiss store with multiple workers or multiple pods.
 
 ## Environments
 ### Develop
@@ -145,8 +142,9 @@
     uvicorn app:app
     ```
 
-### Improve
-- Use BentoML to serving batching and search batching
+### Future
+    - Inference batching (GPU)
+    - Search batching
 
 <p align="center">
 <img src="./assets/batching-architecture.png" alt="animated" />

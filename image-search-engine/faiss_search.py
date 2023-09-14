@@ -1,5 +1,5 @@
 import faiss
-import faiss_config
+from config import settings
 import numpy as np
 import pandas as pd
 
@@ -18,10 +18,10 @@ class FaissSearch:
         - item_price (np.ndarray): Prices of items in the dataset.
         """
         # Load the dataset
-        data = pd.read_csv(faiss_config.DATA_PATH, header=None)
+        data = pd.read_csv(settings.DATA_PATH, header=None)
         
         # Read the Faiss index
-        self.index = faiss.read_index(faiss_config.INDEX_PATH)
+        self.index = faiss.read_index(settings.INDEX_PATH)
         
         # Extract attributes from the dataset
         self.item_url = data.values[:, 0]
@@ -29,13 +29,13 @@ class FaissSearch:
         self.item_name = data.values[:, 2]
         self.item_price = data.values[:, 3]
            
-    def search(self, query_vector, top_k=faiss_config.TOP_K):
+    def search(self, query_vector, top_k=settings.TOP_K):
         """
         Performs a similarity search using the provided query vector.
 
         Args:
         - query_vector (np.ndarray): The query vector for similarity search.
-        - top_k (int, optional): The number of nearest neighbors to retrieve. Default is specified in faiss_config.
+        - top_k (int, optional): The number of nearest neighbors to retrieve. Default is specified in settings.
 
         Returns:
         - dict: A dictionary containing search results, including item information.
@@ -52,7 +52,7 @@ class FaissSearch:
                 "item_price": self.item_price[idx],
             })
         
-        return {"results": results}
+        return results
     
 
 if __name__ == "__main__":
