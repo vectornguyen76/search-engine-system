@@ -49,6 +49,8 @@ services:
     build:
       context: ./image-search-engine
       dockerfile: Dockerfile
+    environment:
+      - QDRANT_URL=http://qdrant:6333
     ports:
       - 7000:7000
 
