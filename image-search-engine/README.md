@@ -123,6 +123,7 @@
 5. **Refrence**
     - https://qdrant.tech/benchmarks/
     - https://blog.qdrant.tech/batch-vector-search-with-qdrant-8c4d598179d5
+    - https://github.com/qdrant/qdrant/issues/1656
 
 ## Environments
 ### Develop

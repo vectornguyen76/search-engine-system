@@ -41,7 +41,7 @@ services:
       - "6333:6333"
       - "6334:6334"
     volumes:
-      - ./qdrant_data:/qdrant/storage
+      - ./image-search-engine/qdrant_search:/qdrant/storage
 
   image_search:
     container_name: image_search_container
