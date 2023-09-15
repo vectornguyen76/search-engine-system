@@ -5,7 +5,7 @@ index.faiss
 test*
 *.ipynb
 NOTE.md
-qdrant_search
+qdrant_vector_database
 
 image-search-engine/assets/uploaded_images/*
 !image-search-engine/assets/uploaded_images/.gitkeep

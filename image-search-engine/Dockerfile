@@ -16,17 +16,14 @@ RUN pip install torch torchvision torchaudio --index-url https://download.pytorc
 # Install the Python dependencies from requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Download the faiss index from a Google Drive link
+# Download the image features from a Google Drive link
 RUN gdown https://drive.google.com/uc?id=1-3CH-0PZbNziCH3JYwZcOTyqhThhe8wg
 
 # Move the downloaded index to a directory named /faiss_store
 RUN mkdir --parents /app/faiss_store && mv index.faiss /app/faiss_store
 
-# Copy the download_model.py script from the host into the container's /app directory
-COPY download_model.py /app
-
-# Run the download_model.py script to download the model
-RUN python download_model.py
+# Download model
+RUN python -c 'from torchvision.models import efficientnet_b3, EfficientNet_B3_Weights; efficientnet_b3(weights=EfficientNet_B3_Weights.IMAGENET1K_V1)'
 
 # Copy all files from the host into the container's /app directory
 COPY . /app

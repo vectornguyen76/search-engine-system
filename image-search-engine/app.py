@@ -1,11 +1,11 @@
 from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from feature_extractor import FeatureExtractor
-from faiss_search import FaissSearch
-from qdrant_search import QdrantSearch
+from faiss_search.searcher import FaissSearch
+from qdrant_search.searcher import QdrantSearch
 from datetime import datetime
 from config import settings
-from models import Product
+from schemas import Product
 
 # Create a FastAPI app instance with the specified title from settings
 app = FastAPI(title=settings.APP_NAME)

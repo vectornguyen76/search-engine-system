@@ -1,5 +1,4 @@
 import os
-from dotenv import load_dotenv
 from pydantic_settings import BaseSettings
 
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -22,7 +21,7 @@ class Settings(BaseSettings):
     TOP_K:int = 3
     
     # Faiss configuration
-    INDEX_PATH:str = "./faiss_store/index.faiss"
+    INDEX_PATH:str = "./faiss_search/index.faiss"
     
     # Qdrant configuration
     QDRANT_GRPC_URL:str = os.environ.get("QDRANT_GRPC_URL", "http://localhost:6334")
