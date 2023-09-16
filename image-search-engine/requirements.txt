@@ -36,6 +36,6 @@ sympy==1.12
 tqdm==4.66.1
 typing_extensions==4.7.1
 tzdata==2023.3
-urllib3==2.0.0
+urllib3==1.26.14
 uvicorn==0.23.2
 qdrant-client==1.5.4
