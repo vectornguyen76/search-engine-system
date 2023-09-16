@@ -31,7 +31,7 @@ class QdrantSearch:
         response = await self.client_grpc.async_grpc_points.Search(
             grpc.SearchPoints(
                 collection_name=settings.QDRANT_COLLECTION,
-                vector=query_vector,
+                vector=query_vector[0],
                 limit=top_k,
                 with_payload=grpc.WithPayloadSelector(enable=True),
             )

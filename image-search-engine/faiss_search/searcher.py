@@ -4,30 +4,43 @@ import numpy as np
 import pandas as pd
 
 class FaissSearch:
+    """
+    A class for performing similarity search using the Faiss library.
+
+    This class provides functionality to perform similarity search using a pre-built Faiss index.
+
+    Attributes:
+        index (faiss.Index): The Faiss index used for search.
+        item_path (np.ndarray): URLs of items in the dataset.
+        item_image (np.ndarray): Image paths of items in the dataset.
+        item_name (np.ndarray): Names of items in the dataset.
+        fixed_item_price (np.ndarray): Fixed prices of items in the dataset.
+        sale_item_price (np.ndarray): Sale prices of items in the dataset.
+        sales_number (np.ndarray): Sales numbers of items in the dataset.
+        shop_path (np.ndarray): Paths of shops where items are sold.
+        shop_name (np.ndarray): Names of shops where items are sold.
+    """
     def __init__(self):
         """
         Initializes the FaissSearch class.
 
         This class provides functionality to perform similarity search using the Faiss library.
-
-        Attributes:
-        - index (faiss.Index): The Faiss index used for search.
-        - item_url (np.ndarray): URLs of items in the dataset.
-        - item_image (np.ndarray): Image paths of items in the dataset.
-        - item_name (np.ndarray): Names of items in the dataset.
-        - item_price (np.ndarray): Prices of items in the dataset.
         """
         # Load the dataset
-        data = pd.read_csv(settings.DATA_PATH, header=None)
+        data = pd.read_csv(settings.DATA_PATH)
         
         # Read the Faiss index
         self.index = faiss.read_index(settings.INDEX_PATH)
         
         # Extract attributes from the dataset
-        self.item_url = data.values[:, 0]
-        self.item_image = data.values[:, 1]
-        self.item_name = data.values[:, 2]
-        self.item_price = data.values[:, 3]
+        self.item_path = data['item_path']
+        self.item_image = data['item_image']
+        self.item_name = data['item_name']
+        self.fixed_item_price = data['fixed_item_price']
+        self.sale_item_price = data['sale_item_price']
+        self.sales_number = data['sales_number']
+        self.shop_path = data['shop_path']
+        self.shop_name = data['shop_name']
            
     def search(self, query_vector, top_k=settings.TOP_K):
         """
@@ -38,7 +51,7 @@ class FaissSearch:
         - top_k (int, optional): The number of nearest neighbors to retrieve. Default is specified in settings.
 
         Returns:
-        - dict: A dictionary containing search results, including item information.
+        - list: A list of dictionaries containing search results, including item information.
         """
         distances, indices = self.index.search(query_vector, top_k)
         
@@ -46,10 +59,14 @@ class FaissSearch:
         
         for idx in indices[0]:
             results.append({
-                "item_url": self.item_url[idx],
+                "item_path": self.item_path[idx],
                 "item_image": self.item_image[idx],
                 "item_name": self.item_name[idx],
-                "item_price": self.item_price[idx],
+                "fixed_item_price": self.fixed_item_price[idx],
+                "sale_item_price": self.sale_item_price[idx],
+                "sales_number": self.sales_number[idx],
+                "shop_path": self.shop_path[idx],
+                "shop_name": self.shop_name[idx],
             })
         
         return results

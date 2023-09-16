@@ -6,6 +6,7 @@ test*
 NOTE.md
 qdrant_vector_database
 *.csv
+data.csv
 
 image-search-engine/assets/uploaded_images/*
 !image-search-engine/assets/uploaded_images/.gitkeep

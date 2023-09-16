@@ -35,13 +35,13 @@ services:
       elasticsearch:
         condition: service_healthy
 
-  qdrant:
+  qdrant_vector_database:
     image: qdrant/qdrant:v1.5.1
     ports:
       - "6333:6333"
       - "6334:6334"
     volumes:
-      - ./image-search-engine/qdrant_search:/qdrant/storage
+      - ./qdrant_vector_database:/qdrant/storage
 
   image-search-engine:
     container_name: image_search_container
