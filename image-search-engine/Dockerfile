@@ -19,14 +19,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Download load csv data
 RUN gdown https://drive.google.com/uc?id=1I-Rv676N45aUgY7tcsazQE7fLzzb2LFr
 
-# Move data.csv to a directory named /data
-RUN mv data.csv /app/data
-
 # Download the image features from a Google Drive link
 RUN gdown https://drive.google.com/uc?id=103LTvXhmbjPOVjDVbhwjjzHrsQLpskWt
 
-# Move faiss_search to a directory named /faiss_search
-RUN mv image_features.npz /app/faiss_search
+# Move data.csv, image_features.npz to a directory named /data
+RUN mkdir --parents /app/data && mv data.csv /app/data && mv image_features.npz /app/data
 
 # Download model
 RUN python -c 'from torchvision.models import efficientnet_b3, EfficientNet_B3_Weights; efficientnet_b3(weights=EfficientNet_B3_Weights.IMAGENET1K_V1)'
@@ -34,8 +31,14 @@ RUN python -c 'from torchvision.models import efficientnet_b3, EfficientNet_B3_W
 # Copy all files from the host into the container's /app directory
 COPY . /app
 
+# Ingest data to Faiss
+RUN python faiss_ingest.py
+
 # Expose port 7000 to the host machine
 EXPOSE 7000
 
-# Run the uvicorn server to start the application when the container is started
-CMD uvicorn app:app --port 7000 --host 0.0.0.0
+# Chmod to entrypoint.sh
+RUN chmod +x ./entrypoint.sh
+
+# Run entrypoint.sh
+ENTRYPOINT ["/app/entrypoint.sh"]
