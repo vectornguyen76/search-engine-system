@@ -146,6 +146,7 @@
 ### Future
     - Inference batching (GPU)
     - Search batching
+    - Improve model (Focus product)
 
 <p align="center">
 <img src="./assets/batching-architecture.png" alt="animated" />

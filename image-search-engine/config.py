@@ -15,7 +15,7 @@ class Settings(BaseSettings):
     IMAGEDIR:str = "assets/uploaded_images/"
     
     # Search configuration
-    FEATURES_PATH:str = "./data/array_features.npz"
+    FEATURES_PATH:str = "./data/image_features.npz"
     DATA_PATH:str = "./data/data.csv" 
     DIMENSIONS:int = 1000
     TOP_K:int = 3

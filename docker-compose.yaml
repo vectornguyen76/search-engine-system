@@ -43,7 +43,7 @@ services:
     volumes:
       - ./image-search-engine/qdrant_search:/qdrant/storage
 
-  image_search:
+  image-search-engine:
     container_name: image_search_container
     image: vectornguyen76/image_search_img
     build:
@@ -54,7 +54,7 @@ services:
     ports:
       - 7000:7000
 
-  text_search:
+  text-search-engine:
     container_name: text_search_container
     image: vectornguyen76/text_search_img
     build:
@@ -68,7 +68,7 @@ services:
       elasticsearch:
         condition: service_healthy
 
-  frontend_service:
+  frontend:
     container_name: frontend_container
     image: vectornguyen76/frontend_image
     build:
@@ -87,9 +87,9 @@ services:
       - ./nginx-server/default.conf:/etc/nginx/conf.d/default.conf
       - ./nginx-server/log:/var/log/nginx/
     depends_on:
-      - frontend_service
-      - image_search
-      - text_search
+      - frontend
+      - image-search-engine
+      - text-search-engine
 
 volumes:
   data-elastic-search:

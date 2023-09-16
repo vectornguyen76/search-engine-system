@@ -16,7 +16,7 @@ class QdrantIngest:
         item_image (numpy.ndarray): Array of item images.
         item_name (numpy.ndarray): Array of item names.
         item_price (numpy.ndarray): Array of item prices.
-        array_features (numpy.ndarray): Array of features to be ingested.
+        image_features (numpy.ndarray): Array of features to be ingested.
     """
     def __init__(self):
         """
@@ -35,7 +35,7 @@ class QdrantIngest:
         self.item_price = data.values[:, 3]
 
         # Load array features
-        self.array_features = np.load(settings.FEATURES_PATH, allow_pickle=True)
+        self.image_features = np.load(settings.FEATURES_PATH, allow_pickle=True)
 
     def create_collection(self):
         """
@@ -86,7 +86,7 @@ class QdrantIngest:
         """
         start_time = time.time()
         
-        num_features = self.array_features['array_features'].shape[0]
+        num_features = self.image_features['image_features'].shape[0]
         num_batches = (num_features + batch_size - 1) // batch_size
         
         for i in tqdm(range(num_batches)):
@@ -101,7 +101,7 @@ class QdrantIngest:
                         "item_price": self.item_price[idx]} 
                         for idx in range(start_idx, end_idx)]
             
-            vectors = self.array_features['array_features'][start_idx: end_idx]
+            vectors = self.image_features['image_features'][start_idx: end_idx]
             
             self.client_grpc.upload_collection(
                 collection_name=settings.QDRANT_COLLECTION,

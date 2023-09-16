@@ -7,14 +7,14 @@ class FaissIngest:
     A class for ingesting data into a Faiss index.
 
     Attributes:
-        array_features (numpy.ndarray): Array of features to be indexed.
+        image_features (numpy.ndarray): Array of features to be indexed.
     """
     def __init__(self):
         """
         Initializes a FaissIngest instance and loads array features from a file.
         """
         # Load array features from the specified file
-        self.array_features = np.load(settings.FEATURES_PATH, allow_pickle=True)
+        self.image_features = np.load(settings.FEATURES_PATH, allow_pickle=True)
         
     def create_index(self):
         """
@@ -27,7 +27,7 @@ class FaissIngest:
         index_faiss = faiss.IndexFlatL2(settings.DIMENSIONS)
         
         # Add the array features to the Faiss index
-        index_faiss.add(self.array_features["array_features"])
+        index_faiss.add(self.image_features["image_features"])
         
         # Save the index to disk
         faiss.write_index(index_faiss, settings.INDEX_PATH)
