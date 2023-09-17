@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "env-cmd .env.prod next start",
+    "start:dev": "env-cmd .env.local next start",
     "lint": "next lint"
   },
   "dependencies": {
