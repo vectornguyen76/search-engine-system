@@ -96,7 +96,7 @@ class QdrantIngest:
         start_time = time.time()
         
         num_features = self.image_features['image_features'].shape[0]
-        num_features = 2000
+        # num_features = 2000
         num_batches = (num_features + batch_size - 1) // batch_size
         
         for i in tqdm(range(num_batches)):
