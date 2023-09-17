@@ -143,6 +143,11 @@
     uvicorn app:app
     ```
 
+### Result 
+- Create and add 100.000 points in 6 minutes in qdrant
+- p95: 
+
+
 ### Future
     - Inference batching (GPU)
     - Search batching
