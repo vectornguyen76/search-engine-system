@@ -12,14 +12,18 @@ def main():
     elastic_search = Elasticsearch(settings.ELASTICSEARCH_HOST)
 
     # Read data from a CSV file into a Pandas DataFrame
-    df = pd.read_csv("./data/data.csv", header=None)
+    df = pd.read_csv("./data/data.csv")
 
     # Extract the columns from the DataFrame
-    item_url = df.values[:, 0]
-    item_image = df.values[:, 1]
-    item_name = df.values[:, 2]
-    item_price = df.values[:, 3]
-
+    item_path = df['item_path']
+    item_image = df['item_image']
+    item_name = df['item_name']
+    fixed_item_price = df['fixed_item_price']
+    sale_item_price = df['sale_item_price']
+    sales_number = df['sales_number']
+    shop_path = df['shop_path']
+    shop_name = df['shop_name']
+        
     index_name = 'text_search_index'
 
     # Define index mappings (optional but recommended)
@@ -80,9 +84,14 @@ def main():
                     },
                     "analyzer": "standard"
                 },
-                "item_url": {"type": "text"},
+                
+                "item_path": {"type": "text"},
                 "item_image": {"type": "text"},
-                "item_price": {"type": "text"},
+                "fixed_item_price": {"type": "integer"},
+                "sale_item_price": {"type": "integer"},
+                "sales_number": {"type": "integer"},
+                "shop_path": {"type": "text"},
+                "shop_name": {"type": "text"},
             }
         }
     }
@@ -97,9 +106,13 @@ def main():
             "_id": id,
             "_source": {
                 'item_name': item_name[id],
-                'item_url': item_url[id],
+                'item_path': item_path[id],
                 'item_image': item_image[id],
-                'item_price': item_price[id],
+                'fixed_item_price': fixed_item_price[id],
+                'sale_item_price': sale_item_price[id],
+                'sales_number': sales_number[id],
+                'shop_path': shop_path[id],
+                'shop_name': shop_name[id],
             }
         }
         for id in range(len(item_name))
