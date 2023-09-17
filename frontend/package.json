@@ -4,9 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
-    "start": "env-cmd .env.prod next start",
-    "start:dev": "env-cmd .env.local next start",
+    "build": "env-cmd -f .env.prod next build",
+    "build.dev": "env-cmd -f .env.dev next build",
+    "start": "env-cmd -f .env.prod next start",
+    "start:dev": "env-cmd -f .env.dev next start",
     "lint": "next lint"
   },
   "dependencies": {
@@ -14,6 +15,7 @@
     "@types/react": "18.2.20",
     "@types/react-dom": "18.2.7",
     "axios": "^1.4.0",
+    "env-cmd": "^10.1.0",
     "next": "13.4.19",
     "react": "18.2.0",
     "react-dom": "18.2.0",
