@@ -6,9 +6,13 @@ import { AiFillCamera } from "react-icons/ai";
 
 interface DataSearchType {
   item_name: string
-  item_url: string
+  item_path: string
   item_image: string
-  item_price: string
+  fixed_item_price: number
+  sale_item_price: number
+  sales_number: number
+  shop_path: string
+  shop_name: string
 }
 
 export default function Home() {
@@ -81,7 +85,17 @@ export default function Home() {
         <div className='search m-10'>
           <div className="flex items-center justify-center">
             <div className="flex border-2 rounded">
-              <input type="text" className="px-4 py-2 w-80" placeholder="Search..." onChange={(e) => setSearchValue(e.target.value)} />
+              <input
+                type="text"
+                className="px-4 py-2 w-80"
+                placeholder="Search..."
+                onChange={(e) => setSearchValue(e.target.value)}
+                onKeyUp={(e) => {
+                  if (e.key === "Enter") {
+                    handleClickSearch();
+                  }
+                }}
+              />
               <button className="flex items-center justify-center px-4 border-l" value={searchValue} onClick={handleClickUpload}>
                 <AiFillCamera />
               </button>
@@ -134,7 +148,7 @@ export default function Home() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {dataSearch.map((result, index) => (
                 <div className="relative flex flex-col overflow-hidden rounded-lg border border-gray-100 bg-white shadow-md" key={index}>
-                  <a className="relative mx-3 mt-3 flex h-60 overflow-hidden rounded-xl" href={result.item_url}>
+                  <a className="relative mx-3 mt-3 flex h-60 overflow-hidden rounded-xl" href={result.item_path} target="_blank">
                     <img className="object-cover" src={result.item_image} alt="product image" />
                     <span className="absolute top-0 left-0 m-2 rounded-full bg-black px-2 text-center text-sm font-medium text-white">39% OFF</span>
                   </a>
@@ -144,9 +158,12 @@ export default function Home() {
                     </a>
                     <div className="mt-4 flex items-center justify-between">
                       <p>
-                        <span className="text-3xl font-bold text-slate-900">{result.item_price}</span>
+                        <span className="text-3xl font-medium text-slate-900">{result.fixed_item_price}</span>
                       </p>
-                      <div className="flex items-center">
+                      <p>
+                        <span className="text-3xl font-bold text-slate-900">{result.sale_item_price}</span>
+                      </p>
+                      {/* <div className="flex items-center">
                         <svg aria-hidden="true" className="h-5 w-5 text-yellow-300" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                           <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
                         </svg>
@@ -163,7 +180,7 @@ export default function Home() {
                           <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
                         </svg>
                         <span className="mr-2 ml-3 rounded bg-yellow-200 px-2.5 py-0.5 text-xs font-semibold">5.0</span>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 </div>
