@@ -40,8 +40,8 @@ services:
     ports:
       - "6333:6333"
       - "6334:6334"
-    volumes:
-      - ./qdrant_vector_database:/qdrant/storage
+    # volumes:
+    #   - ./qdrant_vector_database:/qdrant/storage
 
   image-search-engine:
     container_name: image_search_container
