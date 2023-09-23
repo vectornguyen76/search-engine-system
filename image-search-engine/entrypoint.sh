@@ -5,7 +5,7 @@ echo "Start run entrypoint script..."
 echo "Waiting for qdrant..."
 
 # Define the URL to check
-url="http://localhost:6333/healthz"
+url="http://$QDRANT_HOST:6333/healthz"
 
 while true; do
     response=$(curl -s -o /dev/null -w "%{http_code}" "$url")

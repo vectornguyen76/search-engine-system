@@ -50,7 +50,7 @@ services:
       context: ./image-search-engine
       dockerfile: Dockerfile
     environment:
-      - QDRANT_GRPC_URL=http://qdrant_vector_database:6334
+      - QDRANT_HOST=qdrant_vector_database
     ports:
       - 7000:7000
     depends_on:

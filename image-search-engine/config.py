@@ -24,7 +24,7 @@ class Settings(BaseSettings):
     INDEX_PATH:str = "./faiss_search/index.faiss"
     
     # Qdrant configuration
-    QDRANT_GRPC_URL:str = os.environ.get("QDRANT_GRPC_URL", "http://localhost:6334")
+    QDRANT_HOST:str = os.environ.get("QDRANT_HOST", "localhost")
     QDRANT_COLLECTION:str = "image-search-engine"
 
 settings = Settings()
