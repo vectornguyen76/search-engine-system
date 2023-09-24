@@ -44,8 +44,8 @@ services:
       - ./qdrant_vector_database:/qdrant/storage
 
   image-search-engine:
-    container_name: image_search_container
-    image: vectornguyen76/image_search_img
+    container_name: image-search-container
+    image: vectornguyen76/image-search-engine
     build:
       context: ./image-search-engine
       dockerfile: Dockerfile
@@ -59,8 +59,8 @@ services:
       - qdrant_vector_database
 
   text-search-engine:
-    container_name: text_search_container
-    image: vectornguyen76/text_search_img
+    container_name: text-search-container
+    image: vectornguyen76/text-search-engine
     build:
       context: ./text-search-engine
       dockerfile: Dockerfile

@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: image-search-deployment
+spec:
+  replicas: 1
+  selector: 
+    matchLabels:
+      app: image-search
+  template:
+    metadata:
+      labels:
+        app: image-search
+    spec:
+      containers:
+        - name: image-search-container
+          image: vectornguyen76/image-search-engine:latest
+          env:
+            - name: QDRANT_HOST
+              # value: "10.99.104.252"
+              value: "qdrant_vector_database.default"
