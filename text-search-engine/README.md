@@ -68,5 +68,11 @@ uvicorn app:app
 - Opt for "Search as You Type" when real-time, partial matching autocomplete suggestions are required, along with flexibility in matching criteria.
 - Choose the "Completion field type" when seeking highly efficient autocomplete functionality with pre-defined terms or phrases, without the need for partial word matching.
 
+
+### How to rank
+- Top sale number
+- Sale rate
+- Low fixed price
+
 ### Refrence
 https://www.elastic.co/guide/en/elasticsearch/reference/current/search-suggesters.html#completion-suggester
