@@ -32,8 +32,8 @@ jobs:
           context: ./image-search-engine
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/image-search-engine:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          # cache-from: type=gha
+          # cache-to: type=gha,mode=max
 
   build-push-text-search:
     runs-on: ubuntu-latest

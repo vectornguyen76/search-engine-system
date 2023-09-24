@@ -35,13 +35,13 @@ services:
       elasticsearch:
         condition: service_healthy
 
-  qdrant_vector_database:
+  qdrant-vector-database:
     image: qdrant/qdrant:v1.5.1
     ports:
       - "6333:6333"
       - "6334:6334"
     volumes:
-      - ./qdrant_vector_database:/qdrant/storage
+      - ./qdrant-vector-database:/qdrant/storage
 
   image-search-engine:
     container_name: image-search-container
@@ -50,13 +50,13 @@ services:
       context: ./image-search-engine
       dockerfile: Dockerfile
     environment:
-      - QDRANT_HOST=qdrant_vector_database
+      - QDRANT_HOST=qdrant-vector-database
     ports:
       - 7000:7000
     volumes:
       - ./image-search-engine/logs:/app/logs
     depends_on:
-      - qdrant_vector_database
+      - qdrant-vector-database
 
   text-search-engine:
     container_name: text-search-container

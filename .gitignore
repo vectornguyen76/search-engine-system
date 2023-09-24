@@ -4,7 +4,7 @@ index.faiss
 test*
 # *.ipynb
 NOTE.md
-qdrant_vector_database
+qdrant-vector-database
 *.csv
 data.csv
 
