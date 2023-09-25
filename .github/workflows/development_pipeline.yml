@@ -60,8 +60,8 @@ jobs:
           context: ./image-search-engine
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/image-search-engine:latest
-          # cache-from: type=gha
-          # cache-to: type=gha,mode=max
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
   build-push-text-search:
     runs-on: ubuntu-latest
@@ -97,6 +97,9 @@ jobs:
       - name: Run flake8
         run: flake8 --ignore=E501 ./text-search-engine
 
+      # - name: Run Pylint
+      #   run: pylint ./image-search-engine/*.py
+      
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
