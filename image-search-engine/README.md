@@ -129,7 +129,7 @@
 ### Develop
 1. **Create environment and install packages**
     ```shell
-    conda create -n image-search python=3.9
+    conda create -n image-search python=3.10
     ```
     ```shell
     conda activate image-search
