@@ -3,7 +3,6 @@ anyio==3.7.1
 astroid==2.15.7
 beautifulsoup4==4.12.2
 black==23.9.1
-certifi==2023.7.22
 charset-normalizer==3.2.0
 click==8.1.7
 colorama==0.4.6
