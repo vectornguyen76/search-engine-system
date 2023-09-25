@@ -16,25 +16,33 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
+      - name: Cache Python dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-image-search
+
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
           python-version: 3.9
 
       - name: Install Dependencies
-        run: pip install -r requirements.txt 
+        run: pip install -r ./image-search-engine/requirements.txt 
 
       - name: Run isort
-        run: isort --check-only .
+        run: isort --check-only ./image-search-engine/.
 
       - name: Run black
-        run: black --check .
+        run: black --check ./image-search-engine/.
 
       - name: Run flake8
-        run: flake8
+        run: flake8 ./image-search-engine/
 
       - name: Run Pylint
-        run: pylint *.py
+        run: pylint ./image-search-engine/*.py
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -64,22 +72,30 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2      
 
+      - name: Cache Python dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-text-search
+
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
           python-version: 3.9
 
       - name: Install Dependencies
-        run: pip install -r requirements.txt 
+        run: pip install -r ./text-search-engine/requirements.txt 
 
       - name: Run isort
-        run: isort --check-only .
+        run: isort --check-only ./text-search-engine/.
 
       - name: Run black
-        run: black --check .
+        run: black --check ./text-search-engine/.
 
       - name: Run flake8
-        run: flake8
+        run: flake8 ./text-search-engine
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
