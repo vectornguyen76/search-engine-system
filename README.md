@@ -1,3 +1,8 @@
+# Search Engine Shopee
+[![Development](https://github.com/vectornguyen76/search-engine-shopee/actions/workflows/development_pipeline.yml/badge.svg)](https://github.com/vectornguyen76/search-engine-shopee/actions/workflows/development_pipeline.yml)
+[![Staging](https://github.com/vectornguyen76/search-engine-shopee/actions/workflows/staging_pipeline.yml/badge.svg)](https://github.com/vectornguyen76/search-engine-shopee/actions/workflows/staging_pipeline.yml)
+[![Production](https://github.com/vectornguyen76/search-engine-shopee/actions/workflows/production_pipeline.yml/badge.svg)](https://github.com/vectornguyen76/search-engine-shopee/actions/workflows/production_pipeline.yml)
+
 ## Text Search Engine
 ### Full text search
     - Implement by Elasticsearch
