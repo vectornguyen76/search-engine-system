@@ -1,10 +1,12 @@
 .env
-dataset
 *.npz
 index.faiss
 test*
-*.ipynb
+# *.ipynb
 NOTE.md
+qdrant-vector-database
+*.csv
+data.csv
 
 image-search-engine/assets/uploaded_images/*
 !image-search-engine/assets/uploaded_images/.gitkeep

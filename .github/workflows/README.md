@@ -7,8 +7,12 @@ File: [development_pipeline.yml](development_pipeline.yml)
 Event: On **Pull Request** → any branch into **develop**
 
 Jobs:
-- Build
-- Unit Test 
+- Install dependencies (caches)
+- Run isort
+- Run black
+- Run flake8
+- Build images (caches)
+- Push images to docker hub
 
 ### Description:
 
