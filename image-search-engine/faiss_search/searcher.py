@@ -1,7 +1,8 @@
 import faiss
-from config import settings
 import numpy as np
 import pandas as pd
+from config import settings
+
 
 class FaissSearch:
     """
@@ -20,6 +21,7 @@ class FaissSearch:
         shop_path (np.ndarray): Paths of shops where items are sold.
         shop_name (np.ndarray): Names of shops where items are sold.
     """
+
     def __init__(self):
         """
         Initializes the FaissSearch class.
@@ -28,20 +30,20 @@ class FaissSearch:
         """
         # Load the dataset
         data = pd.read_csv(settings.DATA_PATH)
-        
+
         # Read the Faiss index
         self.index = faiss.read_index(settings.INDEX_PATH)
-        
+
         # Extract attributes from the dataset
-        self.item_path = data['item_path']
-        self.item_image = data['item_image']
-        self.item_name = data['item_name']
-        self.fixed_item_price = data['fixed_item_price']
-        self.sale_item_price = data['sale_item_price']
-        self.sales_number = data['sales_number']
-        self.shop_path = data['shop_path']
-        self.shop_name = data['shop_name']
-           
+        self.item_path = data["item_path"]
+        self.item_image = data["item_image"]
+        self.item_name = data["item_name"]
+        self.fixed_item_price = data["fixed_item_price"]
+        self.sale_item_price = data["sale_item_price"]
+        self.sales_number = data["sales_number"]
+        self.shop_path = data["shop_path"]
+        self.shop_name = data["shop_name"]
+
     def search(self, query_vector, top_k=settings.TOP_K):
         """
         Performs a similarity search using the provided query vector.
@@ -54,36 +56,38 @@ class FaissSearch:
         - list: A list of dictionaries containing search results, including item information.
         """
         distances, indices = self.index.search(query_vector, top_k)
-        
+
         results = []
-        
+
         for idx in indices[0]:
-            results.append({
-                "item_path": self.item_path[idx],
-                "item_image": self.item_image[idx],
-                "item_name": self.item_name[idx],
-                "fixed_item_price": self.fixed_item_price[idx],
-                "sale_item_price": self.sale_item_price[idx],
-                "sales_number": self.sales_number[idx],
-                "shop_path": self.shop_path[idx],
-                "shop_name": self.shop_name[idx],
-            })
-        
+            results.append(
+                {
+                    "item_path": self.item_path[idx],
+                    "item_image": self.item_image[idx],
+                    "item_name": self.item_name[idx],
+                    "fixed_item_price": self.fixed_item_price[idx],
+                    "sale_item_price": self.sale_item_price[idx],
+                    "sales_number": self.sales_number[idx],
+                    "shop_path": self.shop_path[idx],
+                    "shop_name": self.shop_name[idx],
+                }
+            )
+
         return results
-    
+
 
 if __name__ == "__main__":
     # Instantiate the FaissSearch class
     faiss_search = FaissSearch()
-    
+
     # Create a random query vector
     num_vectors = 1
     dimension = 1000
-    vector = np.random.rand(num_vectors, dimension).astype('float32')
-    
+    vector = np.random.rand(num_vectors, dimension).astype("float32")
+
     print("Query vector shape:", vector.shape)
-    
+
     # Perform a similarity search using the query vector
     results = faiss_search.search(query_vector=vector, top_k=3)
-    
+
     print("Search results:", results)

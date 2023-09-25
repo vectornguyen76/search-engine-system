@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 
+
 class Product(BaseModel):
     item_path: str
     item_image: str

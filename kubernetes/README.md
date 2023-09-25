@@ -37,19 +37,22 @@
         ```
         kubectl delete pvc -l app.kubernetes.io/instance=qdrant-vector-database
         ```
-4. Deploy kubenetes template
+5. Deploy kubenetes template
     ```
     kubectl apply -f image-search-deployment.yaml,image-search-service.yaml
     ```
-2. Show dashboard
+6. Show dashboard
     ```
     minikube dashboard
     ```
-5. Get service
+7. Get service
     ```
-    minikube service backend
+    minikube service image-search-service
     ```
-
+8. Destroy kubenetes template
+    ```
+    kubectl delete -f image-search-deployment.yaml,image-search-service.yaml
+    ```
 
 ### Refrence
 - https://github.com/qdrant/qdrant-helm/tree/main/charts/qdrant

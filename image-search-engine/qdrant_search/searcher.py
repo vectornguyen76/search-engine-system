@@ -1,7 +1,9 @@
+import asyncio
+
 import numpy as np
 from config import settings
 from qdrant_client import QdrantClient, grpc
-import asyncio
+
 
 class QdrantSearch:
     """
@@ -10,12 +12,15 @@ class QdrantSearch:
     Attributes:
         client_grpc (QdrantClient): A client for interacting with Qdrant.
     """
+
     def __init__(self):
         """
         Initializes a QdrantSearch instance and creates a Qdrant client.
         """
         # Create a client to interact with Qdrant
-        self.client_grpc = QdrantClient(url=f"http://{settings.QDRANT_HOST}:6334", prefer_grpc=True)
+        self.client_grpc = QdrantClient(
+            url=f"http://{settings.QDRANT_HOST}:6334", prefer_grpc=True
+        )
 
     async def search(self, query_vector, top_k=settings.TOP_K):
         """
@@ -39,15 +44,16 @@ class QdrantSearch:
 
         return response
 
+
 if __name__ == "__main__":
     # Instantiate the QdrantSearch class
     qdrant_search = QdrantSearch()
-    
+
     # Create a random query vector
     dimension = 1000
-    vector = np.random.rand(dimension).astype('float32')
-    
+    vector = np.random.rand(dimension).astype("float32")
+
     print("Query vector shape:", vector.shape)
-    
+
     # Perform a similarity search using the query vector
     asyncio.run(qdrant_search.search(query_vector=vector, top_k=3))

@@ -1,6 +1,7 @@
 import torch
 from torchvision.io import read_image
-from torchvision.models import efficientnet_b3, EfficientNet_B3_Weights
+from torchvision.models import EfficientNet_B3_Weights, efficientnet_b3
+
 
 class FeatureExtractor:
     def __init__(self):
@@ -33,9 +34,9 @@ class FeatureExtractor:
 
         # Use a GPU (if available) for inference
         model = model.to(self.device)
-        
-        return model   
-    
+
+        return model
+
     def preprocess_input(self, image_path):
         """
         Preprocesses the input image for inference.
@@ -47,18 +48,18 @@ class FeatureExtractor:
         - torch.Tensor: Preprocessed image tensor.
         """
         image = read_image(image_path)
-        
+
         # Initialize the inference transforms
         preprocess = self.weights.transforms(antialias=True)
-        
+
         # Process RGBA image
-        image = image.narrow(0, 0, 3) 
-        
+        image = image.narrow(0, 0, 3)
+
         # Apply inference preprocessing transforms
         image = preprocess(image).unsqueeze(0)
 
         return image
-    
+
     def extract_feature(self, image_path):
         """
         Extracts features from the input image.
@@ -72,7 +73,7 @@ class FeatureExtractor:
         image = self.preprocess_input(image_path)
 
         feature = self.model(image)
-        
+
         feature = feature.detach().numpy()
-        
+
         return feature
