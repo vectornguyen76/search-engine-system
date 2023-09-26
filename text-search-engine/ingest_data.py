@@ -1,122 +1,174 @@
 import pandas as pd
 from config import settings
-from elasticsearch import Elasticsearch, helpers
+from tqdm import tqdm
+from elasticsearch import Elasticsearch
+from elasticsearch.helpers import streaming_bulk, bulk
 
+class ElasticSeachIngest:
+    """
+    A class for ingesting data into Elasticsearch.
+
+    Attributes:
+        elastic_search (Elasticsearch): An Elasticsearch client.
+        index_name (str): The name of the Elasticsearch index to create.
+        data (DataFrame): The data to be ingested as a Pandas DataFrame.
+        number_of_docs (int): The number of documents in the dataset.
+    """
+
+    def __init__(self):
+        """
+        Initialize the ElasticSeachIngest instance.
+        """
+        self.elastic_search = Elasticsearch(settings.ELASTICSEARCH_HOST)
+        self.index_name = settings.INDEX_NAME
+        self.data = pd.read_csv(settings.DATA_PATH)
+        self.number_of_docs = len(self.data.index)
+
+    def create_index(self):
+        """
+        Create an Elasticsearch index with specified mappings.
+        """
+        index_mappings = {
+            "settings": {
+                "index": {
+                    "analysis": {
+                        "filter": {},
+                        "analyzer": {
+                            "keyword_analyzer": {
+                                "filter": ["lowercase", "asciifolding", "trim"],
+                                "char_filter": [],
+                                "type": "custom",
+                                "tokenizer": "keyword",
+                            },
+                            "edge_ngram_analyzer": {
+                                "filter": ["lowercase"],
+                                "tokenizer": "edge_ngram_tokenizer",
+                            },
+                            "edge_ngram_search_analyzer": {"tokenizer": "lowercase"},
+                        },
+                        "tokenizer": {
+                            "edge_ngram_tokenizer": {
+                                "type": "edge_ngram",
+                                "min_gram": 2,
+                                "max_gram": 5,
+                                "token_chars": ["letter"],
+                            }
+                        },
+                    }
+                }
+            },
+            "mappings": {
+                "properties": {
+                    "item_name": {
+                        "type": "text",
+                        "fields": {
+                            "keywordstring": {
+                                "type": "text",
+                                "analyzer": "keyword_analyzer",
+                            },
+                            "edgengram": {
+                                "type": "text",
+                                "analyzer": "edge_ngram_analyzer",
+                                "search_analyzer": "edge_ngram_search_analyzer",
+                            },
+                            "completion": {"type": "completion"},
+                        },
+                        "analyzer": "standard",
+                    },
+                    "item_path": {"type": "text"},
+                    "item_image": {"type": "text"},
+                    "fixed_item_price": {"type": "integer"},
+                    "sale_item_price": {"type": "integer"},
+                    "sale_rate": {"type": "float"},
+                    "sales_number": {"type": "integer"},
+                    "shop_path": {"type": "text"},
+                    "shop_name": {"type": "text"},
+                }
+            },
+        }
+
+        # Create the index with the defined mappings
+        self.elastic_search.indices.create(
+            index=self.index_name,
+            body=index_mappings,
+            ignore=400
+        )  # ignore 400 means to ignore "Index Already Exists" errors
+
+    def generate_actions(self):
+        """
+        Generate actions (documents) to be indexed in Elasticsearch.
+        """
+        for index, row in self.data.iterrows():
+            doc = {
+                "_id": index,
+                "_source": {
+                    "item_name": row["item_name"],
+                    "item_path": row["item_path"],
+                    "item_image": row["item_image"],
+                    "fixed_item_price": row["fixed_item_price"],
+                    "sale_item_price": row["sale_item_price"],
+                    "sale_rate": 1 - (row["sale_item_price"] / row["fixed_item_price"]),
+                    "sales_number": row["sales_number"],
+                    "shop_path": row["shop_path"],
+                    "shop_name": row["shop_name"],
+                },
+            }
+            yield doc
+
+    def indexing_document(self):
+        """
+        Index documents in Elasticsearch using streaming_bulk.
+        """
+        progress = tqdm(unit="docs", total=self.number_of_docs)
+        successes = 0
+        for success, _ in streaming_bulk(
+            client=self.elastic_search, index=self.index_name, actions=self.generate_actions(),
+        ):
+            progress.update(1)
+            successes += success
+
+        print(f"Indexed {successes}/{self.number_of_docs} documents")
+
+    def indexing_batch_document(self):
+        """
+        Index documents in Elasticsearch in batches.
+        """
+        batch_size = 5000
+
+        num_batches = (self.number_of_docs + batch_size - 1) // batch_size
+        successes = 0
+        for i in tqdm(range(num_batches)):
+            # Split into batches
+            start_idx = i * batch_size
+            end_idx = min((i + 1) * batch_size, self.number_of_docs)
+
+            actions = [{
+                "_id": idx,
+                "_source": {
+                    "item_name": self.data["item_name"][idx],
+                    "item_path": self.data["item_path"][idx],
+                    "item_image": self.data["item_image"][idx],
+                    "fixed_item_price": self.data["fixed_item_price"][idx],
+                    "sale_item_price": self.data["sale_item_price"][idx],
+                    "sale_rate": 1 - (self.data["sale_item_price"][idx] / self.data["fixed_item_price"])[idx],
+                    "sales_number": self.data["sales_number"][idx],
+                    "shop_path": self.data["shop_path"][idx],
+                    "shop_name": self.data["shop_name"][idx],
+                },
+            } for idx in range(start_idx, end_idx)]
+            # Perform bulk indexing
+            success, _ = bulk(self.elastic_search, actions, index=self.index_name)
+            successes += success
+
+        print(f"Indexed {successes}/{self.number_of_docs} documents")
 
 def main():
     """
-    This script reads data from a CSV file and indexes it into an Elasticsearch index.
-    It demonstrates bulk indexing of data with specified mappings.
+    Main function to perform Elasticsearch data ingestion.
     """
-
-    # Connect to Elasticsearch
-    elastic_search = Elasticsearch(settings.ELASTICSEARCH_HOST)
-
-    # Read data from a CSV file into a Pandas DataFrame
-    df = pd.read_csv("./data/data.csv")
-
-    # Extract the columns from the DataFrame
-    item_path = df["item_path"]
-    item_image = df["item_image"]
-    item_name = df["item_name"]
-    fixed_item_price = df["fixed_item_price"]
-    sale_item_price = df["sale_item_price"]
-    sales_number = df["sales_number"]
-    shop_path = df["shop_path"]
-    shop_name = df["shop_name"]
-
-    index_name = "text_search_index"
-
-    # Define index mappings (optional but recommended)
-    index_mappings = {
-        "settings": {
-            "index": {
-                "analysis": {
-                    "filter": {},
-                    "analyzer": {
-                        "keyword_analyzer": {
-                            "filter": ["lowercase", "asciifolding", "trim"],
-                            "char_filter": [],
-                            "type": "custom",
-                            "tokenizer": "keyword",
-                        },
-                        "edge_ngram_analyzer": {
-                            "filter": ["lowercase"],
-                            "tokenizer": "edge_ngram_tokenizer",
-                        },
-                        "edge_ngram_search_analyzer": {"tokenizer": "lowercase"},
-                    },
-                    "tokenizer": {
-                        "edge_ngram_tokenizer": {
-                            "type": "edge_ngram",
-                            "min_gram": 2,
-                            "max_gram": 5,
-                            "token_chars": ["letter"],
-                        }
-                    },
-                }
-            }
-        },
-        "mappings": {
-            "properties": {
-                "item_name": {
-                    "type": "text",
-                    "fields": {
-                        "keywordstring": {
-                            "type": "text",
-                            "analyzer": "keyword_analyzer",
-                        },
-                        "edgengram": {
-                            "type": "text",
-                            "analyzer": "edge_ngram_analyzer",
-                            "search_analyzer": "edge_ngram_search_analyzer",
-                        },
-                        "completion": {"type": "completion"},
-                    },
-                    "analyzer": "standard",
-                },
-                "item_path": {"type": "text"},
-                "item_image": {"type": "text"},
-                "fixed_item_price": {"type": "integer"},
-                "sale_item_price": {"type": "integer"},
-                "sale_rate": {"type": "float"},
-                "sales_number": {"type": "integer"},
-                "shop_path": {"type": "text"},
-                "shop_name": {"type": "text"},
-            }
-        },
-    }
-
-    # Create the index with the defined mappings
-    elastic_search.indices.create(
-        index=index_name, body=index_mappings, ignore=400
-    )  # ignore 400 means to ignore "Index Already Exists" errors
-
-    # Prepare actions for bulk indexing
-    actions = [
-        {
-            "_index": index_name,
-            "_id": id,
-            "_source": {
-                "item_name": item_name[id],
-                "item_path": item_path[id],
-                "item_image": item_image[id],
-                "fixed_item_price": fixed_item_price[id],
-                "sale_item_price": sale_item_price[id],
-                "sale_rate": 1 - (sale_item_price[id] / fixed_item_price[id]),
-                "sales_number": sales_number[id],
-                "shop_path": shop_path[id],
-                "shop_name": shop_name[id],
-            },
-        }
-        for id in range(len(item_name))
-    ]
-
-    # Perform bulk indexing
-    success, _ = helpers.bulk(elastic_search, actions, index=index_name)
-
-    print(f"Indexed {success} documents")
-
+    es_ingest = ElasticSeachIngest()
+    es_ingest.create_index()
+    es_ingest.indexing_batch_document()
 
 if __name__ == "__main__":
     main()

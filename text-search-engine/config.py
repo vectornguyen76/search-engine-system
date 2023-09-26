@@ -14,6 +14,10 @@ class Settings(BaseSettings):
     DATE_FMT: str = "%Y-%m-%d %H:%M:%S"
     LOG_DIR: str = f"{basedir}/logs/api.log"
 
+    # Search configuration
+    DATA_PATH: str = "./data/data.csv"
+    INDEX_NAME: str = "text_search_index"
+    
     ELASTICSEARCH_HOST: str = os.getenv(
         key="ELASTICSEARCH_HOST", default="http://localhost:9200"
     )
