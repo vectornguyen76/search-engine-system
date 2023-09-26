@@ -1,12 +1,18 @@
-from config import settings
-from elasticsearch import Elasticsearch
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+
+from config import settings
+from elastic_search.searcher import ElasticSearcher
+from log_config import configure_logging
+from schemas import Product
+
+# Configure logging
+logger = configure_logging(__name__)
 
 # Create a FastAPI app instance with the specified title from settings
 app = FastAPI(title=settings.APP_NAME)
 
-# Config CORS
+# Configure Cross-Origin Resource Sharing (CORS)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -15,69 +21,61 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Initialize Elasticsearch
-elastic_search = Elasticsearch(settings.ELASTICSEARCH_HOST)
+# Initialize ElasticSearcher
+elastic_search = ElasticSearcher()
 
 
-@app.get("/full-text-search")
+@app.get("/full-text-search", response_model=list[Product])
 async def full_text_search(query: str, size: int):
     """
-    Endpoint to perform a full-text search based on the query.
+    Perform a full-text search based on the query.
 
     Args:
         query (str): The search query.
         size (int): The number of search results to retrieve.
 
     Returns:
-        dict: A dictionary containing the search results.
+        list: A list of search results as Product objects.
     """
-    index_name = "text_search_index"
+    try:
+        search_results = await elastic_search.text_search(query=query, top_k=size)
 
-    # Define a search query
-    search_query = {"size": size, "query": {"match": {"item_name": query}}}
+        result = [
+            Product.from_point(suggestion["_source"]) for suggestion in search_results
+        ]
 
-    # Perform the search
-    search_results = elastic_search.search(index=index_name, body=search_query)
+        logger.info(f"Text search successful, query: {query}")
 
-    results = []
-    for suggestion in search_results["hits"]["hits"]:
-        results.append(suggestion["_source"])
+        return result
 
-    return {"results": results}
+    except Exception as e:
+        logger.error("Could not perform text search: %s", e)
+        raise HTTPException(status_code=500, detail=e)
 
 
-@app.get("/auto-complete-search")
+@app.get("/auto-complete-search", response_model=list[Product])
 async def auto_complete_search(query: str, size: int):
     """
-    Endpoint to provide auto-complete suggestions based on the query.
+    Provide auto-complete suggestions based on the query.
 
     Args:
-        query (str): The query for which auto-complete suggestions are requested.
+        query (str): The query for auto-complete suggestions.
         size (int): The number of auto-complete suggestions to retrieve.
 
     Returns:
-        dict: A dictionary containing the auto-complete suggestions.
+        list: A list of auto-complete suggestions as Product objects.
     """
-    index_name = "text_search_index"
+    try:
+        search_results = await elastic_search.auto_complete(query=query, top_k=size)
 
-    # Build the search request
-    search_request = {
-        "suggest": {
-            "item-suggest": {
-                "prefix": query,
-                "completion": {"field": "item_name.suggest", "size": size},
-            }
-        }
-    }
+        result = [
+            Product.from_point(suggestion["_source"]) for suggestion in search_results
+        ]
 
-    # Perform the search
-    results = elastic_search.search(index=index_name, body=search_request)
+        logger.info(f"Auto-complete search successful, query: {query}")
 
-    # Extract and format the suggestions
-    suggestions = results["suggest"]["item-suggest"][0]["options"]
+        return result
 
-    formatted_results = []
-    for suggestion in suggestions:
-        formatted_results.append(suggestion["_source"])
-
-    return {"results": formatted_results}
+    except Exception as e:
+        logger.error("Could not perform auto-complete: %s", e)
+        raise HTTPException(status_code=500, detail=e)

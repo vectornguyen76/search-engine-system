@@ -1,8 +1,10 @@
 import pandas as pd
-from config import settings
-from tqdm import tqdm
 from elasticsearch import Elasticsearch
-from elasticsearch.helpers import streaming_bulk, bulk
+from elasticsearch.helpers import bulk, streaming_bulk
+from tqdm import tqdm
+
+from config import settings
+
 
 class ElasticSeachIngest:
     """
@@ -89,9 +91,7 @@ class ElasticSeachIngest:
 
         # Create the index with the defined mappings
         self.elastic_search.indices.create(
-            index=self.index_name,
-            body=index_mappings,
-            ignore=400
+            index=self.index_name, body=index_mappings, ignore=400
         )  # ignore 400 means to ignore "Index Already Exists" errors
 
     def generate_actions(self):
@@ -122,7 +122,9 @@ class ElasticSeachIngest:
         progress = tqdm(unit="docs", total=self.number_of_docs)
         successes = 0
         for success, _ in streaming_bulk(
-            client=self.elastic_search, index=self.index_name, actions=self.generate_actions(),
+            client=self.elastic_search,
+            index=self.index_name,
+            actions=self.generate_actions(),
         ):
             progress.update(1)
             successes += success
@@ -142,25 +144,33 @@ class ElasticSeachIngest:
             start_idx = i * batch_size
             end_idx = min((i + 1) * batch_size, self.number_of_docs)
 
-            actions = [{
-                "_id": idx,
-                "_source": {
-                    "item_name": self.data["item_name"][idx],
-                    "item_path": self.data["item_path"][idx],
-                    "item_image": self.data["item_image"][idx],
-                    "fixed_item_price": self.data["fixed_item_price"][idx],
-                    "sale_item_price": self.data["sale_item_price"][idx],
-                    "sale_rate": 1 - (self.data["sale_item_price"][idx] / self.data["fixed_item_price"])[idx],
-                    "sales_number": self.data["sales_number"][idx],
-                    "shop_path": self.data["shop_path"][idx],
-                    "shop_name": self.data["shop_name"][idx],
-                },
-            } for idx in range(start_idx, end_idx)]
+            actions = [
+                {
+                    "_id": idx,
+                    "_source": {
+                        "item_name": self.data["item_name"][idx],
+                        "item_path": self.data["item_path"][idx],
+                        "item_image": self.data["item_image"][idx],
+                        "fixed_item_price": self.data["fixed_item_price"][idx],
+                        "sale_item_price": self.data["sale_item_price"][idx],
+                        "sale_rate": 1
+                        - (
+                            self.data["sale_item_price"][idx]
+                            / self.data["fixed_item_price"]
+                        )[idx],
+                        "sales_number": self.data["sales_number"][idx],
+                        "shop_path": self.data["shop_path"][idx],
+                        "shop_name": self.data["shop_name"][idx],
+                    },
+                }
+                for idx in range(start_idx, end_idx)
+            ]
             # Perform bulk indexing
             success, _ = bulk(self.elastic_search, actions, index=self.index_name)
             successes += success
 
         print(f"Indexed {successes}/{self.number_of_docs} documents")
+
 
 def main():
     """
@@ -169,6 +179,7 @@ def main():
     es_ingest = ElasticSeachIngest()
     es_ingest.create_index()
     es_ingest.indexing_batch_document()
+
 
 if __name__ == "__main__":
     main()

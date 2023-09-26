@@ -1,4 +1,5 @@
 from elasticsearch import Elasticsearch
+
 from config import settings
 
 # Create a connection to your Elasticsearch cluster

@@ -17,7 +17,8 @@ class Settings(BaseSettings):
     # Search configuration
     DATA_PATH: str = "./data/data.csv"
     INDEX_NAME: str = "text_search_index"
-    
+    TOP_K: int = 3
+
     ELASTICSEARCH_HOST: str = os.getenv(
         key="ELASTICSEARCH_HOST", default="http://localhost:9200"
     )
