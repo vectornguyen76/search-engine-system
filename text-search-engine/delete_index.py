@@ -1,9 +1,10 @@
 from elasticsearch import Elasticsearch
+from config import settings
 
 # Create a connection to your Elasticsearch cluster
-es = Elasticsearch(["http://localhost:9200"])
+es = Elasticsearch(settings.ELASTICSEARCH_HOST)
 
-index_name = "text_search_index"
+index_name = settings.INDEX_NAME
 
 # Delete the index
 if es.indices.exists(index=index_name):
