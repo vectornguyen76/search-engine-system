@@ -1,8 +1,7 @@
 import asyncio
 
-from elasticsearch import AsyncElasticsearch
-
 from config import settings
+from elasticsearch import AsyncElasticsearch
 
 
 class ElasticSearcher:

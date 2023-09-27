@@ -1,9 +1,8 @@
 import pandas as pd
+from config import settings
 from elasticsearch import Elasticsearch
 from elasticsearch.helpers import bulk, streaming_bulk
 from tqdm import tqdm
-
-from config import settings
 
 
 class ElasticSeachIngest:

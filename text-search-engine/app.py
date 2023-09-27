@@ -1,8 +1,7 @@
-from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
-
 from config import settings
 from elastic_search.searcher import ElasticSearcher
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from log_config import configure_logging
 from schemas import Product
 
