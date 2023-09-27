@@ -26,17 +26,21 @@
 1. **Overview**
     ElasticSearch is a popular search engine used by developers to implement search functionality in their applications. With each new release, Vector Search allows developers to search for documents based on their semantic similarity instead of just their textual relevance. This feature has many use cases, including semantic search, recommendation systems, image search and question answering.
 
-2. **Disadvantage**
+2. **Advance**
+    - It is highly scalable, is able to handle large-scale data, ready-production and high user concurrency.
+    - Support asynchronous client 
+
+3. **Disadvantage**
     - Not support GPU but can use plugin of third party.
     - Elasticsearch is typically way slower than all the competitors, no matter the dataset and metric.
     - Not support to batch vector search
 
-3. **Pricing** 
+4. **Pricing** 
     - Store embeddings and Search embeddings are free
     - Embedding models or Built-in semantic search model is paid
     - Price 125$/month for Machine learning
 
-4. **Example**
+5. **Example**
     - **Create the index**
         ```shell
         PUT my-index
@@ -95,7 +99,7 @@
         }
         ```
 
-5. **Refrence**
+6. **Refrence**
     - https://www.elastic.co/guide/en/elasticsearch/reference/current/knn-search.html#knn-semantic-search
     - https://www.elastic.co/guide/en/elasticsearch/reference/current/knn-search-api.html
 
@@ -110,6 +114,7 @@
     - QDrant supports both CPU and GPU-based computing, making it highly flexible and adaptable to different hardware configurations.
     - It is highly scalable, is able to handle large-scale data and high user concurrency.
     - Support to batch vector search
+    - Support asynchronous client 
 
 3. **Disadvance**
 
