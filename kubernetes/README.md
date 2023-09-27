@@ -12,7 +12,7 @@
     docker compose build
     docker compose push
     ```
-4. Install Qdrant helm chart
+4. Install Qdrant Helm Chart
     - Add repo
         ```
         helm repo add qdrant https://qdrant.github.io/qdrant-helm
@@ -29,14 +29,7 @@
         ```
         helm list
         ```
-    - Uninstall repo
-        ```
-        helm uninstall qdrant-vector-database
-        ```
-    - Delete the volume
-        ```
-        kubectl delete pvc -l app.kubernetes.io/instance=qdrant-vector-database
-        ```
+
 5. Deploy kubenetes template
     ```
     kubectl apply -f image-search-deployment.yaml,image-search-service.yaml
@@ -50,9 +43,23 @@
     minikube service image-search-service
     ```
 8. Destroy kubenetes template
-    ```
-    kubectl delete -f image-search-deployment.yaml,image-search-service.yaml
-    ```
-
+    - Delete app
+        ```
+        kubectl delete -f image-search-deployment.yaml,image-search-service.yaml
+        ```
+    - Uninstall repo
+        ```
+        helm uninstall qdrant-vector-database
+        ```
+    - Delete the qdrant volume 
+        ```
+        kubectl delete pvc -l app.kubernetes.io/instance=qdrant-vector-database
+        ```
+    - Delete cluster
+        ```
+        minikube delete
+        ```
 ### Refrence
 - https://github.com/qdrant/qdrant-helm/tree/main/charts/qdrant
+- https://www.elastic.co/guide/en/cloud-on-k8s/current/k8s-stack-helm-chart.html
+- https://github.com/elastic/cloud-on-k8s/tree/main/deploy/eck-stack

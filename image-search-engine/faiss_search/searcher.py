@@ -60,6 +60,7 @@ class FaissSearch:
         results = []
 
         for idx in indices[0]:
+            sale_rate = 1 - (self.sale_item_price[idx] / self.fixed_item_price[idx])
             results.append(
                 {
                     "item_path": self.item_path[idx],
@@ -67,6 +68,7 @@ class FaissSearch:
                     "item_name": self.item_name[idx],
                     "fixed_item_price": self.fixed_item_price[idx],
                     "sale_item_price": self.sale_item_price[idx],
+                    "sale_rate": sale_rate,
                     "sales_number": self.sales_number[idx],
                     "shop_path": self.shop_path[idx],
                     "shop_name": self.shop_name[idx],
