@@ -155,8 +155,8 @@ class ElasticSeachIngest:
                         "sale_rate": 1
                         - (
                             self.data["sale_item_price"][idx]
-                            / self.data["fixed_item_price"]
-                        )[idx],
+                            / self.data["fixed_item_price"][idx]
+                        ),
                         "sales_number": self.data["sales_number"][idx],
                         "shop_path": self.data["shop_path"][idx],
                         "shop_name": self.data["shop_name"][idx],

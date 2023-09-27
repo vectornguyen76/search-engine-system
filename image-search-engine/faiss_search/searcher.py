@@ -68,7 +68,10 @@ class FaissSearch:
                     "fixed_item_price": self.fixed_item_price[idx],
                     "sale_item_price": self.sale_item_price[idx],
                     "sale_rate": 1
-                    - self.fixed_item_price[idx] / self.sale_item_price[idx],
+                    - (
+                        self.fixed_item_price[idx]
+                        / self.sale_item_price[idx]
+                    ),
                     "sales_number": self.sales_number[idx],
                     "shop_path": self.shop_path[idx],
                     "shop_name": self.shop_name[idx],
