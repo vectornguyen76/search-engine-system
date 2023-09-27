@@ -143,27 +143,28 @@ class ElasticSeachIngest:
             start_idx = i * batch_size
             end_idx = min((i + 1) * batch_size, self.number_of_docs)
 
-            actions = [
-                {
-                    "_id": idx,
-                    "_source": {
-                        "item_name": self.data["item_name"][idx],
-                        "item_path": self.data["item_path"][idx],
-                        "item_image": self.data["item_image"][idx],
-                        "fixed_item_price": self.data["fixed_item_price"][idx],
-                        "sale_item_price": self.data["sale_item_price"][idx],
-                        "sale_rate": 1
-                        - (
-                            self.data["sale_item_price"][idx]
-                            / self.data["fixed_item_price"][idx]
-                        ),
-                        "sales_number": self.data["sales_number"][idx],
-                        "shop_path": self.data["shop_path"][idx],
-                        "shop_name": self.data["shop_name"][idx],
-                    },
-                }
-                for idx in range(start_idx, end_idx)
-            ]
+            actions = []
+            for idx in range(start_idx, end_idx):
+                sale_rate = 1 - (
+                    self.data["sale_item_price"][idx]
+                    / self.data["fixed_item_price"][idx]
+                )
+                actions.append(
+                    {
+                        "_id": idx,
+                        "_source": {
+                            "item_name": self.data["item_name"][idx],
+                            "item_path": self.data["item_path"][idx],
+                            "item_image": self.data["item_image"][idx],
+                            "fixed_item_price": self.data["fixed_item_price"][idx],
+                            "sale_item_price": self.data["sale_item_price"][idx],
+                            "sale_rate": sale_rate,
+                            "sales_number": self.data["sales_number"][idx],
+                            "shop_path": self.data["shop_path"][idx],
+                            "shop_name": self.data["shop_name"][idx],
+                        },
+                    }
+                )
             # Perform bulk indexing
             success, _ = bulk(self.elastic_search, actions, index=self.index_name)
             successes += success
