@@ -62,3 +62,4 @@
 ### Refrence
 - https://github.com/qdrant/qdrant-helm/tree/main/charts/qdrant
 - https://www.elastic.co/guide/en/cloud-on-k8s/current/k8s-stack-helm-chart.html
+- https://github.com/elastic/cloud-on-k8s/tree/main/deploy/eck-stack
