@@ -98,3 +98,5 @@ services:
 volumes:
   data-elastic-search:
     driver: local
+  qdrant-vector-database:
+    driver: local

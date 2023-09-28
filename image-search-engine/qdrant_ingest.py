@@ -131,7 +131,6 @@ class QdrantIngest:
                 collection_name=settings.QDRANT_COLLECTION,
                 vectors=vectors,
                 payload=payloads,
-                parallel=4,
                 ids=ids,
             )
 
