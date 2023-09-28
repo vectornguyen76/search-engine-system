@@ -75,4 +75,5 @@ uvicorn app:app
 - Low fixed price
 
 ### Refrence
-https://www.elastic.co/guide/en/elasticsearch/reference/current/search-suggesters.html#completion-suggester
+- https://www.sbert.net/examples/applications/image-search/README.html
+- https://www.elastic.co/guide/en/elasticsearch/reference/current/search-suggesters.html#completion-suggester

@@ -149,6 +149,12 @@
     ```
 
 ### Result 
+<p align="center">
+<img src="./assets/qdrant-db.jpg" alt="animated" />
+<br>
+<em>Qdrant Vector Store</em>
+</p>
+<br>
 - Create and add 100.000 points in 6 minutes in qdrant
 - p95: 
 
