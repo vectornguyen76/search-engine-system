@@ -141,6 +141,7 @@ jobs:
       - name: Build and push dev frontend image
         uses: docker/build-push-action@v4
         with:
+          context: ./frontend
           file: ./frontend/Dockerfile.dev
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/frontend_dev_image:latest
@@ -150,6 +151,7 @@ jobs:
       - name: Build and push prod frontend image
         uses: docker/build-push-action@v4
         with:
+          context: ./frontend
           file: ./frontend/Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/frontend_prod_image:latest
