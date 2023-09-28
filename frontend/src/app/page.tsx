@@ -31,7 +31,7 @@ export default function Home() {
     fetch(apiUrl, { method: 'GET' })
       .then((response) => response.json())
       .then((data) => {
-        setDataSearch(data.results)
+        setDataSearch(data)
         setLoading(false);
       })
       .catch((error) => {
@@ -65,7 +65,7 @@ export default function Home() {
           const data = await response.json();
           // Handle the API response here
           console.log('API Response:', data);
-          setDataSearch(data.results)
+          setDataSearch(data)
           setLoading(false);
           setShowUpload(false);
         } else {
