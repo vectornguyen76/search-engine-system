@@ -4,6 +4,7 @@ index.faiss
 test*
 # *.ipynb
 NOTE.md
+data-elastic-search
 qdrant-vector-database
 *.csv
 data.csv

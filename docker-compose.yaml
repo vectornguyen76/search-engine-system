@@ -21,7 +21,7 @@ services:
         timeout: 1s
         retries: 10
     volumes:
-      - data-elastic-search:/usr/share/elasticsearch/data
+      - ./data-elastic-search:/usr/share/elasticsearch/data
 
   kibana:
     image: docker.elastic.co/kibana/kibana:7.10.0

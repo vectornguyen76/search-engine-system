@@ -10,6 +10,7 @@ interface DataSearchType {
   item_image: string
   fixed_item_price: number
   sale_item_price: number
+  sale_rate: number
   sales_number: number
   shop_path: string
   shop_name: string
