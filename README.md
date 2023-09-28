@@ -15,6 +15,35 @@
     - Semantic Search with text to text
     - Semantic Search with text to image
 
+## Set up enviroment develop
+### Develop frontend
+- Run backend services
+    ```
+    docker compose --profile dev.frontend up
+    ```
+- Run frontend
+    ```
+    cd frontend
+    ```
+    ```
+    npm run dev
+    ```
+### Develop backend
+- Run f services
+    ```
+    docker compose --profile dev.frontend up
+    ```
+- Run frontend
+    ```
+    cd frontend
+    ```
+    ```
+    npm run dev
+    ```
+- docker compose --profile dev.backend up
+### Develop production
+- docker compose --profile prod up
+
 ### Reference 
 - https://www.sbert.net/examples/applications/image-search/README.html
 
