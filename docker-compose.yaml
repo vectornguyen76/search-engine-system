@@ -36,10 +36,11 @@ services:
         condition: service_healthy
 
   qdrant-vector-database:
+    container_name: qdrant-vector-database
     image: qdrant/qdrant:v1.5.1
     ports:
-      - "6333:6333"
-      - "6334:6334"
+      - 6333:6333
+      - 6334:6334
     volumes:
       - ./qdrant-vector-database:/qdrant/storage
 
@@ -57,6 +58,9 @@ services:
       - ./image-search-engine/logs:/app/logs
     depends_on:
       - qdrant-vector-database
+    profiles: 
+      - dev.frontend
+      - prod
 
   text-search-engine:
     container_name: text-search-container
@@ -71,16 +75,31 @@ services:
     depends_on:
       elasticsearch:
         condition: service_healthy
+    profiles: 
+      - dev.frontend
+      - prod
+
+  frontend_dev_service:
+    container_name: frontend_dev_container
+    image: vectornguyen76/frontend_dev_image
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    ports:
+      - 3000:3000
+    profiles: 
+      - dev.backend
 
   frontend_service:
-    container_name: frontend_search_container
-    image: vectornguyen76/frontend_image
+    container_name: frontend_prod_container
+    image: vectornguyen76/frontend_prod_image
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    command: npm start
     ports:
       - 3000:3000
+    profiles: 
+      - prod
 
   nginx_service:
     container_name: nginx_container
@@ -94,7 +113,11 @@ services:
       - frontend_service
       - image-search-engine
       - text-search-engine
+    profiles: 
+      - prod
 
 volumes:
   data-elastic-search:
+    driver: local
+  qdrant-vector-database:
     driver: local
