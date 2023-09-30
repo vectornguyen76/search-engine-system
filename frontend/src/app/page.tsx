@@ -27,7 +27,7 @@ export default function Home() {
 
   useEffect(() => {
     // This effect runs when the component mounts
-    const apiUrl = `${NEXT_PUBLIC_TEXT_SEARCH}/full-text-search?query=Ao&size=20`; // You can set your initial API URL here
+    const apiUrl = `${NEXT_PUBLIC_TEXT_SEARCH}/full-text-search?query=aoso&size=20`; // You can set your initial API URL here
     fetch(apiUrl, { method: 'GET' })
       .then((response) => response.json())
       .then((data) => {
