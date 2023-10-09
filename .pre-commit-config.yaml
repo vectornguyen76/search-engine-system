@@ -1,22 +1,39 @@
+exclude: "^\
+  (third-party/.*)\
+  "
+
 repos:
-# -   repo: https://github.com/pre-commit/pre-commit-hooks
-#     rev: v3.2.0
-#     hooks:
-#     -   id: trailing-whitespace
-#     -   id: end-of-file-fixer
-    # -   id: check-yaml
-
--   repo: https://github.com/pre-commit/mirrors-isort
-    rev: v5.7.0  # Use the latest release of isort
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.1.0
     hooks:
-    -   id: isort
+      - id: check-added-large-files # prevents giant files from being committed.
+      - id: check-merge-conflict # checks for some markers such as "<<<<<<<", "=======", and ">>>>>>>".
+      - id: detect-private-key # detects the presence of private keys.
+      - id: end-of-file-fixer # ensures that a file is either empty, or ends with one newline.
+      - id: requirements-txt-fixer # sorts entries in requirements.txt.
+      - id: trailing-whitespace # trims trailing whitespace at the end of lines.
 
--   repo: https://github.com/psf/black
-    rev: 23.9.1  # Use the latest release of black
+  # Format YAML and other files
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v2.5.1
     hooks:
-    -   id: black
+      - id: prettier
+        files: \.(js|ts|jsx|tsx|css|less|html|json|markdown|md|yaml|yml)$
 
--   repo: https://github.com/PyCQA/flake8
-    rev: 6.1.0  # Use the latest release of flake8
+  # Sort the order of importing libs
+  - repo: https://github.com/PyCQA/isort
+    rev: 5.12.0
     hooks:
-    -   id: flake8
+      - id: isort
+        args: [--profile=black]
+
+  # Format Python files
+  - repo: https://github.com/psf/black
+    rev: 23.7.0
+    hooks:
+      - id: black
+
+  - repo: https://github.com/PyCQA/flake8
+    rev: 6.1.0
+    hooks:
+      - id: flake8

@@ -1,14 +1,10 @@
-"use client"
-import React from 'react'
+"use client";
+import React from "react";
 
-type Props = {}
+type Props = {};
 
 const SearchBarComponent = (props: Props) => {
-  return (
-    <div className='m-10'>
-      SearchBarComponent
-    </div>
-  )
-}
+  return <div className="m-10">SearchBarComponent</div>;
+};
 
-export default SearchBarComponent
+export default SearchBarComponent;

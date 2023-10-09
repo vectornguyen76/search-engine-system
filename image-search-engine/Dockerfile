@@ -7,7 +7,7 @@ WORKDIR /app
 # Copy the requirements.txt file from the host into the container's /app directory
 COPY requirements.txt /app
 
-# Upgrade pip 
+# Upgrade pip
 RUN pip install --upgrade pip
 
 # Download pytorch CPU

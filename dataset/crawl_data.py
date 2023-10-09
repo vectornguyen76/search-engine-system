@@ -47,7 +47,8 @@ def extract_item_details(item):
     try:
         item_image = item.find_element(By.CLASS_NAME, "vYyqCY").get_attribute("src")
         item_data.append(item_image)
-    except:
+    except Exception as e:
+        print(e)
         pass
 
     item_name = item.find_element(By.CLASS_NAME, "h0HBrE").text
@@ -59,14 +60,16 @@ def extract_item_details(item):
     try:
         sale_item_price = item.find_element(By.CLASS_NAME, "_0ZJOIv").text
         item_data.append(sale_item_price)
-    except:
+    except Exception as e:
+        print(e)
         pass
 
     try:
         sales_number = item.find_element(By.CLASS_NAME, "sPnnFI").text
         if sales_number is None:
             sales_number = "Đã bán 0"
-    except:
+    except Exception as e:
+        print(e)
         sales_number = "Đã bán 0"
     item_data.append(sales_number)
 

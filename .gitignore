@@ -6,6 +6,7 @@ test*
 NOTE.md
 data-elastic-search
 qdrant-vector-database
+architectures
 *.csv
 data.csv
 
