@@ -7,6 +7,7 @@ File: [development_pipeline.yml](development_pipeline.yml)
 Event: On **Pull Request** → any branch into **develop**
 
 Jobs:
+
 - Install dependencies (caches)
 - Run isort
 - Run black
@@ -23,6 +24,7 @@ File: [staging_pipeline.yml](staging_pipeline.yml)
 Event: On **Pull Request** → any branch into **staging**
 
 Jobs:
+
 - Build
 - Unit Test
 - Deploy
@@ -36,8 +38,9 @@ File: [production_pipeline.yml](production_pipeline.yml)
 Event: On **Pull Request** → any branch into **master**
 
 Jobs:
+
 - Build
-- Test 
+- Test
 - Deploy
 
 ### Description:

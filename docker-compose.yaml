@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 services:
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
@@ -16,10 +16,10 @@ services:
     ports:
       - 9200:9200
     healthcheck:
-        test: curl --fail http://localhost:9200/_cat/health || exit 1
-        interval: 10s
-        timeout: 1s
-        retries: 10
+      test: curl --fail http://localhost:9200/_cat/health || exit 1
+      interval: 10s
+      timeout: 1s
+      retries: 10
     volumes:
       - data-elastic-search:/usr/share/elasticsearch/data
 
@@ -58,7 +58,7 @@ services:
       - ./image-search-engine/logs:/app/logs
     depends_on:
       - qdrant-vector-database
-    profiles: 
+    profiles:
       - dev.frontend
       - prod
 
@@ -75,7 +75,7 @@ services:
     depends_on:
       elasticsearch:
         condition: service_healthy
-    profiles: 
+    profiles:
       - dev.frontend
       - prod
 
@@ -87,7 +87,7 @@ services:
       dockerfile: Dockerfile.dev
     ports:
       - 3000:3000
-    profiles: 
+    profiles:
       - dev.backend
 
   frontend_service:
@@ -98,7 +98,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - 3000:3000
-    profiles: 
+    profiles:
       - prod
 
   nginx_service:
@@ -113,7 +113,7 @@ services:
       - frontend_service
       - image-search-engine
       - text-search-engine
-    profiles: 
+    profiles:
       - prod
 
 volumes:
