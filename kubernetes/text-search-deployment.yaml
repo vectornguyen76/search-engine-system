@@ -4,7 +4,7 @@ metadata:
   name: text-search-deployment
 spec:
   replicas: 1
-  selector: 
+  selector:
     matchLabels:
       app: text-search
   template:
