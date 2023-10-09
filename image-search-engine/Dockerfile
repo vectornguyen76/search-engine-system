@@ -11,7 +11,7 @@ COPY requirements.txt /app
 RUN pip install --upgrade pip
 
 # Download pytorch CPU
-RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+RUN pip install torch==2.0.1+cpu torchvision==0.15.2+cpu torchaudio==2.0.2 --index-url https://download.pytorch.org/whl/cpu
 
 # Install the Python dependencies from requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
