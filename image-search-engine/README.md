@@ -129,12 +129,13 @@ This project implements an image search engine for Shopee using qdrant as the ve
 
    Once you have started the PyTriton application, you can access the model through its HTTP/gRPC API. For example, to make a prediction using the model, you can send an HTTP POST request to the /predict endpoint with the input data in the request body.
 
-5. **FastAPI with Triton Server and PyTriton Comparison**
-   Both FastAPI with Triton Server and PyTriton are good options for deploying and serving AI models with Python. However, there are some key differences between the two approaches:
+5. **FastAPI with Triton Server and PyTriton**
 
-   - Flexibility: FastAPI with Triton Server is a more flexible approach. You can use FastAPI to create custom APIs that expose your models in a variety of ways. PyTriton is less flexible, but it is easier to use.
-   - Performance: FastAPI with Triton Server can be more performant than PyTriton, especially if you are using a complex model or a large dataset.
-   - Ease of use: PyTriton is easier to use than FastAPI with Triton Server. PyTriton provides a simple and intuitive interface for deploying and serving models.
+   - Both FastAPI with Triton Server and PyTriton are good options for deploying and serving AI models with Python. However, there are some key differences between the two approaches:
+
+     - _Flexibility_: FastAPI with Triton Server is a more flexible approach. You can use FastAPI to create custom APIs that expose your models in a variety of ways. PyTriton is less flexible, but it is easier to use.
+     - _Performance_: FastAPI with Triton Server can be more performant than PyTriton, especially if you are using a complex model or a large dataset.
+     - _Ease of use_: PyTriton is easier to use than FastAPI with Triton Server. PyTriton provides a simple and intuitive interface for deploying and serving models.
 
 6. **Conclusion**
 
@@ -146,6 +147,7 @@ This project implements an image search engine for Shopee using qdrant as the ve
    - [BentoML vs. Triton Inference Server](https://www.bentoml.com/blog/bentoml-or-triton-inference-server-choose-both)
    - [FastAPI + gRPC AsyncIO + Triton GitHub Repository](https://github.com/Curt-Park/mnist-fastapi-aio-triton)
    - [Best Tools to Do ML Model Serving](https://neptune.ai/blog/ml-model-serving-best-tools)
+   - [Pytriton GitHub Repository](https://github.com/triton-inference-server/pytriton)
 
 ### BentoML
 
