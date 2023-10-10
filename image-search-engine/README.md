@@ -1,5 +1,22 @@
 # Shopee Image Search Engine
 
+## Table of Contents
+
+1. [About the Solution](#about-the-solution)
+2. [Web Framework for ML Services](#web-framework-for-ml-services)
+   - [FastAPI](#fastapi)
+3. [Machine Learning Model Serving Platform](#machine-learning-model-serving-platform)
+   - [Triton Inference Server](#triton-inference-server)
+   - [BentoML](#bentoml)
+4. [Vector Database - Vector Search](#vector-database---vector-search)
+   - [Faiss](#faiss)
+   - [Vector Search in ElasticSearch](#vector-search-in-elasticsearch)
+   - [Qdrant](#qdrant)
+5. [Strategies for Improving Image Retrieval](#strategies-for-improving-image-retrieval)
+6. [Development Environment](#development-environment)
+7. [Testing and Results](#testing-and-results)
+8. [References](#references)
+
 ## About the Solution
 
 This project implements an image search engine for Shopee using qdrant as the vector database for efficient similarity search. The choice of qdrant over faiss was made to start with a small server that runs on CPU and scales when there is a significant increase in traffic.
@@ -241,9 +258,33 @@ This project implements an image search engine for Shopee using qdrant as the ve
    - [Batch Vector Search with Qdrant](https://blog.qdrant.tech/batch-vector-search-with-qdrant-8c4d598179d5)
    - [Qdrant GitHub Repository](https://github.com/qdrant/qdrant/issues/1656)
 
-## Environments
+## Strategies for Improving Image Retrieval
 
-### Development Environment
+1. **Leveraging Deep Learning Architectures**
+
+   Deep learning architectures, such as Convolutional Neural Networks (CNNs), can play a pivotal role in feature extraction. Utilize pre-trained models like Vision Transformers (ViTs), ResNet, VGG, or EfficientNet to extract meaningful image features.
+
+   [Learn more](https://paperswithcode.com/sota/image-classification-on-imagenet)
+
+2. **Utilizing Embeddings**
+
+   Consider employing techniques like Siamese networks or triplet loss to generate embeddings for images. These embeddings help create a feature space conducive to similarity-based searches, a core aspect of image retrieval.
+
+3. **Fine-tuning Models**
+
+   Fine-tune pre-trained models on your dataset. Transfer learning enables you to fine-tune models to your specific task, capitalizing on the knowledge embedded in pre-trained weights.
+
+4. **Cross-Modal Retrieval**
+
+   Leverage both image and text information if available in your dataset. Cross-modal retrieval techniques enable you to utilize textual descriptions or tags for enhanced retrieval.
+
+   [Learn more](https://www.sbert.net/examples/applications/image-search/README.html)
+
+5. **Feedback Loops**
+
+   Incorporate feedback loops where user interactions with the retrieval system inform and improve future recommendations.
+
+## Development Environment
 
 1. **Create Environment and Install Packages**
 
@@ -264,7 +305,7 @@ This project implements an image search engine for Shopee using qdrant as the ve
    uvicorn app:app
    ```
 
-### Results
+## Testing and Results
 
 <p align="center">
 <img src="./assets/documents/qdrant-db.jpg" alt="Qdrant Vector Store" />
@@ -274,3 +315,9 @@ This project implements an image search engine for Shopee using qdrant as the ve
 <br>
 - Created and added 100,000 points in 6 minutes in qdrant.
 - p95: [Provide Performance Data]
+
+## References
+
+- [Kaggle Landmark Retrieval Competition Discussion](https://www.kaggle.com/competitions/landmark-retrieval-2021/discussion/277099)
+- [System Design for Discovery](https://eugeneyan.com/writing/system-design-for-discovery/)
+- [Qdrant Food Discovery Demo](https://github.com/qdrant/demo-food-discovery.git)
