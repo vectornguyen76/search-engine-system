@@ -307,6 +307,32 @@ This project implements an image search engine for Shopee using qdrant as the ve
 
 ## Testing and Results
 
+### Locust - Load Testing
+
+1. **Overview**
+
+   Locust is an open-source, Python-based load testing tool that allows you to test the performance and scalability of your web applications or services. It is designed to be user-friendly, highly customizable, and easy to extend.
+
+2. **How to run**
+
+   ```
+   pip install locust
+   ```
+
+   ```
+   cd locust
+   locust
+   ```
+
+3. **References**
+
+- [Locust Documentation](http://docs.locust.io/en/stable/)
+- [Writing a Locustfile](http://docs.locust.io/en/stable/writing-a-locustfile.html)
+- [Increasing Performance](http://docs.locust.io/en/stable/increase-performance.html)
+- [Running Distributed Tests](http://docs.locust.io/en/stable/running-distributed.html)
+
+### Results
+
 <p align="center">
 <img src="./assets/documents/qdrant-db.jpg" alt="Qdrant Vector Store" />
 <br>
