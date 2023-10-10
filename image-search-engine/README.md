@@ -322,7 +322,15 @@ This project implements an image search engine for Shopee using qdrant as the ve
    ```
    cd locust
    locust
+   http://localhost:8089/
    ```
+
+   <p align="center">
+   <img src="./assets/documents/locust.jpg" alt="Locust Load Test" />
+   <br>
+   <em>Locust Load Test</em>
+   </p>
+   <br>
 
 3. **References**
 

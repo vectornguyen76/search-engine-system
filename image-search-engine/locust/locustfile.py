@@ -1,7 +1,7 @@
-from locust import HttpUser, task
+from locust import FastHttpUser, task
 
 
-class SearchImageUser(HttpUser):
+class SearchImageUser(FastHttpUser):
     @task
     def search_image(self):
         """
