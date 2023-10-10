@@ -171,14 +171,19 @@ class ElasticSeachIngest:
 
         print(f"Indexed {successes}/{self.number_of_docs} documents")
 
+    def check_index_exists(self):
+        """Check index name exists"""
+        return not self.elastic_search.indices.exists(index=self.index_name)
+
 
 def main():
     """
     Main function to perform Elasticsearch data ingestion.
     """
     es_ingest = ElasticSeachIngest()
-    es_ingest.create_index()
-    es_ingest.indexing_batch_document()
+    if not es_ingest.check_index_exists():
+        es_ingest.create_index()
+        es_ingest.indexing_batch_document()
 
 
 if __name__ == "__main__":
