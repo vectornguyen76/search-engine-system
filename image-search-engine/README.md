@@ -71,7 +71,7 @@ This project implements an image search engine for Shopee using qdrant as the ve
 
 1. **Overview**
    <p align="center">
-   <img src="./assets/documents/arch_triton_server.jpg" alt="Triton Inference Server Architecture" />
+   <img src="./assets/documents/triton.png" alt="Triton Inference Server Architecture" />
    <br>
    <em>Batching Architecture</em>
    </p>
@@ -90,14 +90,62 @@ This project implements an image search engine for Shopee using qdrant as the ve
    - **Flexibility**: Triton supports various deployment options and can be integrated with existing infrastructure.
    - **Ease of Use**: Triton provides tools for deploying, managing, and monitoring AI models in production.
 
-3. **Conclusion**
+3. **FastAPI with Triton Inference Server**
+   <p align="center">
+   <img src="./assets/documents/fastapi-triton.png" alt="FastAPI with Triton Inference Server" />
+   <br>
+   <em>FastAPI - Triton Inference Server Architecture</em>
+   </p>
+
+   Using FastAPI with Triton Server is a more flexible approach to deploying and serving AI models with Python. FastAPI is a modern, high-performance web framework that is easy to use and extend. Triton Server is a high-performance inference serving software that can be used to deploy and serve AI models on CPUs, GPUs, and other accelerators.
+
+4. **PyTriton**
+
+   PyTriton is a Flask/FastAPI-like interface that simplifies Triton's deployment in Python environments. It provides a simple and intuitive way to deploy and serve AI models with Triton Server.
+
+   ```python
+   import pytriton
+
+   app = pytriton.App()
+
+   # Define the model.
+   model = pytriton.Model(
+      "linear_regression",
+      "linear_regression.model",
+      [pytriton.Input("data", pytriton.DataType.FLOAT32, (-1, 1))],
+      [pytriton.Output("prediction", pytriton.DataType.FLOAT32, (1,))],
+   )
+
+   # Deploy the model.
+   app.deploy(model)
+
+   # Start the Triton Inference Server.
+   app.start_triton()
+
+   # Serve the model.
+   app.serve()
+
+   ```
+
+   Once you have started the PyTriton application, you can access the model through its HTTP/gRPC API. For example, to make a prediction using the model, you can send an HTTP POST request to the /predict endpoint with the input data in the request body.
+
+5. **FastAPI with Triton Server and PyTriton Comparison**
+   Both FastAPI with Triton Server and PyTriton are good options for deploying and serving AI models with Python. However, there are some key differences between the two approaches:
+
+   - Flexibility: FastAPI with Triton Server is a more flexible approach. You can use FastAPI to create custom APIs that expose your models in a variety of ways. PyTriton is less flexible, but it is easier to use.
+   - Performance: FastAPI with Triton Server can be more performant than PyTriton, especially if you are using a complex model or a large dataset.
+   - Ease of use: PyTriton is easier to use than FastAPI with Triton Server. PyTriton provides a simple and intuitive interface for deploying and serving models.
+
+6. **Conclusion**
 
    - Triton Inference Server is a powerful and flexible platform for deploying AI models at scale. It is a popular choice for companies and organizations needing to deploy AI models in production.
 
-4. **References**
+7. **References**
    - [Triton Inference Server GitHub Repository](https://github.com/triton-inference-server/client/blob/main/src/python/examples/image_client.py)
    - [Triton Inference Server Architecture](https://github.com/triton-inference-server/server/blob/main/docs/user_guide/architecture.md#models-and-schedulers)
    - [BentoML vs. Triton Inference Server](https://www.bentoml.com/blog/bentoml-or-triton-inference-server-choose-both)
+   - [FastAPI + gRPC AsyncIO + Triton GitHub Repository](https://github.com/Curt-Park/mnist-fastapi-aio-triton)
+   - [Best Tools to Do ML Model Serving](https://neptune.ai/blog/ml-model-serving-best-tools)
 
 ### BentoML
 
