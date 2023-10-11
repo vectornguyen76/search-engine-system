@@ -24,6 +24,12 @@ app.add_middleware(
 elastic_search = ElasticSearcher()
 
 
+@app.get("/")
+def healthcheck() -> bool:
+    """Check the server's status."""
+    return True
+
+
 @app.get("/full-text-search", response_model=list[Product])
 async def full_text_search(query: str, size: int):
     """

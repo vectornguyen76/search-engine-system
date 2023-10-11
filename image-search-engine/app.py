@@ -30,6 +30,12 @@ app.add_middleware(
 )
 
 
+@app.get("/")
+def healthcheck() -> bool:
+    """Check the server's status."""
+    return True
+
+
 @app.post("/search-image", response_model=list[Product])
 async def search_image_qdrant(file: UploadFile = File(...)):
     """

@@ -1,5 +1,22 @@
 # Shopee Image Search Engine
 
+## Table of Contents
+
+1. [About the Solution](#about-the-solution)
+2. [Web Framework for ML Services](#web-framework-for-ml-services)
+   - [FastAPI](#fastapi)
+3. [Machine Learning Model Serving Platform](#machine-learning-model-serving-platform)
+   - [Triton Inference Server](#triton-inference-server)
+   - [BentoML](#bentoml)
+4. [Vector Database - Vector Search](#vector-database---vector-search)
+   - [Faiss](#faiss)
+   - [Vector Search in ElasticSearch](#vector-search-in-elasticsearch)
+   - [Qdrant](#qdrant)
+5. [Strategies for Improving Image Retrieval](#strategies-for-improving-image-retrieval)
+6. [Development Environment](#development-environment)
+7. [Testing and Results](#testing-and-results)
+8. [References](#references)
+
 ## About the Solution
 
 This project implements an image search engine for Shopee using qdrant as the vector database for efficient similarity search. The choice of qdrant over faiss was made to start with a small server that runs on CPU and scales when there is a significant increase in traffic.
@@ -54,7 +71,7 @@ This project implements an image search engine for Shopee using qdrant as the ve
 
 1. **Overview**
    <p align="center">
-   <img src="./assets/documents/arch_triton_server.jpg" alt="Triton Inference Server Architecture" />
+   <img src="./assets/documents/triton.png" alt="Triton Inference Server Architecture" />
    <br>
    <em>Batching Architecture</em>
    </p>
@@ -73,14 +90,64 @@ This project implements an image search engine for Shopee using qdrant as the ve
    - **Flexibility**: Triton supports various deployment options and can be integrated with existing infrastructure.
    - **Ease of Use**: Triton provides tools for deploying, managing, and monitoring AI models in production.
 
-3. **Conclusion**
+3. **FastAPI with Triton Inference Server**
+   <p align="center">
+   <img src="./assets/documents/fastapi-triton.png" alt="FastAPI with Triton Inference Server" />
+   <br>
+   <em>FastAPI - Triton Inference Server Architecture</em>
+   </p>
+
+   Using FastAPI with Triton Server is a more flexible approach to deploying and serving AI models with Python. FastAPI is a modern, high-performance web framework that is easy to use and extend. Triton Server is a high-performance inference serving software that can be used to deploy and serve AI models on CPUs, GPUs, and other accelerators.
+
+4. **PyTriton**
+
+   PyTriton is a Flask/FastAPI-like interface that simplifies Triton's deployment in Python environments. It provides a simple and intuitive way to deploy and serve AI models with Triton Server.
+
+   ```python
+   import pytriton
+
+   app = pytriton.App()
+
+   # Define the model.
+   model = pytriton.Model(
+      "linear_regression",
+      "linear_regression.model",
+      [pytriton.Input("data", pytriton.DataType.FLOAT32, (-1, 1))],
+      [pytriton.Output("prediction", pytriton.DataType.FLOAT32, (1,))],
+   )
+
+   # Deploy the model.
+   app.deploy(model)
+
+   # Start the Triton Inference Server.
+   app.start_triton()
+
+   # Serve the model.
+   app.serve()
+
+   ```
+
+   Once you have started the PyTriton application, you can access the model through its HTTP/gRPC API. For example, to make a prediction using the model, you can send an HTTP POST request to the /predict endpoint with the input data in the request body.
+
+5. **FastAPI with Triton Server and PyTriton**
+
+   - Both FastAPI with Triton Server and PyTriton are good options for deploying and serving AI models with Python. However, there are some key differences between the two approaches:
+
+     - _Flexibility_: FastAPI with Triton Server is a more flexible approach. You can use FastAPI to create custom APIs that expose your models in a variety of ways. PyTriton is less flexible, but it is easier to use.
+     - _Performance_: FastAPI with Triton Server can be more performant than PyTriton, especially if you are using a complex model or a large dataset.
+     - _Ease of use_: PyTriton is easier to use than FastAPI with Triton Server. PyTriton provides a simple and intuitive interface for deploying and serving models.
+
+6. **Conclusion**
 
    - Triton Inference Server is a powerful and flexible platform for deploying AI models at scale. It is a popular choice for companies and organizations needing to deploy AI models in production.
 
-4. **References**
+7. **References**
    - [Triton Inference Server GitHub Repository](https://github.com/triton-inference-server/client/blob/main/src/python/examples/image_client.py)
    - [Triton Inference Server Architecture](https://github.com/triton-inference-server/server/blob/main/docs/user_guide/architecture.md#models-and-schedulers)
    - [BentoML vs. Triton Inference Server](https://www.bentoml.com/blog/bentoml-or-triton-inference-server-choose-both)
+   - [FastAPI + gRPC AsyncIO + Triton GitHub Repository](https://github.com/Curt-Park/mnist-fastapi-aio-triton)
+   - [Best Tools to Do ML Model Serving](https://neptune.ai/blog/ml-model-serving-best-tools)
+   - [Pytriton GitHub Repository](https://github.com/triton-inference-server/pytriton)
 
 ### BentoML
 
@@ -241,9 +308,33 @@ This project implements an image search engine for Shopee using qdrant as the ve
    - [Batch Vector Search with Qdrant](https://blog.qdrant.tech/batch-vector-search-with-qdrant-8c4d598179d5)
    - [Qdrant GitHub Repository](https://github.com/qdrant/qdrant/issues/1656)
 
-## Environments
+## Strategies for Improving Image Retrieval
 
-### Development Environment
+1. **Leveraging Deep Learning Architectures**
+
+   Deep learning architectures, such as Convolutional Neural Networks (CNNs), can play a pivotal role in feature extraction. Utilize pre-trained models like Vision Transformers (ViTs), ResNet, VGG, or EfficientNet to extract meaningful image features.
+
+   [Learn more](https://paperswithcode.com/sota/image-classification-on-imagenet)
+
+2. **Utilizing Embeddings**
+
+   Consider employing techniques like Siamese networks or triplet loss to generate embeddings for images. These embeddings help create a feature space conducive to similarity-based searches, a core aspect of image retrieval.
+
+3. **Fine-tuning Models**
+
+   Fine-tune pre-trained models on your dataset. Transfer learning enables you to fine-tune models to your specific task, capitalizing on the knowledge embedded in pre-trained weights.
+
+4. **Cross-Modal Retrieval**
+
+   Leverage both image and text information if available in your dataset. Cross-modal retrieval techniques enable you to utilize textual descriptions or tags for enhanced retrieval.
+
+   [Learn more](https://www.sbert.net/examples/applications/image-search/README.html)
+
+5. **Feedback Loops**
+
+   Incorporate feedback loops where user interactions with the retrieval system inform and improve future recommendations.
+
+## Development Environment
 
 1. **Create Environment and Install Packages**
 
@@ -264,6 +355,40 @@ This project implements an image search engine for Shopee using qdrant as the ve
    uvicorn app:app
    ```
 
+## Testing and Results
+
+### Locust - Load Testing
+
+1. **Overview**
+
+   Locust is an open-source, Python-based load testing tool that allows you to test the performance and scalability of your web applications or services. It is designed to be user-friendly, highly customizable, and easy to extend.
+
+2. **How to run**
+
+   ```
+   pip install locust
+   ```
+
+   ```
+   cd locust
+   locust
+   http://localhost:8089/
+   ```
+
+   <p align="center">
+   <img src="./assets/documents/locust.jpg" alt="Locust Load Test" />
+   <br>
+   <em>Locust Load Test</em>
+   </p>
+   <br>
+
+3. **References**
+
+- [Locust Documentation](http://docs.locust.io/en/stable/)
+- [Writing a Locustfile](http://docs.locust.io/en/stable/writing-a-locustfile.html)
+- [Increasing Performance](http://docs.locust.io/en/stable/increase-performance.html)
+- [Running Distributed Tests](http://docs.locust.io/en/stable/running-distributed.html)
+
 ### Results
 
 <p align="center">
@@ -274,3 +399,9 @@ This project implements an image search engine for Shopee using qdrant as the ve
 <br>
 - Created and added 100,000 points in 6 minutes in qdrant.
 - p95: [Provide Performance Data]
+
+## References
+
+- [Kaggle Landmark Retrieval Competition Discussion](https://www.kaggle.com/competitions/landmark-retrieval-2021/discussion/277099)
+- [System Design for Discovery](https://eugeneyan.com/writing/system-design-for-discovery/)
+- [Qdrant Food Discovery Demo](https://github.com/qdrant/demo-food-discovery.git)

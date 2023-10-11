@@ -13,6 +13,9 @@ data.csv
 image-search-engine/assets/uploaded_images/*
 !image-search-engine/assets/uploaded_images/.gitkeep
 
+# Model
+*.pth
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
