@@ -5,19 +5,19 @@ dynamic_batching { }
 instance_group [
   {
     count: 1
-    kind: KIND_CPU
+    kind: KIND_GPU
   }
 ]
 input [
   {
-    name: "input__0"
+    name: "INPUT__0"
     data_type: TYPE_FP32
-    dims: [ 3, 320, 320 ]
+    dims: [ 1, 3, 300, 300 ]
   }
 ]
 output [
   {
-    name: "output__0"
+    name: "OUTPUT__0"
     data_type: TYPE_FP32
     dims: [ 1000 ]
   }

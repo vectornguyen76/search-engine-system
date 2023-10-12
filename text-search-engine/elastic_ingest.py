@@ -173,7 +173,7 @@ class ElasticSeachIngest:
 
     def check_index_exists(self):
         """Check index name exists"""
-        return not self.elastic_search.indices.exists(index=self.index_name)
+        return self.elastic_search.indices.exists(index=self.index_name)
 
 
 def main():

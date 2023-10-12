@@ -1,4 +1,6 @@
 import torch
+import tritonclient.grpc.aio as grpcclient
+from config import settings
 from torchvision.io import read_image
 from torchvision.models import EfficientNet_B3_Weights, efficientnet_b3
 
@@ -18,6 +20,10 @@ class FeatureExtractor:
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.weights = EfficientNet_B3_Weights.IMAGENET1K_V1
         self.model = self.load_model()
+        self.triton_client = grpcclient.InferenceServerClient(
+            url=settings.TRITON_SERVER_URL
+        )
+        self.outputs = [grpcclient.InferRequestedOutput("OUTPUT__0")]
 
     def load_model(self):
         """
@@ -76,4 +82,18 @@ class FeatureExtractor:
 
         feature = feature.detach().numpy()
 
+        return feature
+
+    async def triton_extract_feature(
+        self,
+        image_path,
+        model_name: str = "efficientnet_b3",
+    ):
+        image = self.preprocess_input(image_path)
+
+        results = await self.triton_client.infer(
+            model_name=model_name, inputs=image, outputs=self.outputs
+        )
+
+        feature = results.as_numpy("OUTPUT__0")
         return feature

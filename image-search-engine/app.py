@@ -80,6 +80,43 @@ async def search_image_qdrant(file: UploadFile = File(...)):
         raise HTTPException(status_code=500, detail=e.reason_phrase)
 
 
+@app.post("/search-image-triton", response_model=list[Product])
+async def search_image_triton(file: UploadFile = File(...)):
+    """
+    Endpoint to upload an image, extract features, and perform a search.
+
+    Args:
+        file (UploadFile): The image file to be uploaded.
+
+    Returns:
+        dict: A dictionary containing search results, including item information.
+    """
+    # Prepend the current datetime to the filename
+    file.filename = datetime.now().strftime("%Y%m%d-%H%M%S-") + file.filename
+
+    # Construct the full image path based on the settings
+    image_path = settings.IMAGEDIR + file.filename
+
+    # Read the contents of the uploaded file asynchronously
+    contents = await file.read()
+
+    # Write the uploaded contents to the specified image path
+    with open(image_path, "wb") as f:
+        f.write(contents)
+
+    # Extract features from the uploaded image using the feature extractor
+    feature = await feature_extractor.triton_extract_feature(image_path=image_path)
+
+    # Perform a search using the extracted feature vector
+    search_results = await qdrant_search.search(query_vector=feature, top_k=20)
+
+    result = [Product.from_point(point) for point in search_results.result]
+
+    logger.info(f"Search image successfully, file name: {file.filename}")
+
+    return result
+
+
 @app.post("/search-image-faiss", response_model=list[Product])
 async def upload_image(file: UploadFile = File(...)):
     """

@@ -30,9 +30,7 @@ class QdrantIngest:
         Initializes a QdrantIngest instance, creates a Qdrant client, and loads data.
         """
         # Create a client to interact with Qdrant
-        self.client_grpc = QdrantClient(
-            url=f"http://{settings.QDRANT_HOST}:6334", prefer_grpc=True
-        )
+        self.client_grpc = QdrantClient(url=settings.QDRANT_URL, prefer_grpc=True)
 
         # Load the dataset
         data = pd.read_csv(settings.DATA_PATH)
