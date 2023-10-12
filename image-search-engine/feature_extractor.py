@@ -51,7 +51,7 @@ class FeatureExtractor:
         - image_path (str): The path to the input image.
 
         Returns:
-        - torch.Tensor: Preprocessed image tensor.
+        - torch.Tensor: Preprocessed image tensor. [1, 3, 300, 300]
         """
         image = read_image(image_path)
 
@@ -74,7 +74,7 @@ class FeatureExtractor:
         - image_path (str): The path to the input image.
 
         Returns:
-        - numpy.ndarray: Extracted features as a numpy array.
+        - numpy.ndarray: Extracted features as a numpy array. (1, 1000)
         """
         image = self.preprocess_input(image_path)
 
@@ -84,16 +84,17 @@ class FeatureExtractor:
 
         return feature
 
-    async def triton_extract_feature(
-        self,
-        image_path,
-        model_name: str = "efficientnet_b3",
-    ):
+    async def triton_extract_feature(self, image_path):
         image = self.preprocess_input(image_path)
 
+        inputs = [grpcclient.InferInput("INPUT__0", image.shape, datatype="FP32")]
+
+        inputs[0].set_data_from_numpy(image.numpy())
+
         results = await self.triton_client.infer(
-            model_name=model_name, inputs=image, outputs=self.outputs
+            model_name=settings.MODEL_NAME, inputs=inputs, outputs=self.outputs
         )
 
         feature = results.as_numpy("OUTPUT__0")
+
         return feature

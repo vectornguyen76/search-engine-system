@@ -1,8 +1,8 @@
 version: "3"
 services:
   triton-server:
-    image: nvcr.io/nvidia/tritonserver:22.02-py3
-    ipc: host
+    container_name: triton-server
+    image: nvcr.io/nvidia/tritonserver:23.09-py3
     ports:
       - 9000:8000
       - 9001:8001
@@ -14,7 +14,9 @@ services:
       resources:
         reservations:
           devices:
-            - capabilities: [gpu]
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
@@ -67,8 +69,8 @@ services:
       context: ./image-search-engine
       dockerfile: Dockerfile
     environment:
-      - QDRANT_HOST=qdrant-vector-database:6334
-      - TRITON_SERVER_URL=triton-server:6334
+      - QDRANT_URL=http://qdrant-vector-database:6334
+      - TRITON_SERVER_URL=triton-server:8001
     ports:
       - 7000:7000
     volumes:

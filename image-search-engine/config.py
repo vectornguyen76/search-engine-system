@@ -26,11 +26,12 @@ class Settings(BaseSettings):
     INDEX_PATH: str = "./faiss_search/index.faiss"
 
     # Qdrant configuration
-    QDRANT_URL: str = os.environ.get("QDRANT_HOST", "localhost:6334")
+    QDRANT_URL: str = os.environ.get("QDRANT_URL", "http://localhost:6334")
     QDRANT_COLLECTION: str = "image-search-engine"
 
     # Triton configuration
-    TRITON_SERVER_URL: str = os.environ.get("TRITON_SERVER_URL", "localhost:8001")
+    MODEL_NAME: str = "efficientnet_b3"
+    TRITON_SERVER_URL: str = os.environ.get("TRITON_SERVER_URL", "localhost:9001")
 
 
 settings = Settings()
