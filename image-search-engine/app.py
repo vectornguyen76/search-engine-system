@@ -5,10 +5,10 @@ from faiss_search.searcher import FaissSearch
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from feature_extractor import FeatureExtractor
-from log_config import configure_logging
 from qdrant_client.http.exceptions import UnexpectedResponse
 from qdrant_search.searcher import QdrantSearch
 from schemas import Product
+from utils import configure_logging
 
 logger = configure_logging(__name__)
 

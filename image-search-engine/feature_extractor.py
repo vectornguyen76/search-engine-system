@@ -3,6 +3,7 @@ import tritonclient.grpc.aio as grpcclient
 from config import settings
 from torchvision.io import read_image
 from torchvision.models import EfficientNet_B3_Weights, efficientnet_b3
+from utils import measure_time
 
 
 class FeatureExtractor:
@@ -66,6 +67,7 @@ class FeatureExtractor:
 
         return image
 
+    @measure_time
     def extract_feature(self, image_path):
         """
         Extracts features from the input image.
@@ -84,6 +86,7 @@ class FeatureExtractor:
 
         return feature
 
+    @measure_time
     async def triton_extract_feature(self, image_path):
         image = self.preprocess_input(image_path)
 
