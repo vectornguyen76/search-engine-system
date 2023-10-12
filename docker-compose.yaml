@@ -10,13 +10,13 @@ services:
     command: tritonserver --model-repository=/models
     volumes:
       - ./image-search-engine/model_repository:/models
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
