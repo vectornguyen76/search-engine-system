@@ -1,15 +1,13 @@
-import functools
 import logging
-import time
 from datetime import datetime
 
 import pytz
 from config import settings
 
 
-def configure_logging(name):
+def initial_logger():
     # Create a logger instance
-    logger = logging.getLogger(name)
+    logger = logging.getLogger("app")
 
     # Set the logging level
     logger.setLevel(logging.DEBUG)
@@ -49,14 +47,4 @@ def configure_logging(name):
     return logger
 
 
-def measure_time(func):
-    @functools.wraps(func)
-    def wrapper(*args, **kwargs):
-        start_time = time.time()
-        result = func(*args, **kwargs)
-        end_time = time.time()
-        execution_time = end_time - start_time
-        print(f"Function {func.__name__} executed in {execution_time:.2f} seconds.")
-        return result
-
-    return wrapper
+LOGGER = initial_logger()

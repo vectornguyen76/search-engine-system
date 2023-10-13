@@ -23,7 +23,7 @@ class Settings(BaseSettings):
     TOP_K: int = 3
 
     # Faiss configuration
-    INDEX_PATH: str = "./faiss_search/index.faiss"
+    INDEX_PATH: str = "./src/faiss_search/index.faiss"
 
     # Qdrant configuration
     QDRANT_URL: str = os.environ.get("QDRANT_URL", "http://localhost:6334")

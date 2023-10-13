@@ -1,12 +1,18 @@
 import torch
 import tritonclient.grpc.aio as grpcclient
 from config import settings
+from src.decorators import (
+    async_py_profiling,
+    async_time_profiling,
+    py_profiling,
+    time_profiling,
+)
 from torchvision.io import read_image
 from torchvision.models import EfficientNet_B3_Weights, efficientnet_b3
-from utils import measure_time
 
 
 class FeatureExtractor:
+    # @time_profiling
     def __init__(self):
         """
         Initializes the FeatureExtractor class.
@@ -26,6 +32,7 @@ class FeatureExtractor:
         )
         self.outputs = [grpcclient.InferRequestedOutput("OUTPUT__0")]
 
+    @time_profiling
     def load_model(self):
         """
         Loads the pre-trained EfficientNet-B3 model.
@@ -44,6 +51,7 @@ class FeatureExtractor:
 
         return model
 
+    @time_profiling
     def preprocess_input(self, image_path):
         """
         Preprocesses the input image for inference.
@@ -67,7 +75,7 @@ class FeatureExtractor:
 
         return image
 
-    @measure_time
+    @time_profiling
     def extract_feature(self, image_path):
         """
         Extracts features from the input image.
@@ -86,7 +94,8 @@ class FeatureExtractor:
 
         return feature
 
-    @measure_time
+    @async_py_profiling
+    @async_time_profiling
     async def triton_extract_feature(self, image_path):
         image = self.preprocess_input(image_path)
 

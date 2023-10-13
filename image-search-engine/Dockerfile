@@ -31,9 +31,6 @@ RUN python -c 'from torchvision.models import efficientnet_b3, EfficientNet_B3_W
 # Copy all files from the host into the container's /app directory
 COPY . /app
 
-# Ingest data to Faiss
-RUN python faiss_ingest.py
-
 # Expose port 7000 to the host machine
 EXPOSE 7000
 

@@ -1,16 +1,14 @@
 from datetime import datetime
 
 from config import settings
-from faiss_search.searcher import FaissSearch
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from feature_extractor import FeatureExtractor
 from qdrant_client.http.exceptions import UnexpectedResponse
-from qdrant_search.searcher import QdrantSearch
-from schemas import Product
-from utils import configure_logging
-
-logger = configure_logging(__name__)
+from src.extractor.feature_extractor import FeatureExtractor
+from src.faiss_search.searcher import FaissSearch
+from src.qdrant_search.searcher import QdrantSearch
+from src.schemas import Product
+from src.utils import LOGGER
 
 # Initialize the feature extractor and FaissSearch instances
 feature_extractor = FeatureExtractor()
@@ -69,14 +67,14 @@ async def search_image_qdrant(file: UploadFile = File(...)):
 
         result = [Product.from_point(point) for point in search_results.result]
 
-        logger.info(f"Search image successfully, file name: {file.filename}")
+        LOGGER.info(f"Search image successfully, file name: {file.filename}")
 
         return result
 
     except UnexpectedResponse as e:
         # Handle the case when Qdrant returns an error and convert it to an exception
         # that FastAPI will understand and return to the client
-        logger.error("Could not perform search: %s", e)
+        LOGGER.error("Could not perform search: %s", e)
         raise HTTPException(status_code=500, detail=e.reason_phrase)
 
 
@@ -112,7 +110,7 @@ async def search_image_triton(file: UploadFile = File(...)):
 
     result = [Product.from_point(point) for point in search_results.result]
 
-    logger.info(f"Search image successfully, file name: {file.filename}")
+    LOGGER.info(f"Search image successfully, file name: {file.filename}")
 
     return result
 
@@ -148,10 +146,10 @@ async def upload_image(file: UploadFile = File(...)):
         # Perform a search using the extracted feature vector
         search_results = faiss_search.search(query_vector=feature, top_k=20)
 
-        logger.info(f"Search image use faiss successfully, file name: {file.filename}")
+        LOGGER.info(f"Search image use faiss successfully, file name: {file.filename}")
 
         return search_results
 
     except Exception as e:
-        logger.error("Could not perform search: %s", e)
+        LOGGER.error("Could not perform search: %s", e)
         raise HTTPException(status_code=500, detail=e)

@@ -45,6 +45,7 @@ pydantic==2.2.0
 pydantic-settings==2.0.3
 pydantic_core==2.6.0
 pyflakes==3.1.0
+pyinstrument==4.6.0
 pylint==2.17.5
 PySocks==1.7.1
 python-dateutil==2.8.2
