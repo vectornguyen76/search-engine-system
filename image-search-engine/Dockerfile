@@ -4,6 +4,9 @@ FROM python:3.9-slim
 # Set the working directory inside the container to /app
 WORKDIR /app
 
+# Install for OpenCV
+RUN apt-get update && apt-get install ffmpeg libsm6 libxext6  -y
+
 # Copy the requirements.txt file from the host into the container's /app directory
 COPY requirements.txt /app
 

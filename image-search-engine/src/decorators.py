@@ -10,9 +10,8 @@ def time_profiling(func):
     def wrapper(*args, **kwargs):
         start_time = time.time()
         result = func(*args, **kwargs)
-        end_time = time.time()
         LOGGER.info(
-            f"Function {func.__name__} executed in {end_time - start_time:.4f} seconds."
+            f"Function {func.__name__} executed in {time.time() - start_time:.4f} seconds."
         )
         return result
 
@@ -24,9 +23,8 @@ def async_time_profiling(func):
     async def wrapper(*args, **kwargs):
         start_time = time.time()
         result = await func(*args, **kwargs)
-        end_time = time.time()
         LOGGER.info(
-            f"Function {func.__name__} executed in {end_time - start_time:.4f} seconds."
+            f"Function {func.__name__} executed in {time.time() - start_time:.4f} seconds."
         )
         return result
 

@@ -1,6 +1,6 @@
 name: "efficientnet_b3"
 platform: "pytorch_libtorch"
-max_batch_size : 0
+max_batch_size : 32
 instance_group [
   {
     count: 1
@@ -11,7 +11,7 @@ input [
   {
     name: "INPUT__0"
     data_type: TYPE_FP32
-    dims: [ 1, 3, 300, 300 ]
+    dims: [ 3, 300, 300 ]
   }
 ]
 output [

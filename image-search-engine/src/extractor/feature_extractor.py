@@ -1,18 +1,17 @@
 import torch
 import tritonclient.grpc.aio as grpcclient
 from config import settings
-from src.decorators import (
-    async_py_profiling,
-    async_time_profiling,
+from src.decorators import (  # async_py_profiling,; async_time_profiling,
     py_profiling,
     time_profiling,
 )
+from src.utils import LOGGER, decode_img
+from torchvision import transforms
 from torchvision.io import read_image
 from torchvision.models import EfficientNet_B3_Weights, efficientnet_b3
 
 
 class FeatureExtractor:
-    # @time_profiling
     def __init__(self):
         """
         Initializes the FeatureExtractor class.
@@ -25,6 +24,7 @@ class FeatureExtractor:
         - model (torch.nn.Module): The loaded EfficientNet-B3 model.
         """
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        LOGGER.info(f"Model run on {self.device} device")
         self.weights = EfficientNet_B3_Weights.IMAGENET1K_V1
         self.model = self.load_model()
         self.triton_client = grpcclient.InferenceServerClient(
@@ -32,7 +32,6 @@ class FeatureExtractor:
         )
         self.outputs = [grpcclient.InferRequestedOutput("OUTPUT__0")]
 
-    @time_profiling
     def load_model(self):
         """
         Loads the pre-trained EfficientNet-B3 model.
@@ -51,7 +50,7 @@ class FeatureExtractor:
 
         return model
 
-    @time_profiling
+    # @time_profiling
     def preprocess_input(self, image_path):
         """
         Preprocesses the input image for inference.
@@ -75,6 +74,7 @@ class FeatureExtractor:
 
         return image
 
+    @py_profiling
     @time_profiling
     def extract_feature(self, image_path):
         """
@@ -94,10 +94,32 @@ class FeatureExtractor:
 
         return feature
 
-    @async_py_profiling
-    @async_time_profiling
+    # @async_py_profiling
+    # @async_time_profiling
     async def triton_extract_feature(self, image_path):
         image = self.preprocess_input(image_path)
+
+        inputs = [grpcclient.InferInput("INPUT__0", image.shape, datatype="FP32")]
+
+        inputs[0].set_data_from_numpy(image.numpy())
+
+        results = await self.triton_client.infer(
+            model_name=settings.MODEL_NAME, inputs=inputs, outputs=self.outputs
+        )
+
+        feature = results.as_numpy("OUTPUT__0")
+
+        return feature
+
+    # @async_py_profiling
+    # @async_time_profiling
+    async def triton_extract_base(self, image):
+        image = decode_img(image)
+        # Initialize the inference transforms
+        preprocess = self.weights.transforms(antialias=True)
+
+        # Apply inference preprocessing transforms
+        image = preprocess(image).unsqueeze(0)
 
         inputs = [grpcclient.InferInput("INPUT__0", image.shape, datatype="FP32")]
 

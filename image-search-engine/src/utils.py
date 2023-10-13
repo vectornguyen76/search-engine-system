@@ -1,8 +1,46 @@
+import base64
 import logging
 from datetime import datetime
 
+import cv2
+import numpy as np
 import pytz
 from config import settings
+from torchvision import transforms
+
+
+async def save_image_file(file):
+    # Prepend the current datetime to the filename
+    file.filename = datetime.now().strftime("%Y%m%d-%H%M%S-") + file.filename
+
+    # Construct the full image path based on the settings
+    image_path = settings.IMAGEDIR + file.filename
+
+    # Read the contents of the uploaded file asynchronously
+    contents = await file.read()
+
+    # Write the uploaded contents to the specified image path
+    with open(image_path, "wb") as f:
+        f.write(contents)
+
+    return image_path
+
+
+def decode_img(img: str) -> np.ndarray:
+    image_array = np.frombuffer(base64.urlsafe_b64decode(img), dtype=np.uint8)
+    # Decode the image using OpenCV
+    image = cv2.imdecode(image_array, cv2.IMREAD_COLOR)
+
+    # Convert BGR image to RGB image
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
+    # Define a transform to convert
+    # the image to torch tensor
+    transform = transforms.Compose([transforms.ToTensor()])
+
+    # Convert the image to Torch tensor
+    tensor = transform(image)
+    return tensor
 
 
 def initial_logger():
