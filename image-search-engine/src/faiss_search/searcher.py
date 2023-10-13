@@ -2,7 +2,6 @@ import faiss
 import numpy as np
 import pandas as pd
 from config import settings
-from src.decorators import time_profiling
 
 
 class FaissSearch:
