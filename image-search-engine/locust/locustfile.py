@@ -21,9 +21,8 @@ def encode_img_base64(image_path):
 class SearchImageUser(FastHttpUser):
     def __init__(self, *args: Any, **kwargs: Any):
         super().__init__(*args, **kwargs)
-        image_path = "test_image.jpg"
-        img_enc = encode_img_base64(image_path)
-        self.request = {"image": img_enc}
+        self.image_path = "image_test.jpg"
+        self.request = {"image": encode_img_base64(self.image_path)}
 
     @task
     def search_image_base64(self):
@@ -31,6 +30,6 @@ class SearchImageUser(FastHttpUser):
 
     @task
     def search_image(self):
-        image_file = open("test_image.jpg", "rb")
+        image_file = open(self.image_path, "rb")
         request_body = {"file": image_file}
         self.client.post("/search-image", files=request_body)
