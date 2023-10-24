@@ -4,8 +4,8 @@ from config import settings
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from qdrant_client.http.exceptions import UnexpectedResponse
-from src.extractor.feature_extractor import FeatureExtractor
 from src.faiss_search.searcher import FaissSearch
+from src.feature_extraction.extractor import FeatureExtractor
 from src.qdrant_search.searcher import QdrantSearch
 from src.schemas import ImageBase64Request, Product
 from src.utils import LOGGER, save_image_file
@@ -36,7 +36,7 @@ def healthcheck() -> bool:
 
 @app.post("/search-image-faiss", response_model=list[Product])
 async def search_image_faiss(file: UploadFile = File(...)):
-    start_time = time.time()
+    # start_time = time.time()
     try:
         image_path = await save_image_file(file=file)
 
@@ -46,7 +46,7 @@ async def search_image_faiss(file: UploadFile = File(...)):
         # Perform a search using the extracted feature vector
         search_results = faiss_search.search(query_vector=feature, top_k=20)
 
-        LOGGER.info(f"Faiss search executed in {time.time() - start_time:.4f} seconds.")
+        # LOGGER.info(f"Faiss search executed in {time.time() - start_time:.4f} seconds.")
         return search_results
 
     except Exception as e:
@@ -56,7 +56,7 @@ async def search_image_faiss(file: UploadFile = File(...)):
 
 @app.post("/search-image-qdrant", response_model=list[Product])
 async def search_image_qdrant(file: UploadFile = File(...)):
-    start_time = time.time()
+    # start_time = time.time()
     try:
         image_path = await save_image_file(file=file)
 
@@ -68,9 +68,9 @@ async def search_image_qdrant(file: UploadFile = File(...)):
 
         result = [Product.from_point(point) for point in search_results.result]
 
-        LOGGER.info(
-            f"Qdrant search executed in {time.time() - start_time:.4f} seconds."
-        )
+        # LOGGER.info(
+        #     f"Qdrant search executed in {time.time() - start_time:.4f} seconds."
+        # )
         return result
 
     except UnexpectedResponse as e:
@@ -107,7 +107,7 @@ async def search_image_qdrant_triton(file: UploadFile = File(...)):
 @app.post("/search-image-base64", response_model=list[Product])
 async def search_image_base64(data: ImageBase64Request):
     # Extract features from the uploaded image using the feature extractor
-    feature = await feature_extractor.triton_extract_base(image=data.image)
+    feature = await feature_extractor.triton_extract_base64(image=data.image)
 
     # Perform a search using the extracted feature vector
     search_results = await qdrant_search.search(query_vector=feature, top_k=20)

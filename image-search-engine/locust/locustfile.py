@@ -2,7 +2,7 @@ import base64
 from typing import Any
 
 import cv2
-from locust import FastHttpUser, task
+from locust import FastHttpUser, constant, constant_throughput, task
 
 
 def encode_img_base64(image_path):
@@ -19,17 +19,33 @@ def encode_img_base64(image_path):
 
 
 class SearchImageUser(FastHttpUser):
+    host = "http://localhost:7000"
+    # wait_time = constant(10)
+    # wait_time = constant_throughput(1)
+
     def __init__(self, *args: Any, **kwargs: Any):
         super().__init__(*args, **kwargs)
+        # self.request = {"image": encode_img_base64(self.image_path)}
         self.image_path = "image_test.jpg"
-        self.request = {"image": encode_img_base64(self.image_path)}
 
-    @task
-    def search_image_base64(self):
-        self.client.post("/search-image-base64", json=self.request)
+    # @task
+    # def search_image_faiss(self):
+    #     image_file = open(self.image_path, "rb")
+    #     request_body = {"file": image_file}
+    #     self.client.post("/search-image-faiss", files=request_body)
+
+    # @task
+    # def search_image_qdrant(self):
+    #     image_file = open(self.image_path, "rb")
+    #     request_body = {"file": image_file}
+    #     self.client.post("/search-image-qdrant", files=request_body)
 
     @task
     def search_image(self):
         image_file = open(self.image_path, "rb")
         request_body = {"file": image_file}
         self.client.post("/search-image", files=request_body)
+
+    # @task
+    # def search_image_base64(self):
+    #     self.client.post("/search-image-base64", json=self.request)

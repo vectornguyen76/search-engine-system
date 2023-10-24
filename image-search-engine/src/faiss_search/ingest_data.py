@@ -3,7 +3,7 @@ import os
 import faiss
 import numpy as np
 from config import settings
-from src.utils import LOGGER
+from src.utils import LOGGER, time_profiling
 
 
 class FaissIngest:
@@ -24,6 +24,7 @@ class FaissIngest:
     def check_index_exists(self):
         return os.path.exists(settings.INDEX_PATH)
 
+    @time_profiling
     def create_index(self):
         """
         Creates a Faiss index, adds array features to it, and saves the index to disk.

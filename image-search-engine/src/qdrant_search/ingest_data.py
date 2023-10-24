@@ -1,10 +1,8 @@
-import time
-
 import numpy as np
 import pandas as pd
 from config import settings
 from qdrant_client import QdrantClient, grpc
-from src.utils import LOGGER
+from src.utils import LOGGER, time_profiling
 from tqdm import tqdm
 
 
@@ -52,9 +50,6 @@ class QdrantIngest:
     def create_collection(self):
         """
         Creates a collection in Qdrant.
-
-        Returns:
-            grpc.CreateCollectionResponse: The response from Qdrant after creating the collection.
         """
         # Create collection
         response = self.client_grpc.grpc_collections.Create(
@@ -75,27 +70,17 @@ class QdrantIngest:
     def check_collection(self):
         """
         Checks if the collection already exists in Qdrant.
-
-        Returns:
-            grpc.GetCollectionInfoResponse: The response from Qdrant containing collection information.
         """
         response = self.client_grpc.grpc_collections.Get(
             grpc.GetCollectionInfoRequest(collection_name=settings.QDRANT_COLLECTION)
         )
         return response
 
+    @time_profiling
     def add_points(self, batch_size=1000):
         """
         Adds data points to the Qdrant collection.
-
-        Args:
-            batch_size (int): Batch size for uploading data points.
-
-        Returns:
-            None
         """
-        start_time = time.time()
-
         num_features = self.image_features["image_features"].shape[0]
         # num_features = 2000
         num_batches = (num_features + batch_size - 1) // batch_size
@@ -134,4 +119,3 @@ class QdrantIngest:
             )
 
         LOGGER.info("Done adding points to the collection!")
-        LOGGER.info(f"Time: {time.time() - start_time}")

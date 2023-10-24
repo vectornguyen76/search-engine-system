@@ -1,10 +1,10 @@
-name: "efficientnet_b3"
-platform: "pytorch_libtorch"
-max_batch_size : 128
+name: "efficientnet_b3_onnx"
+platform: "onnxruntime_onnx"
+max_batch_size : 32
 dynamic_batching { }
 instance_group [
   {
-    count: 3
+    count: 1
     kind: KIND_GPU
   }
 ]
@@ -19,6 +19,6 @@ output [
   {
     name: "output"
     data_type: TYPE_FP32
-    dims: [ 1, 1000 ]
+    dims: [ 1000 ]
   }
 ]
