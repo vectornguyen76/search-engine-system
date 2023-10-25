@@ -27,12 +27,28 @@ services:
     volumes:
       - ./qdrant-vector-database:/qdrant/storage
 
-  image-search-engine:
-    container_name: image-search-container
-    image: vectornguyen76/image-search-engine
+  # image-search-engine:
+  #   container_name: image-search-container
+  #   image: vectornguyen76/image-search-engine
+  #   build:
+  #     context: ./image-search-engine
+  #     dockerfile: Dockerfile
+  #   environment:
+  #     - QDRANT_URL=http://qdrant-vector-database:6334
+  #     - TRITON_SERVER_URL=triton-server:8001
+  #   ports:
+  #     - 7000:7000
+  #   volumes:
+  #     - ./image-search-engine/logs:/app/logs
+  #   depends_on:
+  #     - qdrant-vector-database
+
+  image-search-engine-gpu:
+    container_name: image-search-container-gpu
+    image: vectornguyen76/image-search-engine-gpu
     build:
       context: ./image-search-engine
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.gpu
     environment:
       - QDRANT_URL=http://qdrant-vector-database:6334
       - TRITON_SERVER_URL=triton-server:8001
@@ -42,101 +58,14 @@ services:
       - ./image-search-engine/logs:/app/logs
     depends_on:
       - qdrant-vector-database
-    profiles:
-      - dev.frontend
-      - prod
-
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
-    container_name: elasticsearch
-    environment:
-      - node.name=elasticsearch
-      - cluster.name=es-docker-cluster
-      - discovery.type=single-node
-      - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms1024m -Xmx1024m"
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    ports:
-      - 9200:9200
-    healthcheck:
-      test: curl --fail http://localhost:9200/_cat/health || exit 1
-      interval: 10s
-      timeout: 1s
-      retries: 10
-    volumes:
-      - data-elastic-search:/usr/share/elasticsearch/data
-
-  kibana:
-    image: docker.elastic.co/kibana/kibana:7.10.0
-    container_name: kibana
-    ports:
-      - 5601:5601
-    environment:
-      ELASTICSEARCH_URL: http://elasticsearch:9200
-      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
-    depends_on:
-      elasticsearch:
-        condition: service_healthy
-
-  text-search-engine:
-    container_name: text-search-container
-    image: vectornguyen76/text-search-engine
-    build:
-      context: ./text-search-engine
-      dockerfile: Dockerfile
-    ports:
-      - 8000:8000
-    environment:
-      ELASTICSEARCH_HOST: http://elasticsearch:9200
-    depends_on:
-      elasticsearch:
-        condition: service_healthy
-    profiles:
-      - dev.frontend
-      - prod
-
-  frontend_dev_service:
-    container_name: frontend_dev_container
-    image: vectornguyen76/frontend_dev_image
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile.dev
-    ports:
-      - 3000:3000
-    profiles:
-      - dev.backend
-
-  frontend_service:
-    container_name: frontend_prod_container
-    image: vectornguyen76/frontend_prod_image
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    ports:
-      - 3000:3000
-    profiles:
-      - prod
-
-  nginx_service:
-    container_name: nginx_container
-    image: nginx:1.25.1-alpine
-    ports:
-      - 80:80
-    volumes:
-      - ./nginx-server/default.conf:/etc/nginx/conf.d/default.conf
-      - ./nginx-server/log:/var/log/nginx/
-    depends_on:
-      - frontend_service
-      - image-search-engine
-      - text-search-engine
-    profiles:
-      - prod
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
 
 volumes:
-  data-elastic-search:
-    driver: local
   qdrant-vector-database:
     driver: local

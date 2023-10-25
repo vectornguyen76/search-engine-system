@@ -16,6 +16,7 @@ image-search-engine/assets/uploaded_images/*
 # Model
 *.pth
 *.pt
+*.onnx
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

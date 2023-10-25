@@ -30,8 +30,11 @@ class Settings(BaseSettings):
     QDRANT_COLLECTION: str = "image-search-engine"
 
     # Triton configuration
-    MODEL_NAME: str = "efficientnet_b3"
     TRITON_SERVER_URL: str = os.environ.get("TRITON_SERVER_URL", "localhost:9001")
+    TORCH_MODEL_NAME: str = "efficientnet_b3"
+    ONNX_MODEL_NAME: str = "efficientnet_b3_onnx"
+    MODEL_INPUT_NAME: str = "input"
+    MODEL_OUTPUT_NAME: str = "output"
 
 
 settings = Settings()

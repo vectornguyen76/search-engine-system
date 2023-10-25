@@ -1,14 +1,70 @@
 import base64
+import functools
 import logging
+import time
 from datetime import datetime
 
 import cv2
 import numpy as np
+import pyinstrument
 import pytz
 from config import settings
 from torchvision import transforms
 
 
+def time_profiling(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        start_time = time.time()
+        result = func(*args, **kwargs)
+        LOGGER.info(
+            f"Function {func.__name__} executed in {time.time() - start_time:.4f} seconds."
+        )
+        return result
+
+    return wrapper
+
+
+def async_time_profiling(func):
+    @functools.wraps(func)
+    async def wrapper(*args, **kwargs):
+        start_time = time.time()
+        result = await func(*args, **kwargs)
+        LOGGER.info(
+            f"Function {func.__name__} executed in {time.time() - start_time:.4f} seconds."
+        )
+        return result
+
+    return wrapper
+
+
+def async_py_profiling(func):
+    async def wrapper(*args, **kwargs):
+        profiler = pyinstrument.Profiler(async_mode="enabled")
+        profiler.start()
+        result = await func(*args, **kwargs)
+        profiler.stop()
+        with open(f"./logs/time_execute_{func.__name__}.html", "w") as f:
+            f.write(profiler.output_html())
+        return result
+
+    return wrapper
+
+
+def py_profiling(func):
+    def wrapper(*args, **kwargs):
+        profiler = pyinstrument.Profiler()
+        profiler.start()
+        result = func(*args, **kwargs)
+        profiler.stop()
+        with open(f"./logs/time_execute_{func.__name__}.html", "w") as f:
+            f.write(profiler.output_html())
+        return result
+
+    return wrapper
+
+
+# @async_time_profiling
 async def save_image_file(file):
     # Prepend the current datetime to the filename
     file.filename = datetime.now().strftime("%Y%m%d-%H%M%S-") + file.filename
