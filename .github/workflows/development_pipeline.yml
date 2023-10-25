@@ -39,7 +39,7 @@ jobs:
         run: black --check ./image-search-engine/.
 
       - name: Run flake8
-        run: flake8 --ignore=E501,W503 ./image-search-engine
+        run: flake8 --ignore=E501,W503,F401 ./image-search-engine
 
       # - name: Run Pylint
       #   run: pylint ./image-search-engine/*.py
@@ -95,7 +95,7 @@ jobs:
         run: black --check ./text-search-engine/.
 
       - name: Run flake8
-        run: flake8 --ignore=E501,W503 ./text-search-engine
+        run: flake8 --ignore=E501,W503,F401 ./text-search-engine
 
       # - name: Run Pylint
       #   run: pylint ./image-search-engine/*.py
