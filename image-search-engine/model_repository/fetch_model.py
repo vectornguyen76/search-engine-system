@@ -19,7 +19,7 @@ torch.jit.save(traced_model, "./efficientnet_b3/1/model.pt")
 # Export the model to ONNX with dynamic batch size
 torch.onnx.export(
     model,
-    torch.randn(1, 3, 300, 300),
+    torch.randn(1, 3, 300, 300).to(device),
     "./efficientnet_b3_onnx/1/model.onnx",
     input_names=["input"],
     output_names=["output"],

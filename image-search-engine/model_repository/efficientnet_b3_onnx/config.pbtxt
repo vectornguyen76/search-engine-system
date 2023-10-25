@@ -1,7 +1,9 @@
 name: "efficientnet_b3_onnx"
 platform: "onnxruntime_onnx"
-max_batch_size : 32
-dynamic_batching { }
+max_batch_size : 16
+dynamic_batching {
+    max_queue_delay_microseconds: 100
+}
 instance_group [
   {
     count: 1

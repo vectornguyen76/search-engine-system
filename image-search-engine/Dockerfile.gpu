@@ -1,0 +1,44 @@
+# Use the Python 3.9 slim image as the base image
+FROM python:3.9-slim
+
+# Set the working directory inside the container to /app
+WORKDIR /app
+
+# Install for OpenCV
+RUN apt-get update && apt-get install ffmpeg libsm6 libxext6  -y
+
+# Copy the requirements.txt file from the host into the container's /app directory
+COPY requirements.txt /app
+
+# Upgrade pip
+RUN pip install --upgrade pip
+
+# Download pytorch GPU
+RUN pip install torch==2.0.1 torchvision==0.15.2 torchaudio==2.0.2
+
+# Install the Python dependencies from requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Download load csv data
+RUN gdown https://drive.google.com/uc?id=1I-Rv676N45aUgY7tcsazQE7fLzzb2LFr
+
+# Download the image features from a Google Drive link
+RUN gdown https://drive.google.com/uc?id=103LTvXhmbjPOVjDVbhwjjzHrsQLpskWt
+
+# Move data.csv, image_features.npz to a directory named /data
+RUN mkdir --parents /app/data && mv data.csv /app/data && mv image_features.npz /app/data
+
+# Download model
+RUN python -c 'from torchvision.models import efficientnet_b3, EfficientNet_B3_Weights; efficientnet_b3(weights=EfficientNet_B3_Weights.IMAGENET1K_V1)'
+
+# Copy all files from the host into the container's /app directory
+COPY . /app
+
+# Expose port 7000 to the host machine
+EXPOSE 7000
+
+# Chmod to entrypoint.sh
+RUN chmod +x ./entrypoint.sh
+
+# Run entrypoint.sh
+ENTRYPOINT ["/app/entrypoint.sh"]

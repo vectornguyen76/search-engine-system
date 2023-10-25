@@ -1,6 +1,6 @@
 name: "efficientnet_b3"
 platform: "pytorch_libtorch"
-max_batch_size : 128
+max_batch_size : 32
 dynamic_batching { }
 instance_group [
   {
