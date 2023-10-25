@@ -357,6 +357,16 @@ This project implements an image search engine for Shopee using qdrant as the ve
 
 ## Testing and Results
 
+- Ubuntu: 20.04
+- CUDA Version: 12.2
+- EC2: g4dn.xlarge
+- CPU: Intel Xeon Family 4-vCPUs
+- RAM: 16GB
+- GPU: NVIDIA T4 Tensor Core
+- VRAM: 16GB
+- Uvicorn Workers: 4
+  FastAPI, Qdrant, Faiss, Triton, Locust are executed on the same device.
+
 ### Locust - Load Testing
 
 1. **Overview**
@@ -389,16 +399,97 @@ This project implements an image search engine for Shopee using qdrant as the ve
 - [Increasing Performance](http://docs.locust.io/en/stable/increase-performance.html)
 - [Running Distributed Tests](http://docs.locust.io/en/stable/running-distributed.html)
 
-### Results
+### Test Faiss
 
-<p align="center">
-<img src="./assets/documents/qdrant-db.jpg" alt="Qdrant Vector Store" />
-<br>
-<em>Qdrant Vector Store</em>
-</p>
-<br>
-- Created and added 100,000 points in 6 minutes in qdrant.
-- p95: [Provide Performance Data]
+1. **Ingest Data Time**
+2. **Search Time CPU**
+   <p align="center">
+   <img src="./assets/documents/time-faiss-cpu.jpg" alt="Faiss Search Time in CPU" />
+   <br>
+   <em>Faiss Search Time in CPU</em>
+   </p>
+   <br>
+
+   About 39ms
+
+### Test Qdrant
+
+1. **Ingest Data Time**
+   <p align="center">
+   <img src="./assets/documents/point-qdrant.jpg" alt="Point in Qdrant" />
+   <br>
+   <em>Point in Qdrant</em>
+   </p>
+   <br>
+
+   <p align="center">
+   <img src="./assets/documents/info-qdrant.jpg" alt="Qdrant Info" />
+   <br>
+   <em>Qdrant Info</em>
+   </p>
+   <br>
+   Create Collection and add 100,000 points take 6 minutes.
+
+2. **Search Time CPU**
+   <p align="center">
+   <img src="./assets/documents/time-qdrant-cpu.jpg" alt="Qdrant Search Time in CPU" />
+   <br>
+   <em>Qdrant Search Time in CPU</em>
+   </p>
+   <br>
+
+   About 3ms
+
+## Test Triton
+
+1. **Folder layout**
+
+   ```
+   model_repository/
+   ├── efficientnet_b3
+   │   ├── 1
+   │   │   └── model.pt
+   │   └── config.pbtxt
+   └── efficientnet_b3_onnx
+      ├── 1
+      │   └── model.onnx
+      └── config.pbtxt
+   ```
+
+2. **Report**
+
+   - Test diffence configurations
+   - Only triton inference step
+   - Original efficientnet_b3 model.pt
+   - Uvicorn workers = 1
+   - User spawn rate = 1
+
+   | Id  | Request Concurrency | Max Batch Size | Dynamic Batching | Instance Count | p95 Latency (ms) | RPS | Max GPU Memory Usage (MB) | Average GPU Utilization (%) |
+   | --- | ------------------- | -------------- | ---------------- | -------------- | ---------------- | --- | ------------------------- | --------------------------- |
+   | 1   | 1                   | 1              | Disabled         | 1:CPU          | 140              | 8   | 160                       | 0                           |
+   | 2   | 1                   | 1              | Disabled         | 1:GPU          | 14               | 74  | 313                       | 35                          |
+   | 3   | 8                   | 1              | Disabled         | 1:GPU          | 83               | 120 | 313                       | 55                          |
+   | 4   | 8                   | 8              | Disabled         | 1:GPU          | 85               | 113 | 313                       | 55                          |
+   | 5   | 8                   | 8              | Disabled         | 2:GPU          | 69               | 140 | 439                       | 66                          |
+   | 6   | 8                   | 8              | Enabled          | 2:GPU          | 68               | 150 | 1019                      | 69                          |
+   | 7   | 16                  | 1              | Disabled         | 1:GPU          | 170              | 111 | 313                       | 58                          |
+   | 8   | 16                  | 16             | Disabled         | 1:GPU          | 170              | 116 | 313                       | 55                          |
+   | 9   | 16                  | 16             | Disabled         | 2:GPU          | 130              | 143 | 439                       | 66                          |
+   | 10  | 16                  | 16             | Enabled          | 2:GPU          | 130              | 155 | 1667                      | 75                          |
+   | 11  | 32                  | 1              | Disabled         | 1:GPU          | 330              | 112 | 313                       | 55                          |
+   | 12  | 32                  | 32             | Disabled         | 1:GPU          | 310              | 116 | 313                       | 58                          |
+   | 13  | 32                  | 32             | Disabled         | 3:GPU          | 290              | 137 | 547                       | 66                          |
+   | 14  | 32                  | 32             | Enabled          | 3:GPU          | 270              | 150 | 7395                      | 73                          |
+   | 15  | 64                  | 1              | Disabled         | 1:GPU          | 610              | 118 | 313                       | 55                          |
+   | 16  | 64                  | 64             | Disabled         | 1:GPU          | 570              | 117 | 313                       | 55                          |
+   | 17  | 64                  | 64             | Disabled         | 3:GPU          | 610              | 132 | 547                       | 65                          |
+   | 18  | 64                  | 64             | Enabled          | 3:GPU          | 640              | 143 | 14023                     | 75                          |
+   | 19  | 64                  | 64             | Enabled          | 5:GPU          | 670              | 137 | 11183                     | 70                          |
+   | 20  | 64                  | 64             | Enabled          | 1:CPU          | 13000            | 5   | 160                       | 0                           |
+
+3. **References**
+
+- [Triton Conceptual Guides](https://github.com/triton-inference-server/tutorials/tree/main/Conceptual_Guide)
 
 ## References
 
