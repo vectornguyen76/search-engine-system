@@ -19,13 +19,13 @@ TRT_LOGGER = trt.Logger()
 def parse_args():
     parser = argparse.ArgumentParser(description="Convert ONNX models to TensorRT")
 
-    parser.add_argument("--device", help="cuda or not", default="cpu")
+    parser.add_argument("--device", help="cuda or not", default="cuda")
 
     # Sample image
     parser.add_argument("--batch_size", type=int, help="data batch size", default=1)
     parser.add_argument("--img_size", help="input size", default=[3, 300, 300])
     parser.add_argument(
-        "--sample_folder_path", help="sample image folder path", default="./test/"
+        "--sample_folder_path", help="sample image folder path", default="./../assets/"
     )
     # parser.add_argument('--sample_image_path', help='sample image path',
     # default='./sample.jpg')

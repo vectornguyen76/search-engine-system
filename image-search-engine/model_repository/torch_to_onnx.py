@@ -14,7 +14,7 @@ from torchvision.utils import save_image
 def parse_args():
     parser = argparse.ArgumentParser(description="Convert Pytorch models to ONNX")
 
-    parser.add_argument("--device", help="cuda or not", default="cpu")
+    parser.add_argument("--device", help="cuda or not", default="cuda")
 
     # Sample image
     parser.add_argument(
@@ -22,7 +22,7 @@ def parse_args():
     )
     parser.add_argument("--img_size", help="image size", default=[3, 300, 300])
     parser.add_argument(
-        "--sample_folder_path", help="sample image folder path", default="./test/"
+        "--sample_folder_path", help="sample image folder path", default="./../assets/"
     )
     # parser.add_argument('--sample_image_path', help='sample image path',
     # default='./sample.jpg')
@@ -183,8 +183,8 @@ if __name__ == "__main__":
     onnx.checker.check_model(onnx_model)
 
     # Print a human readable representation of the graph
-    with open("OnnxShape.txt", "w") as f:
-        f.write(f"{onnx.helper.printable_graph(onnx_model.graph)}")
+    # with open("OnnxShape.txt", "w") as f:
+    #     f.write(f"{onnx.helper.printable_graph(onnx_model.graph)}")
 
     # Comparision output of onnx and output of Pytorch model
     # Pytorch results
