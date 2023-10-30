@@ -26,7 +26,7 @@ class SearchImageUser(FastHttpUser):
     def __init__(self, *args: Any, **kwargs: Any):
         super().__init__(*args, **kwargs)
         self.image_path = "image_test.jpg"
-        self.request = {"image": encode_img_base64(self.image_path)}
+        # self.request = {"image": encode_img_base64(self.image_path)}
 
     # @task
     # def search_image_faiss(self):

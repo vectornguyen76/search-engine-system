@@ -27,28 +27,12 @@ services:
     volumes:
       - ./qdrant-vector-database:/qdrant/storage
 
-  # image-search-engine:
-  #   container_name: image-search-container
-  #   image: vectornguyen76/image-search-engine
-  #   build:
-  #     context: ./image-search-engine
-  #     dockerfile: Dockerfile
-  #   environment:
-  #     - QDRANT_URL=http://qdrant-vector-database:6334
-  #     - TRITON_SERVER_URL=triton-server:8001
-  #   ports:
-  #     - 7000:7000
-  #   volumes:
-  #     - ./image-search-engine/logs:/app/logs
-  #   depends_on:
-  #     - qdrant-vector-database
-
-  image-search-engine-gpu:
-    container_name: image-search-container-gpu
-    image: vectornguyen76/image-search-engine-gpu
+  image-search-engine:
+    container_name: image-search-container
+    image: vectornguyen76/image-search-engine
     build:
       context: ./image-search-engine
-      dockerfile: Dockerfile.gpu
+      dockerfile: Dockerfile
     environment:
       - QDRANT_URL=http://qdrant-vector-database:6334
       - TRITON_SERVER_URL=triton-server:8001
@@ -58,13 +42,29 @@ services:
       - ./image-search-engine/logs:/app/logs
     depends_on:
       - qdrant-vector-database
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
+
+  # image-search-engine-gpu:
+  #   container_name: image-search-container-gpu
+  #   image: vectornguyen76/image-search-engine-gpu
+  #   build:
+  #     context: ./image-search-engine
+  #     dockerfile: Dockerfile.gpu
+  #   environment:
+  #     - QDRANT_URL=http://qdrant-vector-database:6334
+  #     - TRITON_SERVER_URL=triton-server:8001
+  #   ports:
+  #     - 7000:7000
+  #   volumes:
+  #     - ./image-search-engine/logs:/app/logs
+  #   depends_on:
+  #     - qdrant-vector-database
+  #   deploy:
+  #     resources:
+  #       reservations:
+  #         devices:
+  #           - driver: nvidia
+  #             count: 1
+  #             capabilities: [gpu]
 
 volumes:
   qdrant-vector-database:

@@ -82,9 +82,9 @@ class FeatureExtractor:
         """
         image = self.preprocess_input(image_path)
 
-        feature = self.model(image)
+        feature = self.model(image.to(self.device))
 
-        feature = feature.detach().numpy()
+        feature = feature.cpu().detach().numpy()
 
         return feature
 
@@ -143,7 +143,7 @@ class FeatureExtractor:
 
         feature = await self.triton_inference(
             image=image,
-            model_name=settings.ONNX_MODEL_NAME,
+            model_name=settings.TORCH_MODEL_NAME,
             inputs_name=settings.MODEL_INPUT_NAME,
             outputs_name=settings.MODEL_OUTPUT_NAME,
         )
