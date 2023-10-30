@@ -4,25 +4,21 @@ import time
 
 import numpy as np
 
+# ONNX: pip install onnx, onnxruntime
+import onnx
+import onnxruntime as rt
+import tensorrt as trt
+
 # Torch
 import torch
 import torchvision.datasets as datasets
 import torchvision.models as models
 import torchvision.transforms as transforms
-from torchvision.utils import save_image
-
-# ONNX: pip install onnx, onnxruntime
-try:
-    import onnx
-    import onnxruntime as rt
-except ImportError as e:
-    raise ImportError(f"Please install onnx and onnxruntime first. {e}")
-
-import tensorrt as trt
 
 # CUDA & TensorRT
 # import pycuda.driver as cuda
 from cuda import cuda
+from torchvision.utils import save_image
 
 TRT_LOGGER = trt.Logger()
 
