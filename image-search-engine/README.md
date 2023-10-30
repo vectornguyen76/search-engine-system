@@ -15,6 +15,11 @@
 5. [Strategies for Improving Image Retrieval](#strategies-for-improving-image-retrieval)
 6. [Development Environment](#development-environment)
 7. [Testing and Results](#testing-and-results)
+   - [Locust Tool](#locust-tool)
+   - [Test Faiss](#test-faiss)
+   - [Test Qdrant](#test-qdrant)
+   - [Inference without Triton](#inference-without-triton)
+   - [Test Triton](#test-triton)
 8. [References](#references)
 
 ## About the Solution
@@ -357,7 +362,17 @@ This project implements an image search engine for Shopee using qdrant as the ve
 
 ## Testing and Results
 
-### Locust - Load Testing
+- Ubuntu: 20.04
+- CUDA Version: 12.2
+- EC2: g4dn.xlarge
+- CPU: Intel Xeon Family 4-vCPUs
+- RAM: 16GB
+- GPU: NVIDIA T4 Tensor Core
+- VRAM: 16GB
+- Uvicorn Workers: 4
+  FastAPI, Qdrant, Faiss, Triton, Locust are executed on the same device.
+
+### Locust Tool
 
 1. **Overview**
 
@@ -380,7 +395,6 @@ This project implements an image search engine for Shopee using qdrant as the ve
    <br>
    <em>Locust Load Test</em>
    </p>
-   <br>
 
 3. **References**
 
@@ -389,16 +403,165 @@ This project implements an image search engine for Shopee using qdrant as the ve
 - [Increasing Performance](http://docs.locust.io/en/stable/increase-performance.html)
 - [Running Distributed Tests](http://docs.locust.io/en/stable/running-distributed.html)
 
-### Results
+### Test Faiss
 
-<p align="center">
-<img src="./assets/documents/qdrant-db.jpg" alt="Qdrant Vector Store" />
-<br>
-<em>Qdrant Vector Store</em>
-</p>
-<br>
-- Created and added 100,000 points in 6 minutes in qdrant.
-- p95: [Provide Performance Data]
+1. **Ingest Data Time**
+   Create Faiss Index ~ 5 seconds.
+
+2. **Search Time CPU**
+   <p align="center">
+   <img src="./assets/documents/time-faiss-cpu.jpg" alt="Faiss Search Time in CPU" />
+   <br>
+   <em>Faiss Search Time in CPU</em>
+   </p>
+   <br>
+
+   About 39ms
+
+### Test Qdrant
+
+1. **Ingest Data Time**
+   <p align="center">
+   <img src="./assets/documents/point-qdrant.jpg" alt="Point in Qdrant" />
+   <br>
+   <em>Point in Qdrant</em>
+   </p>
+   <br>
+
+   <p align="center">
+   <img src="./assets/documents/info-qdrant.jpg" alt="Qdrant Info" />
+   <br>
+   <em>Qdrant Info</em>
+   </p>
+   Create Collection and add 100,000 points take 6 minutes.
+
+2. **Search Time CPU**
+   <p align="center">
+   <img src="./assets/documents/time-qdrant-cpu.jpg" alt="Qdrant Search Time in CPU" />
+   <br>
+   <em>Qdrant Search Time in CPU</em>
+   </p>
+   About 3ms
+
+### Inference without Triton
+
+1. **Report**
+
+   - Original efficientnet_b3 model.pt
+   - Uvicorn workers = 1
+   - User spawn rate = 1
+
+   | Id  | Request Concurrency | Device | p95 Latency (ms) | RPS | Max GPU Memory Usage (MB) |
+   | :-: | :-----------------: | :----: | :--------------: | :-: | :-----------------------: |
+   |  1  |          1          |  CPU   |       130        |  9  |             0             |
+   |  2  |          1          |  GPU   |        21        | 48  |            525            |
+   |  3  |          4          |  CPU   |       460        |  9  |             0             |
+   |  4  |          4          |  GPU   |        85        | 49  |            525            |
+   |  5  |          8          |  CPU   |       920        |  9  |             0             |
+   |  6  |          8          |  GPU   |       170        | 49  |            525            |
+   |  7  |         16          |  CPU   |       1800       |  9  |             0             |
+   |  8  |         16          |  GPU   |       340        | 49  |            525            |
+   |  9  |         32          |  CPU   |       3600       |  9  |             0             |
+   | 10  |         32          |  GPU   |       650        | 50  |            525            |
+
+   <br>
+   <p align="center">
+   <img src="./assets/documents/no-triton-test-10.jpg" alt="32 Request Concurrency - GPU" />
+   <br>
+   <em>32 Request Concurrency - GPU</em>
+   </p>
+
+### Test Triton
+
+1. **Folder layout**
+
+   ```
+   model_repository/
+   ├── efficientnet_b3
+   │   ├── 1
+   │   │   └── model.pt
+   │   └── config.pbtxt
+   └── efficientnet_b3_onnx
+      ├── 1
+      │   └── model.onnx
+      └── config.pbtxt
+   ```
+
+2. **Dynamic Batching**
+
+   Dynamic batching, in reference to the Triton Inference Server, refers to the functionality which allows the combining of one or more inference requests into a single batch (which has to be created dynamically) to maximize throughput.
+
+   Dynamic batching can be enabled and configured on per model basis by specifying selections in the model's config.pbtxt. Dynamic Batching can be enabled with its default settings by adding the following to the config.pbtxt file:
+
+   ```
+   dynamic_batching { }
+   ```
+
+   While Triton batches these incoming requests without any delay, users can choose to allocate a limited delay for the scheduler to collect more inference requests to be used by the dynamic batcher.
+
+   ```
+   dynamic_batching {
+      max_queue_delay_microseconds: 100
+   }
+   ```
+
+   <p align="center">
+   <img src="./assets/documents/dynamic_batching.png" alt="Dynamic Batching" />
+   <br>
+   <em>Dynamic Batching</em>
+   </p>
+
+3. **Concurrent Model Execution**
+
+   The Triton Inference Server can spin up multiple instances of the same model, which can process queries in parallel. Triton can spawn instances on the same device (GPU), or a different device on the same node as per the user's specifications. This customizability is especially useful when considering ensembles that have models with different throughputs. Multiple copies of heavier models can be spawned on a separate GPU to allow for more parallel processing. This is enabled via the use of instance groups option in a model's configuration.
+
+   <p align="center">
+   <img src="./assets/documents/multi_instance.png" alt="Concurrent Model Execution" />
+   <br>
+   <em>Concurrent Model Execution</em>
+   </p>
+
+4. **Report**
+
+   - Test diffence configurations
+   - Only triton inference step
+   - Original efficientnet_b3 model.pt
+   - Uvicorn workers = 1
+   - User spawn rate = 1
+
+   | Id  | Request Concurrency | Max Batch Size | Dynamic Batching | Instance Count | p95 Latency (ms) | RPS | Max GPU Memory Usage (MB) | Average GPU Utilization (%) |
+   | :-: | :-----------------: | :------------: | :--------------: | :------------: | :--------------: | :-: | :-----------------------: | :-------------------------: |
+   |  1  |          1          |       1        |     Disabled     |     1:CPU      |       140        |  8  |            160            |              0              |
+   |  2  |          1          |       1        |     Disabled     |     1:GPU      |        14        | 74  |            313            |             35              |
+   |  3  |          8          |       1        |     Disabled     |     1:GPU      |        83        | 120 |            313            |             55              |
+   |  4  |          8          |       8        |     Disabled     |     1:GPU      |        85        | 113 |            313            |             55              |
+   |  5  |          8          |       8        |     Disabled     |     2:GPU      |        69        | 140 |            439            |             66              |
+   |  6  |          8          |       8        |     Enabled      |     2:GPU      |        68        | 150 |           1019            |             69              |
+   |  7  |         16          |       1        |     Disabled     |     1:GPU      |       170        | 111 |            313            |             58              |
+   |  8  |         16          |       16       |     Disabled     |     1:GPU      |       170        | 116 |            313            |             55              |
+   |  9  |         16          |       16       |     Disabled     |     2:GPU      |       130        | 143 |            439            |             66              |
+   | 10  |         16          |       16       |     Enabled      |     2:GPU      |       130        | 155 |           1667            |             75              |
+   | 11  |         32          |       1        |     Disabled     |     1:GPU      |       330        | 112 |            313            |             55              |
+   | 12  |         32          |       32       |     Disabled     |     1:GPU      |       310        | 116 |            313            |             58              |
+   | 13  |         32          |       32       |     Disabled     |     3:GPU      |       290        | 137 |            547            |             66              |
+   | 14  |         32          |       32       |     Enabled      |     3:GPU      |       270        | 150 |           7395            |             73              |
+   | 15  |         64          |       1        |     Disabled     |     1:GPU      |       610        | 118 |            313            |             55              |
+   | 16  |         64          |       64       |     Disabled     |     1:GPU      |       570        | 117 |            313            |             55              |
+   | 17  |         64          |       64       |     Disabled     |     3:GPU      |       610        | 132 |            547            |             65              |
+   | 18  |         64          |       64       |     Enabled      |     3:GPU      |       640        | 143 |           14023           |             75              |
+   | 19  |         64          |       64       |     Enabled      |     5:GPU      |       670        | 137 |           11183           |             70              |
+   | 20  |         64          |       64       |     Enabled      |     1:CPU      |      13000       |  5  |            160            |              0              |
+
+   <br>
+   <p align="center">
+   <img src="./assets/documents/triton-test-14.jpg" alt="32 Request Concurrency - GPU" />
+   <br>
+   <em>32 Request Concurrency - Max Batch Size 32 - Dynamic Batching - 3:GPU</em>
+   </p>
+
+5. **References**
+
+- [Triton Conceptual Guides](https://github.com/triton-inference-server/tutorials/tree/main/Conceptual_Guide)
 
 ## References
 

@@ -23,11 +23,18 @@ class Settings(BaseSettings):
     TOP_K: int = 3
 
     # Faiss configuration
-    INDEX_PATH: str = "./faiss_search/index.faiss"
+    INDEX_PATH: str = "./src/faiss_search/index.faiss"
 
     # Qdrant configuration
-    QDRANT_HOST: str = os.environ.get("QDRANT_HOST", "localhost")
+    QDRANT_URL: str = os.environ.get("QDRANT_URL", "http://localhost:6334")
     QDRANT_COLLECTION: str = "image-search-engine"
+
+    # Triton configuration
+    TRITON_SERVER_URL: str = os.environ.get("TRITON_SERVER_URL", "localhost:9001")
+    TORCH_MODEL_NAME: str = "efficientnet_b3"
+    ONNX_MODEL_NAME: str = "efficientnet_b3_onnx"
+    MODEL_INPUT_NAME: str = "input"
+    MODEL_OUTPUT_NAME: str = "output"
 
 
 settings = Settings()

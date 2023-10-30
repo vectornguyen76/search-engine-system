@@ -1,18 +1,48 @@
-from locust import FastHttpUser, task
+import base64
+from typing import Any
+
+import cv2
+from locust import FastHttpUser, constant, constant_throughput, task
+
+
+def encode_img_base64(image_path):
+    # Load an RGB image using OpenCV
+    image = cv2.imread(image_path)
+
+    # Encode the image to a JPEG format (you can choose other formats as well)
+    _, encoded_image = cv2.imencode(".jpg", image)
+
+    # Convert the encoded image to a Base64 string
+    encoded_image_base64 = base64.b64encode(encoded_image).decode("utf-8")
+
+    return encoded_image_base64
 
 
 class SearchImageUser(FastHttpUser):
+    host = "http://localhost:7000"
+    # wait_time = constant(1)
+    # wait_time = constant_throughput(1)
+
+    def __init__(self, *args: Any, **kwargs: Any):
+        super().__init__(*args, **kwargs)
+        self.image_path = "image_test.jpg"
+        # self.request = {"image": encode_img_base64(self.image_path)}
+
+    # @task
+    # def search_image_faiss(self):
+    #     image_file = open(self.image_path, "rb")
+    #     self.client.post("/search-image-faiss", files={"file": image_file})
+
+    # @task
+    # def search_image_qdrant(self):
+    #     image_file = open(self.image_path, "rb")
+    #     self.client.post("/search-image-qdrant", files={"file": image_file})
+
     @task
     def search_image(self):
-        """
-        Simulate a user uploading an image and performing a search.
-        """
+        image_file = open(self.image_path, "rb")
+        self.client.post("/search-image", files={"file": image_file})
 
-        # Create a random image file
-        image_file = open("test.jpg", "rb")
-
-        # Construct the request body
-        request_body = {"file": image_file}
-
-        # Send the request to the API and get the response
-        self.client.post("/search-image", files=request_body)
+    # @task
+    # def search_image_base64(self):
+    #     self.client.post("/search-image-base64", json=self.request)
