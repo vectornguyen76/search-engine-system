@@ -2,12 +2,8 @@ import argparse
 import time
 
 import numpy as np
-
-# ONNX: pip install onnx, onnxruntime
 import onnx
 import onnxruntime as rt
-
-# Torch
 import torch
 import torchvision.datasets as datasets
 import torchvision.models as models
