@@ -1,16 +1,14 @@
-from datetime import datetime
+import time
 
 from config import settings
-from faiss_search.searcher import FaissSearch
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from feature_extractor import FeatureExtractor
-from log_config import configure_logging
 from qdrant_client.http.exceptions import UnexpectedResponse
-from qdrant_search.searcher import QdrantSearch
-from schemas import Product
-
-logger = configure_logging(__name__)
+from src.faiss_search.searcher import FaissSearch
+from src.feature_extraction.extractor import FeatureExtractor
+from src.qdrant_search.searcher import QdrantSearch
+from src.schemas import ImageBase64Request, Product
+from src.utils import LOGGER, save_image_file
 
 # Initialize the feature extractor and FaissSearch instances
 feature_extractor = FeatureExtractor()
@@ -36,30 +34,31 @@ def healthcheck() -> bool:
     return True
 
 
-@app.post("/search-image", response_model=list[Product])
-async def search_image_qdrant(file: UploadFile = File(...)):
-    """
-    Endpoint to upload an image, extract features, and perform a search.
-
-    Args:
-        file (UploadFile): The image file to be uploaded.
-
-    Returns:
-        dict: A dictionary containing search results, including item information.
-    """
+@app.post("/search-image-faiss", response_model=list[Product])
+async def search_image_faiss(file: UploadFile = File(...)):
+    # start_time = time.time()
     try:
-        # Prepend the current datetime to the filename
-        file.filename = datetime.now().strftime("%Y%m%d-%H%M%S-") + file.filename
+        image_path = await save_image_file(file=file)
 
-        # Construct the full image path based on the settings
-        image_path = settings.IMAGEDIR + file.filename
+        # Extract features from the uploaded image using the feature extractor
+        feature = feature_extractor.extract_feature(image_path=image_path)
 
-        # Read the contents of the uploaded file asynchronously
-        contents = await file.read()
+        # Perform a search using the extracted feature vector
+        search_results = faiss_search.search(query_vector=feature, top_k=20)
 
-        # Write the uploaded contents to the specified image path
-        with open(image_path, "wb") as f:
-            f.write(contents)
+        # LOGGER.info(f"Faiss search executed in {time.time() - start_time:.4f} seconds.")
+        return search_results
+
+    except Exception as e:
+        LOGGER.error("Could not perform search: %s", e)
+        raise HTTPException(status_code=500, detail=e)
+
+
+@app.post("/search-image-qdrant", response_model=list[Product])
+async def search_image_qdrant(file: UploadFile = File(...)):
+    # start_time = time.time()
+    try:
+        image_path = await save_image_file(file=file)
 
         # Extract features from the uploaded image using the feature extractor
         feature = feature_extractor.extract_feature(image_path=image_path)
@@ -69,19 +68,20 @@ async def search_image_qdrant(file: UploadFile = File(...)):
 
         result = [Product.from_point(point) for point in search_results.result]
 
-        logger.info(f"Search image successfully, file name: {file.filename}")
-
+        # LOGGER.info(
+        #     f"Qdrant search executed in {time.time() - start_time:.4f} seconds."
+        # )
         return result
 
     except UnexpectedResponse as e:
         # Handle the case when Qdrant returns an error and convert it to an exception
         # that FastAPI will understand and return to the client
-        logger.error("Could not perform search: %s", e)
+        LOGGER.error("Could not perform search: %s", e)
         raise HTTPException(status_code=500, detail=e.reason_phrase)
 
 
-@app.post("/search-image-faiss", response_model=list[Product])
-async def upload_image(file: UploadFile = File(...)):
+@app.post("/search-image", response_model=list[Product])
+async def search_image_qdrant_triton(file: UploadFile = File(...)):
     """
     Endpoint to upload an image, extract features, and perform a search.
 
@@ -91,30 +91,27 @@ async def upload_image(file: UploadFile = File(...)):
     Returns:
         dict: A dictionary containing search results, including item information.
     """
-    try:
-        # Prepend the current datetime to the filename
-        file.filename = datetime.now().strftime("%Y%m%d-%H%M%S-") + file.filename
+    image_path = await save_image_file(file=file)
 
-        # Construct the full image path based on the settings
-        image_path = settings.IMAGEDIR + file.filename
+    # Extract features from the uploaded image using the feature extractor
+    feature = await feature_extractor.triton_extract_feature(image_path=image_path)
 
-        # Read the contents of the uploaded file asynchronously
-        contents = await file.read()
+    # Perform a search using the extracted feature vector
+    search_results = await qdrant_search.search(query_vector=feature, top_k=20)
 
-        # Write the uploaded contents to the specified image path
-        with open(image_path, "wb") as f:
-            f.write(contents)
+    result = [Product.from_point(point) for point in search_results.result]
 
-        # Extract features from the uploaded image using the feature extractor
-        feature = feature_extractor.extract_feature(image_path=image_path)
+    return result
 
-        # Perform a search using the extracted feature vector
-        search_results = faiss_search.search(query_vector=feature, top_k=20)
 
-        logger.info(f"Search image use faiss successfully, file name: {file.filename}")
+@app.post("/search-image-base64", response_model=list[Product])
+async def search_image_base64(data: ImageBase64Request):
+    # Extract features from the uploaded image using the feature extractor
+    feature = await feature_extractor.triton_extract_base64(image=data.image)
 
-        return search_results
+    # Perform a search using the extracted feature vector
+    search_results = await qdrant_search.search(query_vector=feature, top_k=20)
 
-    except Exception as e:
-        logger.error("Could not perform search: %s", e)
-        raise HTTPException(status_code=500, detail=e)
+    result = [Product.from_point(point) for point in search_results.result]
+
+    return result

@@ -2,6 +2,7 @@ import faiss
 import numpy as np
 import pandas as pd
 from config import settings
+from src.utils import time_profiling
 
 
 class FaissSearch:
@@ -44,13 +45,14 @@ class FaissSearch:
         self.shop_path = data["shop_path"]
         self.shop_name = data["shop_name"]
 
+    # @time_profiling
     def search(self, query_vector, top_k=settings.TOP_K):
         """
         Performs a similarity search using the provided query vector.
 
         Args:
         - query_vector (np.ndarray): The query vector for similarity search.
-        - top_k (int, optional): The number of nearest neighbors to retrieve. Default is specified in settings.
+        - top_k (int, optional): The number of nearest neighbors to retrieve.
 
         Returns:
         - list: A list of dictionaries containing search results, including item information.

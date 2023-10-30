@@ -3,6 +3,7 @@ import asyncio
 import numpy as np
 from config import settings
 from qdrant_client import QdrantClient, grpc
+from src.utils import async_time_profiling
 
 
 class QdrantSearch:
@@ -18,10 +19,9 @@ class QdrantSearch:
         Initializes a QdrantSearch instance and creates a Qdrant client.
         """
         # Create a client to interact with Qdrant
-        self.client_grpc = QdrantClient(
-            url=f"http://{settings.QDRANT_HOST}:6334", prefer_grpc=True
-        )
+        self.client_grpc = QdrantClient(url=settings.QDRANT_URL, prefer_grpc=True)
 
+    # @async_time_profiling
     async def search(self, query_vector, top_k=settings.TOP_K):
         """
         Performs a similarity search in Qdrant using a query vector.

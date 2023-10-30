@@ -1,4 +1,12 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+
+
+class ImageBase64Request(BaseModel):
+    image: str = Field(
+        ...,
+        title="Utf-8 string from a base64 encoded image",
+        example="base64encodedimage",
+    )
 
 
 class Product(BaseModel):
