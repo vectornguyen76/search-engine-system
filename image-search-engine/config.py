@@ -31,8 +31,9 @@ class Settings(BaseSettings):
 
     # Triton configuration
     TRITON_SERVER_URL: str = os.environ.get("TRITON_SERVER_URL", "localhost:9001")
-    TORCH_MODEL_NAME: str = "efficientnet_b3"
+    PYTORCH_MODEL_NAME: str = "efficientnet_b3"
     ONNX_MODEL_NAME: str = "efficientnet_b3_onnx"
+    TENSORRT_MODEL_NAME: str = "efficientnet_b3_trt"
     MODEL_INPUT_NAME: str = "input"
     MODEL_OUTPUT_NAME: str = "output"
 

@@ -94,7 +94,9 @@ async def search_image_qdrant_triton(file: UploadFile = File(...)):
     image_path = await save_image_file(file=file)
 
     # Extract features from the uploaded image using the feature extractor
-    feature = await feature_extractor.triton_extract_feature(image_path=image_path)
+    feature = await feature_extractor.triton_extract_feature(
+        image_path=image_path, model_name=settings.PYTORCH_MODEL_NAME
+    )
 
     # Perform a search using the extracted feature vector
     search_results = await qdrant_search.search(query_vector=feature, top_k=20)
@@ -107,7 +109,9 @@ async def search_image_qdrant_triton(file: UploadFile = File(...)):
 @app.post("/search-image-base64", response_model=list[Product])
 async def search_image_base64(data: ImageBase64Request):
     # Extract features from the uploaded image using the feature extractor
-    feature = await feature_extractor.triton_extract_base64(image=data.image)
+    feature = await feature_extractor.triton_extract_base64(
+        image=data.image, model_name=settings.PYTORCH_MODEL_NAME
+    )
 
     # Perform a search using the extracted feature vector
     search_results = await qdrant_search.search(query_vector=feature, top_k=20)
@@ -115,3 +119,15 @@ async def search_image_base64(data: ImageBase64Request):
     result = [Product.from_point(point) for point in search_results.result]
 
     return result
+
+
+@app.post("/search-image-test")
+async def test(file: UploadFile = File(...)):
+    image_path = await save_image_file(file=file)
+
+    # Extract features from the uploaded image using the feature extractor
+    await feature_extractor.triton_extract_feature(
+        image_path=image_path, model_name=settings.ONNX_MODEL_NAME
+    )
+
+    return "done"

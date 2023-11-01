@@ -28,7 +28,9 @@ def parse_args():
     # default='./sample.jpg')
 
     parser.add_argument(
-        "--output_path", help="onnx model path", default="./onnx_output.onnx"
+        "--output_path",
+        help="onnx model path",
+        default="./efficientnet_b3_onnx/1/model.onnx",
     )
 
     # ONNX params

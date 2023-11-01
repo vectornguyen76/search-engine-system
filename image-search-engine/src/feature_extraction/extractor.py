@@ -44,7 +44,6 @@ class FeatureExtractor:
 
         return model
 
-    # @time_profiling
     def preprocess_input(self, image_path):
         """
         Preprocesses the input image for inference.
@@ -68,8 +67,8 @@ class FeatureExtractor:
 
         return image
 
-    # @py_profiling
-    # @time_profiling
+    # @async_py_profiling
+    # @async_time_profiling
     def extract_feature(self, image_path):
         """
         Extracts features from the input image.
@@ -88,7 +87,21 @@ class FeatureExtractor:
 
         return feature
 
+    # @async_py_profiling
+    # @async_time_profiling
     async def triton_inference(self, image, model_name, inputs_name, outputs_name):
+        """
+        Perform Triton inference on an input image.
+
+        Args:
+        - image (torch.Tensor): Preprocessed image tensor.
+        - model_name (str): Name of the Triton model.
+        - inputs_name (str): Name of the input tensor.
+        - outputs_name (str): Name of the output tensor.
+
+        Returns:
+        - numpy.ndarray: Extracted features as a numpy array.
+        """
         inputs = [grpcclient.InferInput(inputs_name, image.shape, datatype="FP32")]
         outputs = [grpcclient.InferRequestedOutput(outputs_name)]
 
@@ -104,35 +117,39 @@ class FeatureExtractor:
 
     # @async_py_profiling
     # @async_time_profiling
-    async def triton_extract_feature_onnx(self, image_path):
+    async def triton_extract_feature(self, image_path, model_name):
+        """
+        Extracts features from the input image using Triton inference.
+
+        Args:
+        - image_path (str): The path to the input image.
+        - model_name (str): Name of the Triton model.
+
+        Returns:
+        - numpy.ndarray: Extracted features as a numpy array.
+        """
         image = self.preprocess_input(image_path)
 
         feature = await self.triton_inference(
             image=image,
-            model_name=settings.ONNX_MODEL_NAME,
+            model_name=model_name,
             inputs_name=settings.MODEL_INPUT_NAME,
             outputs_name=settings.MODEL_OUTPUT_NAME,
         )
 
         return feature
 
-    # @async_py_profiling
-    # @async_time_profiling
-    async def triton_extract_feature(self, image_path):
-        image = self.preprocess_input(image_path)
+    async def triton_extract_base64(self, image, model_name):
+        """
+        Extracts features from a base64-encoded image using Triton inference.
 
-        feature = await self.triton_inference(
-            image=image,
-            model_name=settings.TORCH_MODEL_NAME,
-            inputs_name=settings.MODEL_INPUT_NAME,
-            outputs_name=settings.MODEL_OUTPUT_NAME,
-        )
+        Args:
+        - image (str): Base64-encoded image data.
+        - model_name (str): Name of the Triton model.
 
-        return feature
-
-    # @async_py_profiling
-    # @async_time_profiling
-    async def triton_extract_base64(self, image):
+        Returns:
+        - numpy.ndarray: Extracted features as a numpy array.
+        """
         image = decode_img(image)
 
         # Initialize the inference transforms
@@ -143,7 +160,7 @@ class FeatureExtractor:
 
         feature = await self.triton_inference(
             image=image,
-            model_name=settings.TORCH_MODEL_NAME,
+            model_name=model_name,
             inputs_name=settings.MODEL_INPUT_NAME,
             outputs_name=settings.MODEL_OUTPUT_NAME,
         )
