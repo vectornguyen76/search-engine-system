@@ -1,6 +1,7 @@
 from src.elastic_search.ingest_data import ElasticSeachIngest
 from src.utils import LOGGER
 
+
 def main():
     """
     Main function to perform Elasticsearch data ingestion.

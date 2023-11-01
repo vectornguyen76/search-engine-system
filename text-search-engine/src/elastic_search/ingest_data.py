@@ -2,8 +2,9 @@ import pandas as pd
 from config import settings
 from elasticsearch import Elasticsearch
 from elasticsearch.helpers import bulk, streaming_bulk
-from tqdm import tqdm
 from src.utils import LOGGER
+from tqdm import tqdm
+
 
 class ElasticSeachIngest:
     """
@@ -145,10 +146,8 @@ class ElasticSeachIngest:
 
             actions = []
             for idx in range(start_idx, end_idx):
-                sale_rate = 1 - (
-                    self.data["sale_item_price"][idx]
-                    / self.data["fixed_item_price"][idx]
-                )
+                sale_item_price = self.data["sale_item_price"][idx]
+                fixed_item_price = self.data["fixed_item_price"][idx]
                 actions.append(
                     {
                         "_id": idx,
@@ -158,7 +157,7 @@ class ElasticSeachIngest:
                             "item_image": self.data["item_image"][idx],
                             "fixed_item_price": self.data["fixed_item_price"][idx],
                             "sale_item_price": self.data["sale_item_price"][idx],
-                            "sale_rate": sale_rate,
+                            "sale_rate": 1 - (sale_item_price / fixed_item_price),
                             "sales_number": self.data["sales_number"][idx],
                             "shop_path": self.data["shop_path"][idx],
                             "shop_name": self.data["shop_name"][idx],

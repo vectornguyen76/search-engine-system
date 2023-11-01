@@ -2,7 +2,6 @@ from src.qdrant_search.ingest_data import QdrantIngest
 from src.utils import LOGGER
 
 
-
 def main():
     """
     Main function to perform QdrantIngest data ingestion.
@@ -21,6 +20,7 @@ def main():
         LOGGER.info(response)
 
         qdrant_ingest.add_points()
+
 
 if __name__ == "__main__":
     main()

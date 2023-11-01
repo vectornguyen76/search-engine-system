@@ -1,10 +1,9 @@
 from config import settings
-from src.elastic_search.searcher import ElasticSearcher
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from src.elastic_search.searcher import ElasticSearcher
 from src.schemas import Product
 from src.utils import LOGGER
-
 
 # Create a FastAPI app instance with the specified title from settings
 app = FastAPI(title=settings.APP_NAME)
