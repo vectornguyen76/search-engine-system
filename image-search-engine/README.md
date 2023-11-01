@@ -481,9 +481,13 @@ This project implements an image search engine for Shopee using qdrant as the ve
    │   ├── 1
    │   │   └── model.pt
    │   └── config.pbtxt
-   └── efficientnet_b3_onnx
+   ├── efficientnet_b3_onnx
+   │  ├── 1
+   │  │   └── model.onnx
+   │  └── config.pbtxt
+   └── efficientnet_b3_trt
       ├── 1
-      │   └── model.onnx
+      │   └── model.plan
       └── config.pbtxt
    ```
 
@@ -521,7 +525,7 @@ This project implements an image search engine for Shopee using qdrant as the ve
    <em>Concurrent Model Execution</em>
    </p>
 
-4. **Report**
+4. **Pytorch Model Testing Report**
 
    - Test diffence configurations
    - Only triton inference step
@@ -556,10 +560,50 @@ This project implements an image search engine for Shopee using qdrant as the ve
    <p align="center">
    <img src="./assets/documents/triton-test-14.jpg" alt="32 Request Concurrency - GPU" />
    <br>
-   <em>32 Request Concurrency - Max Batch Size 32 - Dynamic Batching - 3:GPU</em>
+   <em>Pytorch model - 32 Request Concurrency - Max Batch Size 32 - Dynamic Batching - 3:GPU</em>
    </p>
 
-5. **References**
+5. **ONNX Model Testing Report**
+
+   - Test diffence configurations
+   - Only triton inference step
+   - ONNX model efficientnet_b3_onnx model.onnx
+   - FP32 convert (float32)
+   - Uvicorn workers = 1
+   - User spawn rate = 1
+
+   <br>
+   <p align="center">
+   <img src="./assets/documents/triton-test-onnx-1.jpg" alt="32 Request Concurrency - GPU" />
+   <br>
+   <em>ONNX model - 32 Request Concurrency - Max Batch Size 32 - Disabled Dynamic Batching - 2:GPU</em>
+   </p>
+
+6. **TensorRT Model Testing Report**
+
+   - Test diffence configurations
+   - Only triton inference step
+   - TensorRT model efficientnet_b3_trt model.plan
+   - FP16 convert (float16)
+   - Uvicorn workers = 1
+   - User spawn rate = 1
+
+   | Id  | Request Concurrency | Max Batch Size | Dynamic Batching | Instance Count | p95 Latency (ms) | RPS | Max GPU Memory Usage (MB) | Average GPU Utilization (%) |
+   | :-: | :-----------------: | :------------: | :--------------: | :------------: | :--------------: | :-: | :-----------------------: | :-------------------------: |
+   |  2  |          1          |       1        |     Disabled     |     1:GPU      |        8         | 127 |            531            |             35              |
+   |  1  |         16          |       16       |     Enabled      |     1:CPU      |       100        | 188 |            531            |             35              |
+   |  1  |         16          |       16       |     Enabled      |     2:CPU      |       100        | 186 |            893            |             30              |
+   |  2  |         32          |       32       |     Enabled      |     1:GPU      |       222        | 194 |            547            |             35              |
+   |  3  |         32          |       32       |     Enabled      |     2:GPU      |       222        | 193 |            922            |             55              |
+
+   <br>
+   <p align="center">
+   <img src="./assets/documents/triton-test-tensorrt-5.jpg" alt="32 Request Concurrency - GPU" />
+   <br>
+   <em>TensorRT model - 32 Request Concurrency - Max Batch Size 32 - Dynamic Batching - 2:GPU</em>
+   </p>
+
+7. **References**
 
 - [Triton Conceptual Guides](https://github.com/triton-inference-server/tutorials/tree/main/Conceptual_Guide)
 
