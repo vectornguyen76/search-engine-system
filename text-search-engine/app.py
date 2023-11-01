@@ -1,12 +1,9 @@
 from config import settings
-from elastic_search.searcher import ElasticSearcher
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from log_config import configure_logging
-from schemas import Product
-
-# Configure logging
-logger = configure_logging(__name__)
+from src.elastic_search.searcher import ElasticSearcher
+from src.schemas import Product
+from src.utils import LOGGER
 
 # Create a FastAPI app instance with the specified title from settings
 app = FastAPI(title=settings.APP_NAME)
@@ -49,12 +46,12 @@ async def full_text_search(query: str, size: int):
             Product.from_point(suggestion["_source"]) for suggestion in search_results
         ]
 
-        logger.info(f"Text search successful, query: {query}")
+        LOGGER.info(f"Text search successful, query: {query}")
 
         return result
 
     except Exception as e:
-        logger.error("Could not perform text search: %s", e)
+        LOGGER.error("Could not perform text search: %s", e)
         raise HTTPException(status_code=500, detail=e)
 
 
@@ -77,10 +74,10 @@ async def auto_complete_search(query: str, size: int):
             Product.from_point(suggestion["_source"]) for suggestion in search_results
         ]
 
-        logger.info(f"Auto-complete search successful, query: {query}")
+        LOGGER.info(f"Auto-complete search successful, query: {query}")
 
         return result
 
     except Exception as e:
-        logger.error("Could not perform auto-complete: %s", e)
+        LOGGER.error("Could not perform auto-complete: %s", e)
         raise HTTPException(status_code=500, detail=e)
