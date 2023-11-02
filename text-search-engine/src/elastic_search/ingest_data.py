@@ -171,7 +171,7 @@ class ElasticSeachIngest:
         LOGGER.info(f"Indexed {successes}/{self.number_of_docs} documents")
 
     def define_template_search(self):
-        source = """ double sale_rate_score = Math.floor(doc['sale_rate'].value * 10);
+        source = """double sale_rate_score = Math.floor(doc['sale_rate'].value * 10);
                     double sales_number_score = (doc['sales_number'].value > 1000) ? 0.2 : 0;
                     double sale_item_price_score = 1 / doc['sale_item_price'].value;
 
