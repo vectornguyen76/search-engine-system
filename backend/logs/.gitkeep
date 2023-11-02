@@ -1,28 +1,3 @@
-.env
-*.npz
-index.faiss
-test*
-# *.ipynb
-NOTE.md
-data-elastic-search
-qdrant-db
-architectures
-*.csv
-data.csv
-
-image-search-engine/assets/uploaded_images/*
-!image-search-engine/assets/uploaded_images/.gitkeep
-
-# Logs
-image-search-engine/logs/*
-
-# Model
-*.pth
-*.pt
-*.onnx
-*.engine
-*.plan
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

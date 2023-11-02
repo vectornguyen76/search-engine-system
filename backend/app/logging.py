@@ -43,5 +43,3 @@ def configure_logging(name):
         logging.Formatter(file_log_format, datefmt=settings.DATE_FMT)
     )
     logger.addHandler(file_handler)
-
-    return logger

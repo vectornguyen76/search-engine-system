@@ -41,7 +41,7 @@ class SearchImageUser(FastHttpUser):
     @task
     def search_image(self):
         image_file = open(self.image_path, "rb")
-        self.client.post("/search-image", files={"file": image_file})
+        self.client.post("/search-image-test", files={"file": image_file})
 
     # @task
     # def search_image_base64(self):
