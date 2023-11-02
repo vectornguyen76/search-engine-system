@@ -70,7 +70,7 @@ export default function Home() {
 
       try {
         const response = await fetch(
-          `${NEXT_PUBLIC_IMAGE_SEARCH}/search-image`,
+          `${NEXT_PUBLIC_IMAGE_SEARCH}/search-image-qdrant`,
           {
             method: "POST",
             body: formData,
