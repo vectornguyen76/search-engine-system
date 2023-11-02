@@ -49,15 +49,6 @@ services:
       elasticsearch:
         condition: service_healthy
 
-  frontend_service:
-    container_name: frontend_prod_container
-    image: vectornguyen76/frontend_prod_image
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    ports:
-      - 3000:3000
-
 volumes:
   data-elastic-search:
     driver: local

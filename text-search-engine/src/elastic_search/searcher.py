@@ -22,7 +22,21 @@ class ElasticSearcher:
         Returns:
             list: List of search results.
         """
-        search_query = {"size": top_k, "query": {"match": {"item_name": query}}}
+        search_query = {
+            "size": top_k,
+            "query": {
+                "multi_match": {
+                    "query": query,
+                    "fields": ["item_name", "shop_name"],
+                    "fuzziness": "AUTO",
+                }
+            },
+            "sort": [
+                {"sale_rate": {"order": "desc"}},
+                {"sales_number": {"order": "desc"}},
+            ],
+        }
+
         results = await self.elasticsearch.search(
             index=settings.INDEX_NAME, body=search_query
         )
