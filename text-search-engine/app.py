@@ -18,13 +18,13 @@ app.add_middleware(
 )
 
 # Initialize ElasticSearcher
-elastic_search = ElasticSearcher()
+searcher = ElasticSearcher()
 
 
 @app.get("/")
-def healthcheck() -> bool:
+async def healthcheck() -> bool:
     """Check the server's status."""
-    return True
+    return await searcher.elasticsearch.cluster.health()
 
 
 @app.get("/full-text-search", response_model=list[Product])
@@ -40,7 +40,7 @@ async def full_text_search(query: str, size: int):
         list: A list of search results as Product objects.
     """
     try:
-        search_results = await elastic_search.text_search(query=query, top_k=size)
+        search_results = await searcher.text_search(query=query, top_k=size)
 
         result = [
             Product.from_point(suggestion["_source"]) for suggestion in search_results
@@ -68,7 +68,7 @@ async def auto_complete_search(query: str, size: int):
         list: A list of auto-complete suggestions as Product objects.
     """
     try:
-        search_results = await elastic_search.auto_complete(query=query, top_k=size)
+        search_results = await searcher.auto_complete(query=query, top_k=size)
 
         result = [
             Product.from_point(suggestion["_source"]) for suggestion in search_results

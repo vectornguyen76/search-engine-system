@@ -170,6 +170,83 @@ class ElasticSeachIngest:
 
         LOGGER.info(f"Indexed {successes}/{self.number_of_docs} documents")
 
+    def define_template_search(self):
+        source = """ double sale_rate_score = Math.floor(doc['sale_rate'].value * 10);
+                    double sales_number_score = (doc['sales_number'].value > 1000) ? 0.2 : 0;
+                    double sale_item_price_score = 1 / doc['sale_item_price'].value;
+
+                    return sale_rate_score * sales_number_score * sale_item_price_score;
+                """
+
+        # Define the script source
+        script_source = {
+            "script": {
+                "lang": "mustache",
+                "source": {
+                    "size": "{{query_size}}",
+                    "query": {
+                        "function_score": {
+                            "query": {
+                                "bool": {
+                                    "must": [
+                                        {
+                                            "bool": {
+                                                "should": [
+                                                    {
+                                                        "multi_match": {
+                                                            "query": "{{query_string}}",
+                                                            "fields": [
+                                                                "item_name",
+                                                                "shop_name",
+                                                            ],
+                                                        }
+                                                    },
+                                                    {
+                                                        "multi_match": {
+                                                            "query": "{{query_string}}",
+                                                            "fields": [
+                                                                "item_name",
+                                                                "shop_name",
+                                                            ],
+                                                            "fuzziness": "AUTO",
+                                                        }
+                                                    },
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                }
+                            },
+                            "functions": [
+                                {
+                                    "filter": {
+                                        "range": {"sales_number": {"gte": 1000}}
+                                    },
+                                    "weight": 0.2,
+                                },
+                                {
+                                    "script_score": {
+                                        "script": {
+                                            "source": source,
+                                            "lang": "painless",
+                                        }
+                                    }
+                                },
+                            ],
+                            "score_mode": "max",
+                            "boost_mode": "multiply",
+                        }
+                    },
+                },
+                "params": {"query_size": 10, "query_string": "My query string"},
+            }
+        }
+
+        # Create the script template
+        self.elastic_search.put_script(id="fuzzy-search", body=script_source)
+
+        LOGGER.info("Add search template successfully!")
+
     def check_index_exists(self):
         """Check index name exists"""
         return self.elastic_search.indices.exists(index=self.index_name)

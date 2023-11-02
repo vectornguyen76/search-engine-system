@@ -45,6 +45,8 @@ services:
       - 8000:8000
     environment:
       ELASTICSEARCH_HOST: http://elasticsearch:9200
+    volumes:
+      - ./text-search-engine/logs:/app/logs
     depends_on:
       elasticsearch:
         condition: service_healthy

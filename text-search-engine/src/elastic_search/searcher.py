@@ -23,21 +23,11 @@ class ElasticSearcher:
             list: List of search results.
         """
         search_query = {
-            "size": top_k,
-            "query": {
-                "multi_match": {
-                    "query": query,
-                    "fields": ["item_name", "shop_name"],
-                    "fuzziness": "AUTO",
-                }
-            },
-            "sort": [
-                {"sale_rate": {"order": "desc"}},
-                {"sales_number": {"order": "desc"}},
-            ],
+            "id": "fuzzy-search",
+            "params": {"query_size": top_k, "query_string": query},
         }
 
-        results = await self.elasticsearch.search(
+        results = await self.elasticsearch.search_template(
             index=settings.INDEX_NAME, body=search_query
         )
         return results["hits"]["hits"]

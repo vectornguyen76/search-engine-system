@@ -13,6 +13,7 @@ def main():
         LOGGER.info("Create Index in Elastic Search!")
         es_ingest.create_index()
         es_ingest.indexing_batch_document()
+        es_ingest.define_template_search()
 
 
 if __name__ == "__main__":
