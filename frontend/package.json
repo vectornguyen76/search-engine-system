@@ -3,11 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "env-cmd -f .env.dev next dev",
-    "build": "env-cmd -f .env.prod next build",
-    "build:dev": "env-cmd -f .env.dev next build",
-    "start": "env-cmd -f .env.prod next start",
-    "start:dev": "env-cmd -f .env.dev next start",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
@@ -15,8 +13,8 @@
     "@types/react": "18.2.20",
     "@types/react-dom": "18.2.7",
     "axios": "^1.4.0",
-    "env-cmd": "^10.1.0",
-    "next": "13.4.19",
+    "next": "14.0.1",
+    "next-auth": "^4.24.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-icons": "^4.10.1",
@@ -24,7 +22,7 @@
   },
   "devDependencies": {
     "autoprefixer": "10.4.15",
-    "postcss": "8.4.28",
+    "postcss": "^8.4.31",
     "tailwindcss": "3.3.3"
   }
 }

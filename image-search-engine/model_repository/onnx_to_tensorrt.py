@@ -32,12 +32,15 @@ def parse_args():
 
     # Model path
     parser.add_argument(
-        "--onnx_model_path", help="onnx model path", default="./onnx_output.onnx"
+        "--onnx_model_path",
+        help="onnx model path",
+        default="./efficientnet_b3_onnx/1/model.onnx",
     )
     parser.add_argument(
         "--tensorrt_engine_path",
         help="tensorrt engine path",
-        default="./tensorrt_engine.engine",
+        # default="./tensorrt_engine.engine",
+        default="./efficientnet_b3_trt/1/model.plan",
     )
 
     # TensorRT engine params
@@ -66,7 +69,7 @@ def parse_args():
         "--max_engine_batch_size",
         type=int,
         help="set the max input data size of model for inference",
-        default=8,
+        default=32,
     )
     parser.add_argument(
         "--engine_workspace", type=int, help="workspace of engine", default=1024
