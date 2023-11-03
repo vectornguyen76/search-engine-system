@@ -28,7 +28,7 @@ This repository provides a guide and code for converting PyTorch models to ONNX 
    1. **Create Environment and Install Packages**
 
       ```shell
-      conda create -n convert-model python=3.10
+      conda create -n convert-model python=3.9
       ```
 
       ```shell

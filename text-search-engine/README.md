@@ -42,8 +42,6 @@ Three types of suggesters:
   - Costly to build
   - Stored in memory
 
-uvicorn app:app
-
 ## Search as You Type (ngram/token-based approach):
 
 **Use Case**: Search as you type is typically employed when providing real-time, partial matching autocomplete suggestions as users interact with a search box. It's commonly utilized for auto-suggest functionality in search applications.
@@ -87,6 +85,27 @@ uvicorn app:app
 - Top sale number
 - Sale rate
 - Low fixed price
+
+## Development Environment
+
+1. **Create Environment and Install Packages**
+
+   ```shell
+   conda create -n text-search python=3.9
+   ```
+
+   ```shell
+   conda activate text-search
+   ```
+
+   ```shell
+   pip install -r requirements.txt
+   ```
+
+2. **Run the Application**
+   ```
+   uvicorn app:app --port 7000
+   ```
 
 ### Refrence
 
