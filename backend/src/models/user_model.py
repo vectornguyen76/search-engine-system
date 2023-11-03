@@ -1,8 +1,8 @@
 import uuid
 
-from app.db import Base
 from passlib.context import CryptContext
 from sqlalchemy import Column, String
+from src.db import Base
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 

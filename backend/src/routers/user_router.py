@@ -1,13 +1,9 @@
-import logging
-
-from app.db import SessionLocal
-from app.models import UserModel
-from app.schemas.user_schema import CreateUserSchema, ResponeUserSchema
-from fastapi import APIRouter, Depends, FastAPI, Request
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-
-# Create logger for this module
-logger = logging.getLogger(__name__)
+from src.db import SessionLocal
+from src.models import UserModel
+from src.schemas.user_schema import CreateUserSchema, ResponeUserSchema
+from src.utils import LOGGER
 
 router = APIRouter(
     prefix="", tags=["user"], responses={404: {"description": "Not found"}}
@@ -24,7 +20,7 @@ def get_db():
 
 @router.get("/hello")
 async def get_hello():
-    logger.info("hello")
+    LOGGER.info("hello")
     return "Hello"
 
 
@@ -43,9 +39,9 @@ async def add_user(data_user: CreateUserSchema, db: Session = Depends(get_db)):
         db.commit()
         db.refresh(new_user)
 
-        logger.info(f"Register Successfully! Username: {data_user.username}")
+        LOGGER.info(f"Register Successfully! Username: {data_user.username}")
     except Exception as ex:
-        logger.error(f"Register Failed! Error: {ex}")
+        LOGGER.error(f"Register Failed! Error: {ex}")
 
     return new_user
 
