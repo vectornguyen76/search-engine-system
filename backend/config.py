@@ -1,8 +1,13 @@
 import os
 
+from dotenv import load_dotenv
+from pydantic import PostgresDsn
 from pydantic_settings import BaseSettings
 
 basedir = os.path.abspath(os.path.dirname(__file__))
+
+# Load environment variables from the .env file
+load_dotenv()
 
 
 class Settings(BaseSettings):
@@ -15,7 +20,7 @@ class Settings(BaseSettings):
     LOG_DIR: str = f"{basedir}/logs/api.log"
 
     # Database config
-    SQLALCHEMY_DATABASE_URL: str = "sqlite:///./database/develop.db"
+    DATABASE_URL: PostgresDsn
 
 
 settings = Settings()

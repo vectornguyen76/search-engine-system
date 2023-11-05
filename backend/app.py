@@ -1,10 +1,13 @@
 from config import settings
 from fastapi import FastAPI
-from src.db import Base, engine
-from src.routers import user_router
+from src.auth.router import router as auth_router
 
 app = FastAPI(title=settings.APP_NAME)
 
-Base.metadata.create_all(bind=engine)
 
-app.include_router(user_router.router)
+@app.get("/healthcheck", include_in_schema=False)
+async def healthcheck() -> dict[str, str]:
+    return {"status": "ok"}
+
+
+app.include_router(auth_router, prefix="/auth", tags=["Auth"])
