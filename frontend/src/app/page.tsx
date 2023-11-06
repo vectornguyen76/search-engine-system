@@ -194,10 +194,15 @@ export default function Home() {
                   target="_blank"
                 >
                   {/* Image item */}
-                  <img
+                  <Image
+                    alt="product image"
+                    width={320}
+                    height={320}
+                    quality={100}
+                    sizes="100vw"
                     className="object-cover"
                     src={result.item_image}
-                    alt="product image"
+                    loading="lazy"
                   />
 
                   {/* Sale rate */}
