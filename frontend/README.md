@@ -46,3 +46,10 @@
 
    npm start
    ```
+
+6. Create .env from .env.example
+   - Get Client ID and Client secret Google
+   - Generate Secret key:
+     ```
+     openssl rand -base64 32
+     ```
