@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     # App config
     APP_NAME: str = "FastAPI Rest API Template"
     APP_ENV: str = "develop"
+    APP_VERSION: str = "1"
 
     # Logging setting
     DATE_FMT: str = "%Y-%m-%d %H:%M:%S"
@@ -21,6 +22,14 @@ class Settings(BaseSettings):
 
     # Database config
     DATABASE_URL: PostgresDsn
+
+    SITE_DOMAIN: str = "myapp.com"
+
+    CORS_ORIGINS: list[str]
+    CORS_ORIGINS_REGEX: str | None = None
+    CORS_HEADERS: list[str]
+
+    ADMIN_EMAIL: str = "vectornguyen76@gmail.com"
 
 
 settings = Settings()

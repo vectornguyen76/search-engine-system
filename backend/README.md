@@ -5,7 +5,7 @@
 First, create a virtual environment and install the required packages:
 
 ```shell
-conda create -n backend python=3.9
+conda create -n backend python=3.10
 conda activate backend
 pip install -r requirements.txt
 ```
@@ -15,7 +15,7 @@ pip install -r requirements.txt
 Install PostgreSQL:
 
 ```shell
-sudo apt-get install postgresql-13
+sudo apt-get install postgresql-14
 ```
 
 Access the PostgreSQL command line:
@@ -85,7 +85,7 @@ To manage database migrations, we use Alembic. Here's how to set it up:
    Modify the `alembic.ini` configuration file to specify your database connection URL. Then, create an initial migration:
 
    ```shell
-   alembic revision -m "initial2" --autogenerate
+   alembic revision -m "initial" --autogenerate
    ```
 
 3. Apply the initial migration to the database:
@@ -95,3 +95,16 @@ To manage database migrations, we use Alembic. Here's how to set it up:
    ```shell
    alembic upgrade head
    ```
+
+4. Create .env from .env.example
+   - Generate Secret key:
+     ```
+     openssl rand -hex 32
+     ```
+
+## Refrence
+
+- https://github.com/zhanymkanov/fastapi_production_template
+- https://github.com/zhanymkanov/fastapi-best-practices
+- https://github.com/nf1s/fastapi_sqlalchemy_async_orm
+- https://ahmed-nafies.medium.com/tutorial-fastapi-with-sqlalchemy-async-orm-and-alembic-2fa68102f82d

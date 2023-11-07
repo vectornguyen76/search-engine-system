@@ -31,7 +31,8 @@ auth_user = Table(
     metadata,
     Column("id", Integer, Identity(), primary_key=True),
     Column("email", String, nullable=False),
-    Column("password", LargeBinary, nullable=False),
+    Column("username", String, nullable=True),
+    Column("image", String, nullable=True),
     Column("is_admin", Boolean, server_default="false", nullable=False),
     Column("created_at", DateTime, server_default=func.now(), nullable=False),
     Column("updated_at", DateTime, onupdate=func.now()),
@@ -54,7 +55,6 @@ search_history = Table(
     Column("uuid", UUID, primary_key=True),
     Column("user_id", ForeignKey("auth_user.id", ondelete="CASCADE"), nullable=False),
     Column("search_query", String, nullable=False),
-    Column("expires_at", DateTime, nullable=False),
     Column("time", DateTime, server_default=func.now(), nullable=False),
 )
 
