@@ -1,16 +1,23 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
-set -e
+echo "Start run entrypoint script..."
 
-DEFAULT_MODULE_NAME=app
+echo "Waiting for postgres..."
 
-MODULE_NAME=${MODULE_NAME:-$DEFAULT_MODULE_NAME}
-VARIABLE_NAME=${VARIABLE_NAME:-app}
-export APP_MODULE=${APP_MODULE:-"$MODULE_NAME:$VARIABLE_NAME"}
+while ! psql -h $POSTGRES_HOST -U $POSTGRES_USER -d $POSTGRES_DB
+do
+    echo "Waiting for PostgreSQL..."
+    sleep 0.5
+done
+
+echo "PostgreSQL started"
+
+echo "Migrate database"
+alembic revision -m "initial" --autogenerate
+alembic upgrade head
 
 HOST=${HOST:-0.0.0.0}
 PORT=${PORT:-5000}
 
-
 # Start Uvicorn
-uvicorn --proxy-headers $APP_MODULE --host $HOST --port $PORT
+uvicorn --proxy-headers app:app --host $HOST --port $PORT

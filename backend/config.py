@@ -6,8 +6,11 @@ from pydantic_settings import BaseSettings
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-# Load environment variables from the .env file
-load_dotenv()
+ENVIRONMENT = os.getenv(key="ENVIRONMENT", default="DEVELOP")
+
+if ENVIRONMENT == "DEVELOP":
+    # Load environment variables from the .env file
+    load_dotenv()
 
 
 class Settings(BaseSettings):
@@ -30,6 +33,9 @@ class Settings(BaseSettings):
     CORS_HEADERS: list[str]
 
     ADMIN_EMAIL: str = "vectornguyen76@gmail.com"
+
+    TEXT_SEARCH_URL: str = os.getenv(key="TEXT_SEARCH_URL")
+    IMAGE_SEARCH_URL: str = os.getenv(key="IMAGE_SEARCH_URL")
 
 
 settings = Settings()
