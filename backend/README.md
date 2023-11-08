@@ -118,7 +118,7 @@
 4. **Run the Application**
 
    ```shell
-   uvicorn app:app --port 5000
+   uvicorn --reload app:app --port 5000
    ```
 
 ### Local - Docker

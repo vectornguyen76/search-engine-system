@@ -1,0 +1,36 @@
+from typing import Any
+
+import httpx
+from config import settings
+from fastapi import File, UploadFile
+
+
+async def image_search(
+    user_id: int, file: UploadFile = File(...)
+) -> dict[str, Any] | None:
+    async with httpx.AsyncClient() as client:
+        try:
+            # Read the file content and prepare it for upload
+            file_content = file.file.read()
+
+            # Upload the image to the /search-image-faiss endpoint
+            files = {"file": ("image.jpg", file_content, "image/jpeg")}
+
+            # Upload the image to the /search-image-faiss endpoint
+            response = await client.post(
+                f"{settings.IMAGE_SEARCH_URL}/search-image-faiss", files=files
+            )
+
+            if response.status_code == 200:
+                # Successful response, parse the results
+                search_results = response.json()
+                print("Search results:", search_results)
+
+                return search_results
+            else:
+                print(
+                    f"Failed to call the API. Status code: {response.status_code} - {response.text}"
+                )
+
+        except Exception as e:
+            print(f"An error occurred: {str(e)}")

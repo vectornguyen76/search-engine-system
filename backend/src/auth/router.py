@@ -2,25 +2,18 @@ from typing import Any
 
 from fastapi import APIRouter, BackgroundTasks, Depends, Response, status
 from src.auth import jwt, service, utils
-from src.auth.dependencies import (
-    valid_refresh_token,
-    valid_refresh_token_user,
-    valid_user_create,
-)
+from src.auth.dependencies import valid_refresh_token, valid_refresh_token_user
 from src.auth.jwt import parse_jwt_user_data
 from src.auth.schemas import AccessTokenResponse, AuthUser, JWTData, UserResponse
 
 router = APIRouter()
 
 
-@router.post("/users", status_code=status.HTTP_201_CREATED, response_model=UserResponse)
-async def register_user(
-    auth_data: AuthUser = Depends(valid_user_create),
-) -> dict[str, str]:
-    user = await service.create_user(auth_data)
-    return {
-        "email": user["email"],
-    }
+@router.get("/users", response_model=list[UserResponse])
+async def get_all_user(jwt_data: JWTData = Depends(parse_jwt_user_data)):
+    users = await service.get_all_user()
+
+    return users
 
 
 @router.get("/users/me", response_model=UserResponse)

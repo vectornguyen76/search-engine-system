@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pydantic import EmailStr, Field
 from src.models import CustomModel
 
@@ -6,6 +8,7 @@ class AuthUser(CustomModel):
     email: EmailStr
     username: str
     image: str
+    token: str
 
 
 class JWTData(CustomModel):
@@ -19,4 +22,9 @@ class AccessTokenResponse(CustomModel):
 
 
 class UserResponse(CustomModel):
+    id: int
     email: EmailStr
+    username: str | None
+    image: str | None
+    is_admin: bool
+    created_at: datetime | None

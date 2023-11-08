@@ -1,8 +1,8 @@
 """initial
 
-Revision ID: 7791549722c6
+Revision ID: beac8e91010a
 Revises:
-Create Date: 2023-11-05 10:24:44.205282
+Create Date: 2023-11-08 04:24:13.828660
 
 """
 from typing import Sequence, Union
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision: str = "7791549722c6"
+revision: str = "beac8e91010a"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -23,7 +23,8 @@ def upgrade() -> None:
         "auth_user",
         sa.Column("id", sa.Integer(), sa.Identity(always=False), nullable=False),
         sa.Column("email", sa.String(), nullable=False),
-        sa.Column("password", sa.LargeBinary(), nullable=False),
+        sa.Column("username", sa.String(), nullable=True),
+        sa.Column("image", sa.String(), nullable=True),
         sa.Column("is_admin", sa.Boolean(), server_default="false", nullable=False),
         sa.Column(
             "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=False
@@ -49,7 +50,6 @@ def upgrade() -> None:
         sa.Column("uuid", sa.UUID(), nullable=False),
         sa.Column("user_id", sa.Integer(), nullable=False),
         sa.Column("search_query", sa.String(), nullable=False),
-        sa.Column("expires_at", sa.DateTime(), nullable=False),
         sa.Column(
             "time", sa.DateTime(), server_default=sa.text("now()"), nullable=False
         ),

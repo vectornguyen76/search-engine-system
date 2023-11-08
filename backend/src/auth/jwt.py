@@ -50,6 +50,16 @@ async def parse_jwt_user_data(
     return token
 
 
+async def parse_jwt_demo(
+    token: JWTData | None = Depends(parse_jwt_user_data_optional),
+) -> JWTData:
+    if not token:
+        payload = {"user_id": 1, "is_admin": True}
+        token = JWTData(**payload)
+
+    return token
+
+
 async def parse_jwt_admin_data(
     token: JWTData = Depends(parse_jwt_user_data),
 ) -> JWTData:
