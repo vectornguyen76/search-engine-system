@@ -6,6 +6,7 @@ import httpx
 from config import settings
 from src.database import execute, search_history
 from src.text_search.schemas import SearchData
+from src.utils import LOGGER
 
 
 async def text_search(user_id: int, search_data: SearchData) -> dict[str, Any] | None:
@@ -33,8 +34,8 @@ async def text_search(user_id: int, search_data: SearchData) -> dict[str, Any] |
 
                 return search_results
             else:
-                print(
+                LOGGER.error(
                     f"Failed to call the API. Status code: {response.status_code} - {response.text}"
                 )
         except Exception as e:
-            print(f"An error occurred: {str(e)}")
+            LOGGER.error(f"An error occurred: {str(e)}")

@@ -3,6 +3,7 @@ from typing import Any
 import httpx
 from config import settings
 from fastapi import File, UploadFile
+from src.utils import LOGGER
 
 
 async def image_search(
@@ -24,13 +25,12 @@ async def image_search(
             if response.status_code == 200:
                 # Successful response, parse the results
                 search_results = response.json()
-                print("Search results:", search_results)
 
                 return search_results
             else:
-                print(
+                LOGGER.error(
                     f"Failed to call the API. Status code: {response.status_code} - {response.text}"
                 )
 
         except Exception as e:
-            print(f"An error occurred: {str(e)}")
+            LOGGER.error(f"An error occurred: {str(e)}")

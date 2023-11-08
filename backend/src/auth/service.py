@@ -6,9 +6,9 @@ from pydantic import UUID4
 from sqlalchemy import insert, select
 from src.auth import utils
 from src.auth.config import auth_config
-from src.auth.exceptions import InvalidCredentials
 from src.auth.schemas import AuthUser
 from src.database import auth_user, execute, fetch_all, fetch_one, refresh_tokens
+from src.utils import LOGGER
 
 
 async def init_user(email):
@@ -19,11 +19,11 @@ async def init_user(email):
     user = await get_user_by_email(email=email)
 
     if user:
-        print("Admin user is exists!")
+        LOGGER.info("Admin user is exists!")
     else:
-        print("Create Admin user...")
+        LOGGER.info("Create Admin user...")
         await execute(insert_query)
-        print("Create successfully!")
+        LOGGER.info("Create successfully!")
 
 
 async def create_user(user: AuthUser) -> dict[str, Any] | None:
@@ -104,9 +104,9 @@ async def authenticate_user(auth_data: AuthUser) -> dict[str, Any]:
     user = await get_user_by_email(auth_data.email)
     if not user:
         # Create new user
-        print("Create new user")
+        LOGGER.info("Create new user")
         user = await create_user(user=auth_data)
     else:
-        print("User is exists!")
+        LOGGER.info("User is exists!")
 
     return user
