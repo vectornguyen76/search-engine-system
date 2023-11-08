@@ -21,7 +21,7 @@ services:
       timeout: 1s
       retries: 10
     volumes:
-      - data-elastic-search:/usr/share/elasticsearch/data
+      - elastic_search_data:/usr/share/elasticsearch/data
 
   kibana:
     image: docker.elastic.co/kibana/kibana:7.10.0
@@ -51,6 +51,49 @@ services:
       elasticsearch:
         condition: service_healthy
 
+  image-search-engine:
+    container_name: image-search-container
+    image: vectornguyen76/image-search-engine
+    build:
+      context: ./image-search-engine
+      dockerfile: Dockerfile
+    environment:
+      - QDRANT_URL=http://qdrant-db:6334
+      - TRITON_SERVER_URL=triton-server:8001
+    ports:
+      - 7000:7000
+    volumes:
+      - ./image-search-engine/logs:/app/logs
+
+  backend_service:
+    container_name: backend_container
+    image: backend_image
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    env_file:
+      - ./backend/.env.local
+    ports:
+      - 5000:5000
+    volumes:
+      - ./backend/logs/api.log:/app/logs/api.log
+
+  db_service:
+    container_name: db_container
+    image: postgres:14.1
+    env_file:
+      - ./backend/.env.local
+    ports:
+      - 65432:5432
+    volumes:
+      - postgresql_data:/var/lib/postgresql/data/
+      - postgresql_data_backups:/backups
+      - ./backend/scripts/postgres:/scripts
+
 volumes:
-  data-elastic-search:
+  elastic_search_data:
+    driver: local
+  postgresql_data:
+    driver: local
+  postgresql_data_backups:
     driver: local

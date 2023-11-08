@@ -7,7 +7,7 @@ from src.image_search.schemas import SearchResponse
 router = APIRouter()
 
 
-@router.get("/search", response_model=list[SearchResponse])
+@router.post("/search", response_model=list[SearchResponse])
 async def search(
     file: UploadFile = File(...), jwt_data: JWTData = Depends(parse_jwt_demo)
 ):
