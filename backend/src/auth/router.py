@@ -1,6 +1,6 @@
 from typing import Any
 
-from fastapi import APIRouter, BackgroundTasks, Depends, Response, status
+from fastapi import APIRouter, BackgroundTasks, Depends, Response
 from src.auth import jwt, service, utils
 from src.auth.dependencies import valid_refresh_token, valid_refresh_token_user
 from src.auth.jwt import parse_jwt_user_data

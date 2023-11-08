@@ -10,7 +10,6 @@ from sqlalchemy import (
     Identity,
     Insert,
     Integer,
-    LargeBinary,
     MetaData,
     Select,
     String,
