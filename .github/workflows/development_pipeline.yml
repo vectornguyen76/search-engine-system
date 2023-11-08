@@ -33,7 +33,7 @@ jobs:
         run: pip install -r ./image-search-engine/requirements.txt
 
       - name: Run isort
-        run: isort --check-only ./image-search-engine/.
+        run: isort --check-only --profile=black ./image-search-engine/.
 
       - name: Run black
         run: black --check ./image-search-engine/.
