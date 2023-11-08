@@ -22,12 +22,11 @@ export default function Home() {
   const [loading, setLoading] = useState<boolean>(false);
   const [showUpload, setShowUpload] = useState<boolean>(false);
 
-  const NEXT_PUBLIC_IMAGE_SEARCH = process.env.NEXT_PUBLIC_IMAGE_SEARCH!;
-  const NEXT_PUBLIC_TEXT_SEARCH = process.env.NEXT_PUBLIC_TEXT_SEARCH!;
+  const NEXT_PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL!;
 
   useEffect(() => {
     // This effect runs when the component mounts
-    const apiUrl = `${NEXT_PUBLIC_TEXT_SEARCH}/full-text-search?query=Áo&size=20`; // You can set your initial API URL here
+    const apiUrl = `${NEXT_PUBLIC_API_URL}/text_search/search?query=Áo&size=20`; // You can set your initial API URL here
     fetch(apiUrl, { method: "GET" })
       .then((response) => response.json())
       .then((data) => {
@@ -40,7 +39,7 @@ export default function Home() {
 
   const handleClickSearch = async () => {
     setLoading(true);
-    const apiUrl = `${NEXT_PUBLIC_TEXT_SEARCH}/full-text-search?query=${searchValue}&size=20`;
+    const apiUrl = `${NEXT_PUBLIC_API_URL}/text_search/search?query=${searchValue}&size=20`;
     fetch(apiUrl, { method: "GET" })
       .then((response) => response.json())
       .then((data) => {
@@ -70,7 +69,7 @@ export default function Home() {
 
       try {
         const response = await fetch(
-          `${NEXT_PUBLIC_IMAGE_SEARCH}/search-image-qdrant`,
+          `${NEXT_PUBLIC_API_URL}/image_search/search`,
           {
             method: "POST",
             body: formData,
