@@ -5,9 +5,9 @@ import pytz
 from config import settings
 
 
-def configure_logging(name):
+def initial_logger():
     # Create a logger instance
-    logger = logging.getLogger(name)
+    logger = logging.getLogger("app")
 
     # Set the logging level
     logger.setLevel(logging.DEBUG)
@@ -43,3 +43,8 @@ def configure_logging(name):
         logging.Formatter(file_log_format, datefmt=settings.DATE_FMT)
     )
     logger.addHandler(file_handler)
+
+    return logger
+
+
+LOGGER = initial_logger()

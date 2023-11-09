@@ -94,7 +94,7 @@ celerybeat.pid
 *.sage.py
 
 # Environment variable
-# .env
+.env
 # .env*
 
 # Environments
