@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useState, useEffect } from "react";
-import { AiFillCamera } from "react-icons/ai";
+import useAxios from "@/app/libs/useAxios";
 
 interface DataSearchType {
   item_name: string;
@@ -22,35 +22,50 @@ export default function Home() {
   const [loading, setLoading] = useState<boolean>(false);
   const [showUpload, setShowUpload] = useState<boolean>(false);
 
-  const NEXT_PUBLIC_IMAGE_SEARCH = process.env.NEXT_PUBLIC_IMAGE_SEARCH!;
-  const NEXT_PUBLIC_TEXT_SEARCH = process.env.NEXT_PUBLIC_TEXT_SEARCH!;
+  const NEXT_PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL!;
 
   useEffect(() => {
     // This effect runs when the component mounts
-    const apiUrl = `${NEXT_PUBLIC_TEXT_SEARCH}/full-text-search?query=Áo&size=20`; // You can set your initial API URL here
-    fetch(apiUrl, { method: "GET" })
-      .then((response) => response.json())
-      .then((data) => {
-        setDataSearch(data);
-      })
-      .catch((error) => {
+    const fetchData = async () => {
+      try {
+        const { data } = await useAxios.get(
+          "/text_search/search?query=Áo&size=20"
+        );
+        // Handle the response data here
+        console.log(data); // Log the data for debugging
+        setDataSearch(data); // Set the dataSearch state with the fetched data
+      } catch (error) {
+        // Handle any errors that occur during the request
         console.error("Error fetching data:", error);
-      });
-  }, []); // The empty dependency array ensures that this effect runs only once when the component mounts
+      }
+    };
+
+    fetchData(); // Call the async function to start fetching data
+  }, []);
 
   const handleClickSearch = async () => {
     setLoading(true);
-    const apiUrl = `${NEXT_PUBLIC_TEXT_SEARCH}/full-text-search?query=${searchValue}&size=20`;
-    fetch(apiUrl, { method: "GET" })
-      .then((response) => response.json())
-      .then((data) => {
+    const apiUrl = `${NEXT_PUBLIC_API_URL}/text_search/search?query=${searchValue}&size=20`;
+
+    try {
+      const response = await useAxios.get(apiUrl);
+
+      if (response.status === 200) {
+        const data = response.data;
+        // Handle the API response here
+        console.log("API Response:", data);
         setDataSearch(data);
         setLoading(false);
-      })
-      .catch((error) => {
-        setLoading(true);
-        console.error("Error fetching data:", error);
-      });
+      } else {
+        // Handle non-successful response (e.g., status code is not 200)
+        console.error("API Error:", response.statusText);
+        setLoading(false);
+      }
+    } catch (error) {
+      // Handle network or other errors
+      console.error("Error:", error);
+      setLoading(false);
+    }
   };
 
   const handleClickUpload = async () => {
@@ -69,16 +84,13 @@ export default function Home() {
       formData.append("file", selectedFile);
 
       try {
-        const response = await fetch(
-          `${NEXT_PUBLIC_IMAGE_SEARCH}/search-image-qdrant`,
-          {
-            method: "POST",
-            body: formData,
-          }
+        const response = await useAxios.post(
+          `${NEXT_PUBLIC_API_URL}/image_search/search`,
+          formData
         );
 
-        if (response.ok) {
-          const data = await response.json();
+        if (response.status === 200) {
+          const data = response.data;
           // Handle the API response here
           console.log("API Response:", data);
           setDataSearch(data);
@@ -194,10 +206,15 @@ export default function Home() {
                   target="_blank"
                 >
                   {/* Image item */}
-                  <img
+                  <Image
+                    alt="product image"
+                    width={320}
+                    height={320}
+                    quality={100}
+                    sizes="100vw"
                     className="object-cover"
                     src={result.item_image}
-                    alt="product image"
+                    loading="lazy"
                   />
 
                   {/* Sale rate */}

@@ -344,7 +344,7 @@ This project implements an image search engine for Shopee using qdrant as the ve
 1. **Create Environment and Install Packages**
 
    ```shell
-   conda create -n image-search python=3.10
+   conda create -n image-search python=3.9
    ```
 
    ```shell
@@ -357,7 +357,7 @@ This project implements an image search engine for Shopee using qdrant as the ve
 
 2. **Run the Application**
    ```
-   uvicorn app:app
+   uvicorn app:app --port 7000
    ```
 
 ## Testing and Results

@@ -4,8 +4,8 @@ index.faiss
 test*
 # *.ipynb
 NOTE.md
-data-elastic-search
-qdrant-db
+elastic_search_data
+qdrant_db_data
 architectures
 *.csv
 data.csv
