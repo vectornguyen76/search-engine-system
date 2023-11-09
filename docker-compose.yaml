@@ -2,7 +2,7 @@ version: "3"
 services:
   # triton_server:
   #   container_name: triton_server
-  #   image: nvcr.io/nvidia/tritonserver:23.09-py3
+  #   image: nvcr.io/nvidia/tritonserver:23.01-py3
   #   ports:
   #     - 9000:8000
   #     - 9001:8001

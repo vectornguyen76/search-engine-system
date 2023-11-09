@@ -119,3 +119,15 @@ async def search_image_base64(data: ImageBase64Request):
     result = [Product.from_point(point) for point in search_results.result]
 
     return result
+
+
+@app.post("/search-image-test")
+async def test(file: UploadFile = File(...)):
+    image_path = await save_image_file(file=file)
+
+    # Extract features from the uploaded image using the feature extractor
+    await feature_extractor.triton_extract_feature(
+        image_path=image_path, model_name=settings.TENSORRT_MODEL_NAME
+    )
+
+    return "done"
