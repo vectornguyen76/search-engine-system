@@ -17,6 +17,7 @@ class JWTData(CustomModel):
 
 
 class AccessTokenResponse(CustomModel):
+    user_id: int
     access_token: str
     refresh_token: str
 

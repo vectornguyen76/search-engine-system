@@ -5,23 +5,19 @@ from typing import Any
 import httpx
 from config import settings
 from src.database import execute, search_history
-from src.text_search.schemas import SearchData
 from src.utils import LOGGER
 
 
-async def text_search(user_id: int, search_data: SearchData) -> dict[str, Any] | None:
+async def text_search(user_id: int, query: str, size: int) -> dict[str, Any] | None:
     insert_query = search_history.insert().values(
         uuid=uuid.uuid4(),
         user_id=user_id,
-        search_query=search_data.search_query,
+        search_query=query,
         time=datetime.utcnow(),
     )
 
     async with httpx.AsyncClient() as client:
         try:
-            query = search_data.search_query
-            size = search_data.size
-
             response = await client.get(
                 f"{settings.TEXT_SEARCH_URL}/full-text-search?query={query}&size={size}"
             )
