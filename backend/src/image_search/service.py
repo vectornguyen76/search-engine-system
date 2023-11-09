@@ -14,12 +14,12 @@ async def image_search(
             # Read the file content and prepare it for upload
             file_content = file.file.read()
 
-            # Upload the image to the /search-image-faiss endpoint
+            # Upload the image to the /search-image-qdrant endpoint
             files = {"file": ("image.jpg", file_content, "image/jpeg")}
 
-            # Upload the image to the /search-image-faiss endpoint
+            # Upload the image to the /search-image-qdrant endpoint
             response = await client.post(
-                f"{settings.IMAGE_SEARCH_URL}/search-image-faiss", files=files
+                f"{settings.IMAGE_SEARCH_URL}/search-image-qdrant", files=files
             )
 
             if response.status_code == 200:
