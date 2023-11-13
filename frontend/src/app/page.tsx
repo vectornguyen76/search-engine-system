@@ -77,7 +77,23 @@ export default function Home() {
     }
   };
 
-  const handleAutoComplete = async (event: any) => {
+  function debounce(
+    func: (...args: any[]) => void,
+    wait: number
+  ): (...args: any[]) => void {
+    let timeout: number;
+
+    return function executedFunction(...args: any[]) {
+      const later = () => {
+        clearTimeout(timeout);
+        func(...args);
+      };
+
+      clearTimeout(timeout);
+      timeout = window.setTimeout(later, wait);
+    };
+  }
+  const debouncedAutoComplete = debounce(async (event) => {
     const value = event.target.value;
     setSearchValue(value);
 
@@ -85,9 +101,6 @@ export default function Home() {
       setDataAutoComplete([]);
       return;
     }
-
-    // Debounce implementation (optional, but recommended)
-    // Implement the debounce logic here if needed
 
     const apiUrl = `${NEXT_PUBLIC_API_URL}/text_search/auto-complete?query=${value}&size=5`;
     try {
@@ -98,7 +111,7 @@ export default function Home() {
     } catch (error) {
       console.error("Error:", error);
     }
-  };
+  }, 250); // 250 ms
 
   const handleClickUpload = async () => {
     setShowUpload(!showUpload);
@@ -156,7 +169,7 @@ export default function Home() {
                     handleClickSearch();
                   }
                 }}
-                onChange={handleAutoComplete}
+                onChange={debouncedAutoComplete}
               />
               {/* Continue develop auto complete UI in here*/}
               <div
