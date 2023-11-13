@@ -35,3 +35,22 @@ async def text_search(user_id: int, query: str, size: int) -> dict[str, Any] | N
                 )
         except Exception as e:
             LOGGER.error(f"An error occurred: {str(e)}")
+
+
+async def auto_complete(user_id: int, query: str, size: int) -> dict[str, Any] | None:
+    async with httpx.AsyncClient() as client:
+        try:
+            response = await client.get(
+                f"{settings.TEXT_SEARCH_URL}/auto-complete-search?query={query}&size={size}"
+            )
+
+            if response.status_code == 200:
+                search_results = response.json()
+
+                return search_results
+            else:
+                LOGGER.error(
+                    f"Failed to call the API. Status code: {response.status_code} - {response.text}"
+                )
+        except Exception as e:
+            LOGGER.error(f"An error occurred: {str(e)}")
