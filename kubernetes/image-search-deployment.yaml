@@ -15,6 +15,12 @@ spec:
       containers:
         - name: image-search-container
           image: vectornguyen76/image-search-engine:latest
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 3
+            periodSeconds: 3
           env:
             - name: QDRANT_HOST
               value: "qdrant-vector-database.default"

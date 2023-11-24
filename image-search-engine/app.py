@@ -28,7 +28,7 @@ app.add_middleware(
 )
 
 
-@app.get("/")
+@app.get("/healthz")
 def healthcheck() -> bool:
     """Check the server's status."""
     return True
