@@ -28,10 +28,6 @@ class Settings(BaseSettings):
 
     SITE_DOMAIN: str = "vectornguyen.com"
 
-    CORS_ORIGINS: list[str]
-    CORS_ORIGINS_REGEX: str | None = None
-    CORS_HEADERS: list[str]
-
     ADMIN_EMAIL: str = "vectornguyen76@gmail.com"
 
     TEXT_SEARCH_URL: str = os.getenv(
