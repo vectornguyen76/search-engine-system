@@ -34,8 +34,12 @@ class Settings(BaseSettings):
 
     ADMIN_EMAIL: str = "vectornguyen76@gmail.com"
 
-    TEXT_SEARCH_URL: str = os.getenv(key="TEXT_SEARCH_URL", default="http://localhost:8000")
-    IMAGE_SEARCH_URL: str = os.getenv(key="IMAGE_SEARCH_URL", default="http://localhost:7000")
+    TEXT_SEARCH_URL: str = os.getenv(
+        key="TEXT_SEARCH_URL", default="http://localhost:8000"
+    )
+    IMAGE_SEARCH_URL: str = os.getenv(
+        key="IMAGE_SEARCH_URL", default="http://localhost:7000"
+    )
 
 
 settings = Settings()
