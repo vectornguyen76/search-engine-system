@@ -25,7 +25,7 @@
      ```
    - Install repo
      ```
-     helm upgrade -i qdrant-vector-database qdrant/qdrant
+     helm upgrade -i qdrant-db qdrant/qdrant
      ```
    - Check repo
      ```
@@ -58,6 +58,13 @@
    ```
    kubectl apply -f postgres-deployment.yaml,postgres-service.yaml,postgres-pvc.yaml,postgres-pv.yaml
    kubectl delete -f postgres-deployment.yaml,postgres-service.yaml,postgres-pvc.yaml,postgres-pv.yaml
+   ```
+
+   **4. Deploy Image Search**
+
+   ```
+   kubectl apply -f image-search-deployment.yaml,image-search-service.yaml
+   kubectl delete -f image-search-deployment.yaml,image-search-service.yaml
    ```
 
 6. Show dashboard
