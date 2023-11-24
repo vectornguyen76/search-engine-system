@@ -33,9 +33,33 @@
      ```
 
 5. Deploy kubenetes template
+
    ```
    kubectl apply -f image-search-deployment.yaml,image-search-service.yaml
    ```
+
+   **1. Deploy backend**
+
+   ```
+   kubectl apply -f backend-deployment.yaml,backend-service.yaml
+   kubectl delete -f backend-deployment.yaml,backend-service.yaml
+   ```
+
+   **2. Deploy Ingress Nginx**
+
+   ```
+   kubectl apply -f ingress-nginx-service.yaml
+   kubectl delete -f ingress-nginx-service.yaml
+   kubectl get ingress
+   ```
+
+   **3. Deploy Postgres**
+
+   ```
+   kubectl apply -f postgres-deployment.yaml,postgres-service.yaml,postgres-pvc.yaml,postgres-pv.yaml
+   kubectl delete -f postgres-deployment.yaml,postgres-service.yaml,postgres-pvc.yaml,postgres-pv.yaml
+   ```
+
 6. Show dashboard
    ```
    minikube dashboard
