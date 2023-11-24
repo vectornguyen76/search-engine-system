@@ -38,7 +38,7 @@ export default function Home() {
     const fetchData = async () => {
       try {
         const { data } = await useAxios.get(
-          "/text_search/search?query=Áo&size=20"
+          "/text-search/search?query=Áo&size=20"
         );
         // Handle the response data here
         console.log(data); // Log the data for debugging
@@ -54,7 +54,7 @@ export default function Home() {
 
   const handleClickSearch = async () => {
     setLoading(true);
-    const apiUrl = `${NEXT_PUBLIC_API_URL}/text_search/search?query=${searchValue}&size=20`;
+    const apiUrl = `${NEXT_PUBLIC_API_URL}/text-search/search?query=${searchValue}&size=20`;
 
     try {
       const response = await useAxios.get(apiUrl);
@@ -102,7 +102,7 @@ export default function Home() {
       return;
     }
 
-    const apiUrl = `${NEXT_PUBLIC_API_URL}/text_search/auto-complete?query=${value}&size=5`;
+    const apiUrl = `${NEXT_PUBLIC_API_URL}/text-search/auto-complete?query=${value}&size=5`;
     try {
       const response = await useAxios.get(apiUrl);
       if (response.status === 200) {
@@ -130,7 +130,7 @@ export default function Home() {
 
       try {
         const response = await useAxios.post(
-          `${NEXT_PUBLIC_API_URL}/image_search/search`,
+          `${NEXT_PUBLIC_API_URL}/image-search/search`,
           formData
         );
 

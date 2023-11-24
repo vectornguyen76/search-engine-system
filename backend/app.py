@@ -29,5 +29,5 @@ async def healthcheck() -> bool:
 
 
 app.include_router(auth_router, prefix="/auth", tags=["Auth"])
-app.include_router(text_search_router, prefix="/text_search", tags=["Text Search"])
-app.include_router(image_search_router, prefix="/image_search", tags=["Image Search"])
+app.include_router(text_search_router, prefix="/text-search", tags=["Text Search"])
+app.include_router(image_search_router, prefix="/image-search", tags=["Image Search"])
