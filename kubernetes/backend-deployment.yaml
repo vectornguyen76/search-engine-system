@@ -31,5 +31,9 @@ spec:
               value: db_user
             - name: PGPASSWORD
               value: db_password
+            - name: DATABASE_URL
+              value: postgresql+asyncpg://db_user:db_password@postgres-service.default/db_dev
+            - name: JWT_SECRET
+              value: JWT_SECRET
           ports:
             - containerPort: 5000
