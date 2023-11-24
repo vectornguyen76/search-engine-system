@@ -108,7 +108,7 @@ services:
 
   backend_service:
     container_name: backend_container
-    image: vectornguyen76/backend_image
+    image: vectornguyen76/backend-search-engine
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -123,7 +123,7 @@ services:
 
   frontend_service:
     container_name: frontend_container
-    image: vectornguyen76/frontend_image
+    image: vectornguyen76/frontend-search-engine
     build:
       context: ./frontend
       dockerfile: Dockerfile
