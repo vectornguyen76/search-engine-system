@@ -16,12 +16,12 @@ spec:
         - name: image-search-container
           image: vectornguyen76/image-search-engine:latest
           imagePullPolicy: Always
-          livenessProbe:
-            httpGet:
-              path: /healthz
-              port: 7000
-            initialDelaySeconds: 3
-            periodSeconds: 3
+          # livenessProbe:
+          #   httpGet:
+          #     path: /healthz
+          #     port: 7000
+          #   initialDelaySeconds: 3
+          #   periodSeconds: 3
           env:
             - name: QDRANT_URL
               value: "http://qdrant-db.default:6334"

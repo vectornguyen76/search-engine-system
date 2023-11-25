@@ -48,6 +48,9 @@
    **2. Deploy Ingress Nginx**
 
    ```
+   helm upgrade --install ingress-nginx ingress-nginx --repo https://kubernetes.github.io/ingress-nginx --namespace ingress-nginx --create-namespace
+   kubectl --namespace ingress-nginx get services -o wide -w ingress-nginx-controller
+   helm uninstall ingress-nginx --namespace ingress-nginx
    kubectl apply -f ingress-nginx-service.yaml
    kubectl delete -f ingress-nginx-service.yaml
    kubectl get ingress
@@ -58,6 +61,12 @@
    ```
    kubectl apply -f postgres-deployment.yaml,postgres-service.yaml,postgres-pvc.yaml,postgres-pv.yaml
    kubectl delete -f postgres-deployment.yaml,postgres-service.yaml,postgres-pvc.yaml,postgres-pv.yaml
+   ```
+
+   **3. Deploy Qdrant**
+
+   ```
+   helm upgrade --install qdrant-db qdrant --repo https://qdrant.github.io/qdrant-helm
    ```
 
    **4. Deploy Image Search**
@@ -82,16 +91,26 @@
      ```
    - Uninstall repo
      ```
-     helm uninstall qdrant-vector-database
+     helm uninstall qdrant-db
      ```
    - Delete the qdrant volume
      ```
-     kubectl delete pvc -l app.kubernetes.io/instance=qdrant-vector-database
+     kubectl delete pvc -l app.kubernetes.io/instance=qdrant-db
      ```
    - Delete cluster
      ```
      minikube delete
      ```
+
+## Production enviroments
+
+**1. Create Cluster and NodeGroup**
+
+```
+eksctl create cluster -f cluster-config-eksctl.yaml
+eksctl upgrade cluster -f cluster-config-eksctl.yaml
+eksctl delete cluster -f cluster-config-eksctl.yaml
+```
 
 ### Refrence
 
