@@ -10,6 +10,13 @@ spec:
   rules:
     - http:
         paths:
+          - path: /?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: frontend-service
+                port:
+                  number: 3000
           - path: /api/?(.*)
             pathType: ImplementationSpecific
             backend:

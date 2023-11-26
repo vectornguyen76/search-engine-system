@@ -1,119 +1,241 @@
-## Deploy a Kubernetes cluster in Local
+# Kubernetes Development
 
-1. Start cluster use minikube and docker
-   ```
-   minikube start --driver=docker
-   ```
-2. Show node ready
-   ```
-   kubectl get nodes
-   ```
-3. Build and push image to docker hub
-   ```
-   docker compose build
-   docker compose push
-   ```
-4. Install Qdrant Helm Chart
+## Table of Contents
 
-   - Add repo
-     ```
-     helm repo add qdrant https://qdrant.github.io/qdrant-helm
-     ```
-   - Update repo
-     ```
-     helm repo update
-     ```
-   - Install repo
-     ```
-     helm upgrade -i qdrant-db qdrant/qdrant
-     ```
-   - Check repo
-     ```
-     helm list
-     ```
+1. [Architecture](#architecture)
+2. [Development Environment Setup](#development-environment-setup)
+3. [Production Environment Setup](#production-environment-setup)
+4. [Kubernetes Cluster Deployment](#kubernetes-cluster-deployment)
+   - [Deploy Ingress Nginx](#deploy-ingress-nginx)
+     - [Installation](#installation)
+     - [Configuration](#configuration)
+     - [Verification](#verification)
+     - [Uninstallation](#uninstallation)
+   - [Deploy Postgres](#deploy-postgres)
+     - [Local Installation](#local-installation)
+     - [EKS Installation](#eks-installation)
+     - [Local Uninstallation](#local-uninstallation)
+     - [EKS Uninstallation](#eks-uninstallation)
+   - [Deploy Backend](#deploy-backend)
+   - [Deploy Frontend](#deploy-frontend)
+   - [Deploy Qdrant](#deploy-qdrant)
+   - [Deploy Image Search](#deploy-image-search)
+   - [Deploy Text Search](#deploy-text-search)
+5. [References](#references)
 
-5. Deploy kubenetes template
+## Architecture
 
+<p align="center">
+  <img src="./../assets/kubernetes-architecture.png" alt="Kubernetes Architecture Diagram" />
+  <br>
+  <em>Fig: Kubernetes Architecture</em>
+</p>
+
+## Development Environment Setup
+
+This section covers the steps to set up a Kubernetes development environment.
+
+### Start Kubernetes with Docker Desktop
+
+Initiate Kubernetes within Docker Desktop for local development.
+
+### Show Node Status
+
+Check the status of Kubernetes nodes.
+
+```
+kubectl get nodes
+```
+
+### Build and Push Docker Images
+
+Commands to build Docker images and push them to Docker Hub.
+
+```
+docker compose build
+docker compose push
+```
+
+## Production Environment Setup
+
+Guidelines for setting up a Kubernetes environment suitable for production.
+
+### Create and Manage Cluster and NodeGroup
+
+- **Creating a Cluster and Node Group**
+  ```
+  eksctl create cluster -f cluster-config-eksctl.yaml
+  ```
+- **Deleting a Cluster and Node Group**
+  ```
+  eksctl delete cluster -f cluster-config-eksctl.yaml --disable-nodegroup-eviction
+  ```
+
+### Node Status Verification
+
+Same as in the development environment setup.
+
+### Install aws-ebs-csi-driver
+
+```
+kubectl apply -k "github.com/kubernetes-sigs/aws-ebs-csi-driver/deploy/kubernetes/overlays/stable/?ref=release-1.25"
+```
+
+Instructions to install the AWS EBS CSI driver in the production environment.
+
+## Kubernetes Cluster Deployment
+
+### Deploy Ingress Nginx
+
+#### Installation
+
+1. **Install Ingress Nginx Controller**
    ```
-   kubectl apply -f image-search-deployment.yaml,image-search-service.yaml
+   helm upgrade --install ingress-nginx ingress-nginx --repo https://kubernetes.github.io/ingress-nginx
    ```
+   This command installs the Ingress Nginx controller using Helm.
 
-   **1. Deploy backend**
+#### Configuration
 
+1. **Configure Ingress Nginx Service**
    ```
-   kubectl apply -f backend-deployment.yaml,backend-service.yaml
-   kubectl delete -f backend-deployment.yaml,backend-service.yaml
-   ```
-
-   **2. Deploy Ingress Nginx**
-
-   ```
-   helm upgrade --install ingress-nginx ingress-nginx --repo https://kubernetes.github.io/ingress-nginx --namespace ingress-nginx --create-namespace
-   kubectl --namespace ingress-nginx get services -o wide -w ingress-nginx-controller
-   helm uninstall ingress-nginx --namespace ingress-nginx
    kubectl apply -f ingress-nginx-service.yaml
-   kubectl delete -f ingress-nginx-service.yaml
+   ```
+   Apply the configuration defined in `ingress-nginx-service.yaml`.
+
+#### Verification
+
+1. **Check Ingress Nginx**
+   ```
    kubectl get ingress
    ```
+   Verify the ingress setup by listing all ingress resources.
 
-   **3. Deploy Postgres**
+#### Uninstallation
 
+1. **Remove Ingress Nginx**
+   ```
+   helm uninstall ingress-nginx
+   kubectl delete -f ingress-nginx-service.yaml
+   ```
+   Uninstall the Ingress Nginx controller and delete its service configuration.
+
+### Deploy Postgres
+
+#### Local Installation
+
+1. **Apply Postgres Configuration for Local**
    ```
    kubectl apply -f postgres-deployment.yaml,postgres-service.yaml,postgres-pvc.yaml,postgres-pv.yaml
+   ```
+   Set `storageClassName: standard` in `postgres-pvc.yaml` for local deployment.
+
+#### EKS Installation
+
+1. **Apply Postgres Configuration for EKS**
+   ```
+   kubectl apply -f postgres-deployment.yaml,postgres-service.yaml,postgres-pvc.yaml
+   ```
+   Set `storageClassName: gp3` in `postgres-pvc.yaml` for EKS deployment.
+
+#### Local Uninstallation
+
+1. **Remove Postgres in Local**
+   ```
    kubectl delete -f postgres-deployment.yaml,postgres-service.yaml,postgres-pvc.yaml,postgres-pv.yaml
    ```
 
-   **3. Deploy Qdrant**
+#### EKS Uninstallation
+
+1. **Remove Postgres in EKS**
+   ```
+   kubectl delete -f postgres-deployment.yaml,postgres-service.yaml,postgres-pvc.yaml
+   ```
+
+### Deploy Backend
+
+1. **Install Backend Service**
+
+   ```
+   kubectl apply -f backend-deployment.yaml,backend-service.yaml
+   ```
+
+   Deploy the backend service using the specified Kubernetes configurations.
+
+2. **Uninstall Backend Service**
+   ```
+   kubectl delete -f backend-deployment.yaml,backend-service.yaml
+   ```
+   Remove the backend service from the cluster.
+
+### Deploy Frontend
+
+1. **Set Up Environment Variables**
+
+   - For local deployment: `NEXT_PUBLIC_API_URL=http://localhost/api`
+   - For production: Retrieve the IP address of the load balancer from `kubectl get ingress` and set `NEXT_PUBLIC_API_URL=http://{ip-address-loadbalancer}/api`.
+
+2. **Deploy Frontend Service**
+
+   ```
+   kubectl apply -f frontend-deployment.yaml,frontend-service.yaml
+   ```
+
+   Apply the frontend deployment and service configurations.
+
+3. **Uninstall Frontend Service**
+   ```
+   kubectl delete -f frontend-deployment.yaml,frontend-service.yaml
+   ```
+
+### Deploy Qdrant
+
+1. **Install Qdrant Database**
 
    ```
    helm upgrade --install qdrant-db qdrant --repo https://qdrant.github.io/qdrant-helm
    ```
 
-   **4. Deploy Image Search**
+   Install Qdrant using the Helm chart.
+
+2. **Uninstall Qdrant Database**
+   ```
+   helm uninstall qdrant-db
+   kubectl delete pvc -l app.kubernetes.io/instance=qdrant-db
+   ```
+
+### Deploy Image Search
+
+1. **Install Image Search Service**
 
    ```
    kubectl apply -f image-search-deployment.yaml,image-search-service.yaml
+   ```
+
+2. **Uninstall Image Search Service**
+   ```
    kubectl delete -f image-search-deployment.yaml,image-search-service.yaml
    ```
 
-6. Show dashboard
+### Deploy Text Search
+
+1. **Install Text Search Service**
+
    ```
-   minikube dashboard
+   kubectl apply -f text-search-deployment.yaml,text-search-service.yaml
    ```
-7. Get service
+
+2. **Uninstall Text Search Service**
    ```
-   minikube service image-search-service
+   kubectl delete -f text-search-deployment.yaml,text-search-service.yaml
    ```
-8. Destroy kubenetes template
-   - Delete app
-     ```
-     kubectl delete -f image-search-deployment.yaml,image-search-service.yaml
-     ```
-   - Uninstall repo
-     ```
-     helm uninstall qdrant-db
-     ```
-   - Delete the qdrant volume
-     ```
-     kubectl delete pvc -l app.kubernetes.io/instance=qdrant-db
-     ```
-   - Delete cluster
-     ```
-     minikube delete
-     ```
 
-## Production enviroments
+## References
 
-**1. Create Cluster and NodeGroup**
+Useful links for additional information and external resources.
 
-```
-eksctl create cluster -f cluster-config-eksctl.yaml
-eksctl upgrade cluster -f cluster-config-eksctl.yaml
-eksctl delete cluster -f cluster-config-eksctl.yaml
-```
-
-### Refrence
-
-- https://github.com/qdrant/qdrant-helm/tree/main/charts/qdrant
-- https://www.elastic.co/guide/en/cloud-on-k8s/current/k8s-stack-helm-chart.html
-- https://github.com/elastic/cloud-on-k8s/tree/main/deploy/eck-stack
+- [EKSCTL Getting Started](https://eksctl.io/getting-started/)
+- [AWS EBS CSI Driver Installation Guide](https://github.com/kubernetes-sigs/aws-ebs-csi-driver/blob/master/docs/install.md)
+- [Qdrant Helm Charts](https://github.com/qdrant/qdrant-helm/tree/main/charts/qdrant)
+- [Elastic Cloud on Kubernetes Documentation](https://www.elastic.co/guide/en/cloud-on-k8s/current/k8s-stack-helm-chart.html)
+- [Elastic Cloud Kubernetes Deployment](https://github.com/elastic/cloud-on-k8s/tree/main/deploy/eck-stack)

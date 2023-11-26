@@ -5,7 +5,8 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: standard
+  # storageClassName: standard
+  storageClassName: gp3 # Change to an EBS-provisioning StorageClass
   resources:
     requests:
       storage: 1Gi

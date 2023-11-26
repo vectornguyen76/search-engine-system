@@ -15,3 +15,6 @@ spec:
       containers:
         - name: frontend-container
           image: vectornguyen76/frontend-search-engine:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000

@@ -19,8 +19,19 @@ nodeGroups:
     minSize: 1
     maxSize: 3
     volumeSize: 30
-    volumeType: gp2
+    volumeType: gp3
     desiredCapacity: 2
+    iam:
+      withAddonPolicies:
+        imageBuilder: true
+        autoScaler: true
+        externalDNS: true
+        certManager: true
+        appMesh: true
+        appMeshPreview: true
+        ebs: true
+        fsx: true
+        efs: true
     labels:
       nodegroup-type: cpu-nodegroup
 
@@ -32,6 +43,17 @@ nodeGroups:
   #   volumeSize: 50
   #   volumeType: gp3
   #   desiredCapacity: 1
+  #   iam:
+  #     withAddonPolicies:
+  #       imageBuilder: true
+  #       autoScaler: true
+  #       externalDNS: true
+  #       certManager: true
+  #       appMesh: true
+  #       appMeshPreview: true
+  #       ebs: true
+  #       fsx: true
+  #       efs: true
   #   labels:
   #     nodegroup-type: gpu-nodegroup
 
