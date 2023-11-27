@@ -26,7 +26,7 @@
 ## Architecture
 
 <p align="center">
-  <img src="./../assets/kubernetes-architecture.png" alt="Kubernetes Architecture Diagram" />
+  <img src="./assets/kubernetes-architecture.png" alt="Kubernetes Architecture Diagram" />
   <br>
   <em>Fig: Kubernetes Architecture</em>
 </p>
@@ -69,6 +69,14 @@ Guidelines for setting up a Kubernetes environment suitable for production.
 - **Deleting a Cluster and Node Group**
   ```
   eksctl delete cluster -f cluster-config-eksctl.yaml --disable-nodegroup-eviction
+  ```
+- **Creating only Node Group**
+  ```
+  eksctl create nodegroup -f cluster-config-eksctl.yaml
+  ```
+- **Deleting only Node Group**
+  ```
+  eksctl delete nodegroup -f cluster-config-eksctl.yaml
   ```
 
 ### Node Status Verification
@@ -226,6 +234,50 @@ Instructions to install the AWS EBS CSI driver in the production environment.
    ```
 
 2. **Uninstall Text Search Service**
+   ```
+   kubectl delete -f text-search-deployment.yaml,text-search-service.yaml
+   ```
+
+### Deploy Triton Inference Server
+
+1.  Model Repository
+
+- Create s3
+  ```
+  aws s3api create-bucket --bucket qai-triton-repository --region us-east-1
+  ```
+- Copy model repository from local to s3
+  ```
+  aws s3 cp ./../image-search-engine/model_repository s3://qai-triton-repository/model_repository --recursive
+  ```
+  To load the model from the AWS S3, you need to convert the following AWS credentials in the base64 format and add it to the values.yaml
+
+```
+echo -n 'REGION' | base64
+```
+
+```
+echo -n 'SECRECT_KEY_ID' | base64
+```
+
+```
+echo -n 'SECRET_ACCESS_KEY' | base64
+```
+
+## Deploy the Inference Server
+
+```
+cd helm-charts/triton-inference-server
+helm install qai-triton-inference .
+```
+
+1. **Install Triton Inference Server Service**
+
+   ```
+   kubectl apply -f text-search-deployment.yaml,text-search-service.yaml
+   ```
+
+2. **Uninstall Triton Inference Server Service**
    ```
    kubectl delete -f text-search-deployment.yaml,text-search-service.yaml
    ```

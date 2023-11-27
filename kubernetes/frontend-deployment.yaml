@@ -12,6 +12,15 @@ spec:
       labels:
         app: frontend
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: nodegroup-type
+                    operator: In
+                    values:
+                      - cpu-nodegroup
       containers:
         - name: frontend-container
           image: vectornguyen76/frontend-search-engine:latest

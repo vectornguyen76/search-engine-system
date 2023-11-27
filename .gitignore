@@ -10,8 +10,6 @@ architectures
 *.csv
 data.csv
 
-helm-charts
-
 image-search-engine/assets/uploaded_images/*
 !image-search-engine/assets/uploaded_images/.gitkeep
 
