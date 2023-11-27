@@ -19,6 +19,7 @@
    - [Deploy Backend](#deploy-backend)
    - [Deploy Frontend](#deploy-frontend)
    - [Deploy Qdrant](#deploy-qdrant)
+   - [Deploy Triton Inference Server](#deploy-triton-inference-server)
    - [Deploy Image Search](#deploy-image-search)
    - [Deploy Text Search](#deploy-text-search)
 5. [References](#references)
@@ -63,13 +64,29 @@ Guidelines for setting up a Kubernetes environment suitable for production.
 ### Create and Manage Cluster and NodeGroup
 
 - **Creating a Cluster and Node Group**
+
   ```
   eksctl create cluster -f cluster-config-eksctl.yaml
   ```
+
+   <p align="center">
+   <img src="./assets/create-cluster.png" alt="Creating a Cluster and Node Group" />
+   <br>
+   <em>Fig: Creating a Cluster and Node Group</em>
+   </p>
+
 - **Deleting a Cluster and Node Group**
+
   ```
   eksctl delete cluster -f cluster-config-eksctl.yaml --disable-nodegroup-eviction
   ```
+
+   <p align="center">
+   <img src="./assets/delete-cluster.png" alt="Deleting a Cluster and Node Group" />
+   <br>
+   <em>Fig: Deleting a Cluster and Node Group</em>
+   </p>
+
 - **Creating only Node Group**
   ```
   eksctl create nodegroup -f cluster-config-eksctl.yaml
@@ -212,6 +229,88 @@ Instructions to install the AWS EBS CSI driver in the production environment.
    kubectl delete pvc -l app.kubernetes.io/instance=qdrant-db
    ```
 
+### Deploy Triton Inference Server
+
+1.  **Model Repository**
+
+- Create s3
+  ```
+  aws s3api create-bucket --bucket qai-triton-repository --region us-east-1
+  ```
+- Copy model repository from local to s3
+  ```
+  aws s3 cp ./../image-search-engine/model_repository s3://qai-triton-repository/model_repository --recursive
+  ```
+- To load the model from the AWS S3, you need to convert the following AWS credentials in the base64 format and add it to the values.yaml
+
+  ```
+  echo -n 'REGION' | base64
+  ```
+
+  ```
+  echo -n 'SECRECT_KEY_ID' | base64
+  ```
+
+  ```
+  echo -n 'SECRET_ACCESS_KEY' | base64
+  ```
+
+- Update path model repository in values.yaml
+  ```
+  modelRepositoryPath: s3://qai-triton-repository/model_repository
+  ```
+
+2. **Deploy Prometheus and Grafana**
+
+   The inference server metrics are collected by Prometheus and viewable by Grafana. The inference server helm chart assumes that Prometheus
+   and Grafana are available so this step must be followed even if you don't want to use Grafana.
+
+   ```
+   helm install search-engine-metrics --set prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues=false prometheus-community/kube-prometheus-stack
+   ```
+
+   Then port-forward to the Prometheus and Grafana service so you can access it from
+   your local browser.
+
+   ```
+   kubectl port-forward service/search-engine-metrics-grafana 8080:80
+   kubectl port-forward service/search-engine-metrics-kube-prometheus 9090:9090
+   ```
+
+3. **Deploy the Inference Server**
+   Deploy the inference server using the default configuration with the
+   following commands.
+
+   ```
+   cd helm-charts/triton-inference-server
+
+   helm install search-engine-serving .
+   ```
+
+4. **Clean up**
+
+   Once you've finished using the inference server you should use helm to
+   delete the deployment.
+
+   ```
+   helm uninstall search-engine-metrics
+   helm uninstall search-engine-serving
+   ```
+
+   For the Prometheus and Grafana services, you should [explicitly delete
+   CRDs](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack#uninstall-helm-chart):
+
+   ```
+   kubectl delete crd alertmanagerconfigs.monitoring.coreos.com alertmanagers.monitoring.coreos.com podmonitors.monitoring.coreos.com probes.monitoring.coreos.com prometheuses.monitoring.coreos.com prometheusrules.monitoring.coreos.com servicemonitors.monitoring.coreos.com thanosrulers.monitoring.coreos.com
+   ```
+
+   You may also want to delete the AWS bucket you created to hold the
+   model repository.
+
+   ```
+   aws s3 rm -r gs://qai-triton-repository
+   ```
+
 ### Deploy Image Search
 
 1. **Install Image Search Service**
@@ -234,59 +333,6 @@ Instructions to install the AWS EBS CSI driver in the production environment.
    ```
 
 2. **Uninstall Text Search Service**
-   ```
-   kubectl delete -f text-search-deployment.yaml,text-search-service.yaml
-   ```
-
-### Deploy Triton Inference Server
-
-1.  Model Repository
-
-- Create s3
-  ```
-  aws s3api create-bucket --bucket qai-triton-repository --region us-east-1
-  ```
-- Copy model repository from local to s3
-  ```
-  aws s3 cp ./../image-search-engine/model_repository s3://qai-triton-repository/model_repository --recursive
-  ```
-  To load the model from the AWS S3, you need to convert the following AWS credentials in the base64 format and add it to the values.yaml
-
-```
-echo -n 'REGION' | base64
-```
-
-```
-echo -n 'SECRECT_KEY_ID' | base64
-```
-
-```
-echo -n 'SECRET_ACCESS_KEY' | base64
-```
-
-## Prometheus Grafana
-
-helm install search-engine-metrics --set prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues=true prometheus-community/kube-prometheus-stack
-
-kubectl port-forward service/search-engine-metrics-grafana 8080:80
-kubectl port-forward service/search-engine-metrics-kube-prometheus 9090:9090
-
-## Deploy the Inference Server
-
-```
-cd helm-charts/triton-inference-server
-helm install qai-triton-inference .
-
-helm install search-engine-serving .
-```
-
-1. **Install Triton Inference Server Service**
-
-   ```
-   kubectl apply -f text-search-deployment.yaml,text-search-service.yaml
-   ```
-
-2. **Uninstall Triton Inference Server Service**
    ```
    kubectl delete -f text-search-deployment.yaml,text-search-service.yaml
    ```
