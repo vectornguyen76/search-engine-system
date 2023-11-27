@@ -7,7 +7,15 @@
 ## Architecture
 
   <p align="center">
-  <img src="./assets/architectures.png" alt="Architecture" />
+  <img src="./assets/images/architectures.png" alt="Architecture" />
   <br>
   <em>System Architecture</em>
+  </p>
+
+## Demo
+
+  <p align="center">
+  <img src="./assets/images/demo.png" alt="Demo" />
+  <br>
+  <em>Demo</em>
   </p>
