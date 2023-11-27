@@ -27,15 +27,15 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: { { template "triton-inference-server.fullname" . } }
-  namespace: { { .Release.Namespace } }
+  name: {{ template "triton-inference-server.fullname" . }}
+  namespace: {{ .Release.Namespace }}
   labels:
-    app: { { template "triton-inference-server.name" . } }
-    chart: { { template "triton-inference-server.chart" . } }
-    release: { { .Release.Name } }
-    heritage: { { .Release.Service } }
+    app: {{ template "triton-inference-server.name" . }}
+    chart: {{ template "triton-inference-server.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
 spec:
-  type: { { .Values.service.type } }
+  type: {{ .Values.service.type }}
   ports:
     - port: 8000
       targetPort: http
@@ -47,45 +47,45 @@ spec:
       targetPort: metrics
       name: metrics-inference-server
   selector:
-    app: { { template "triton-inference-server.name" . } }
-    release: { { .Release.Name } }
+    app: {{ template "triton-inference-server.name" . }}
+    release: {{ .Release.Name }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: { { template "triton-inference-server-metrics.fullname" . } }
-  namespace: { { .Release.Namespace } }
+  name: {{ template "triton-inference-server-metrics.fullname" . }}
+  namespace: {{ .Release.Namespace }}
   labels:
-    app: { { template "triton-inference-server-metrics.name" . } }
-    chart: { { template "triton-inference-server.chart" . } }
-    release: { { .Release.Name } }
-    heritage: { { .Release.Service } }
+    app: {{ template "triton-inference-server-metrics.name" . }}
+    chart: {{ template "triton-inference-server.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
   annotations:
     alpha.monitoring.coreos.com/non-namespaced: "true"
 spec:
   ports:
-    - name: metrics
-      port: 8080
-      targetPort: metrics
-      protocol: TCP
+  - name: metrics
+    port: 8080
+    targetPort: metrics
+    protocol: TCP
   selector:
-    app: { { template "triton-inference-server.name" . } }
-    release: { { .Release.Name } }
+    app: {{ template "triton-inference-server.name" . }}
+    release: {{ .Release.Name }}
 ---
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: { { template "triton-inference-server-metrics-monitor.fullname" . } }
-  namespace: { { .Release.Namespace } }
+  name: {{ template "triton-inference-server-metrics-monitor.fullname" . }}
+  namespace: {{ .Release.Namespace }}
   labels:
-    app: { { template "triton-inference-server-metrics-monitor.name" . } }
-    chart: { { template "triton-inference-server.chart" . } }
-    release: { { .Release.Name } }
-    heritage: { { .Release.Service } }
+    app: {{ template "triton-inference-server-metrics-monitor.name" . }}
+    chart: {{ template "triton-inference-server.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
 spec:
   selector:
     matchLabels:
-      app: { { template "triton-inference-server-metrics.name" . } }
+      app: {{ template "triton-inference-server-metrics.name" . }}
   endpoints:
-    - port: metrics
-      interval: 15s
+  - port: metrics
+    interval: 15s

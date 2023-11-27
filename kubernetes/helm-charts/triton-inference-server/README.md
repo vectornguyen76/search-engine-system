@@ -32,19 +32,19 @@
 
 A helm chart for installing a single cluster of Triton Inference
 Server is provided. By default the cluster contains a single instance
-of the inference server but the _replicaCount_ configuration parameter
+of the inference server but the *replicaCount* configuration parameter
 can be set to create a cluster of any size, as described below.
 
 This guide assumes you already have a functional Kubernetes cluster
 and helm installed (see below for instructions on installing
 helm). Note the following requirements:
 
-- The helm chart deploys Prometheus and Grafana to collect and display Triton metrics. To use this helm chart you must install Prpmetheus and Grafana in your cluster as described below and your cluster must contain sufficient CPU resources to support these services.
+* The helm chart deploys Prometheus and Grafana to collect and display Triton metrics. To use this helm chart you must install Prpmetheus and Grafana in your cluster as described below and your cluster must contain sufficient CPU resources to support these services.
 
-- If you want Triton Server to use GPUs for inferencing, your cluster
-  must be configured to contain the desired number of GPU nodes (EC2 G4 instances recommended)
-  with support for the NVIDIA driver and CUDA version required by the version
-  of the inference server you are using.
+* If you want Triton Server to use GPUs for inferencing, your cluster
+must be configured to contain the desired number of GPU nodes (EC2 G4 instances recommended)
+with support for the NVIDIA driver and CUDA version required by the version
+of the inference server you are using.
 
 The steps below describe how to set-up a model repository, use helm to
 launch the inference server, and then send inference requests to the
@@ -107,17 +107,14 @@ $ aws s3 cp --recursive docs/examples/model_repository s3://triton-inference-ser
 ```
 
 ### AWS Model Repository
-
 To load the model from the AWS S3, you need to convert the following AWS credentials in the base64 format and add it to the values.yaml
 
 ```
 echo -n 'REGION' | base64
 ```
-
 ```
 echo -n 'SECRECT_KEY_ID' | base64
 ```
-
 ```
 echo -n 'SECRET_ACCESS_KEY' | base64
 ```
@@ -130,8 +127,8 @@ and Grafana are available so this step must be followed even if you
 don't want to use Grafana.
 
 Use the [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack) to install these components. The
-_serviceMonitorSelectorNilUsesHelmValues_ flag is needed so that
-Prometheus can find the inference server metrics in the _example_
+*serviceMonitorSelectorNilUsesHelmValues* flag is needed so that
+Prometheus can find the inference server metrics in the *example*
 release deployed below.
 
 ```
@@ -175,9 +172,9 @@ There are several ways of overriding the default configuration as
 described in this [helm
 documentation](https://helm.sh/docs/using_helm/#customizing-the-chart-before-installing).
 
-You can edit the values.yaml file directly or you can use the _--set_
+You can edit the values.yaml file directly or you can use the *--set*
 option to override a single parameter with the CLI. For example, to
-deploy a cluster of four inference servers use _--set_ to set the
+deploy a cluster of four inference servers use *--set* to set the
 replicaCount parameter.
 
 ```

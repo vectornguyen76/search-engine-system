@@ -27,24 +27,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: { { template "triton-inference-server.fullname" . } }
-  namespace: { { .Release.Namespace } }
+  name: {{ template "triton-inference-server.fullname" . }}
+  namespace: {{ .Release.Namespace }}
   labels:
-    app: { { template "triton-inference-server.name" . } }
-    chart: { { template "triton-inference-server.chart" . } }
-    release: { { .Release.Name } }
-    heritage: { { .Release.Service } }
+    app: {{ template "triton-inference-server.name" . }}
+    chart: {{ template "triton-inference-server.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
 spec:
-  replicas: { { .Values.replicaCount } }
+  replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: { { template "triton-inference-server.name" . } }
-      release: { { .Release.Name } }
+      app: {{ template "triton-inference-server.name" . }}
+      release: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app: { { template "triton-inference-server.name" . } }
-        release: { { .Release.Name } }
+        app: {{ template "triton-inference-server.name" . }}
+        release: {{ .Release.Name }}
 
     spec:
       affinity:
@@ -57,38 +57,34 @@ spec:
                     values:
                       - gpu-nodegroup
       containers:
-        - name: { { .Chart.Name } }
+        - name: {{ .Chart.Name }}
           image: "{{ .Values.image.imageName }}"
-          imagePullPolicy: { { .Values.image.pullPolicy } }
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
 
           resources:
             limits:
-              nvidia.com/gpu: { { .Values.image.numGpus } }
+              nvidia.com/gpu: {{ .Values.image.numGpus }}
 
-          args:
-            [
-              "tritonserver",
-              "--model-store={{ .Values.image.modelRepositoryPath }}",
-              "--model-control-mode=poll",
-              "--repository-poll-secs=5",
-            ]
+          args: ["tritonserver", "--model-store={{ .Values.image.modelRepositoryPath }}",
+                 "--model-control-mode=poll",
+                 "--repository-poll-secs=5"]
 
           env:
-            - name: AWS_DEFAULT_REGION
-              valueFrom:
-                secretKeyRef:
-                  name: aws-credentials
-                  key: AWS_DEFAULT_REGION
-            - name: AWS_ACCESS_KEY_ID
-              valueFrom:
-                secretKeyRef:
-                  name: aws-credentials
-                  key: AWS_ACCESS_KEY_ID
-            - name: AWS_SECRET_ACCESS_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: aws-credentials
-                  key: AWS_SECRET_ACCESS_KEY
+          - name: AWS_DEFAULT_REGION
+            valueFrom:
+              secretKeyRef:
+                name: aws-credentials
+                key: AWS_DEFAULT_REGION
+          - name: AWS_ACCESS_KEY_ID
+            valueFrom:
+              secretKeyRef:
+                name: aws-credentials
+                key: AWS_ACCESS_KEY_ID
+          - name: AWS_SECRET_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: aws-credentials
+                key: AWS_SECRET_ACCESS_KEY
 
           ports:
             - containerPort: 8000
