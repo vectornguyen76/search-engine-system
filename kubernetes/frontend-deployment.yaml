@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: nodegroup-type
+                    operator: In
+                    values:
+                      - cpu-nodegroup
+      containers:
+        - name: frontend-container
+          image: vectornguyen76/frontend-search-engine:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000

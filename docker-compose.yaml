@@ -2,7 +2,7 @@ version: "3"
 services:
   # triton_server:
   #   container_name: triton_server
-  #   image: nvcr.io/nvidia/tritonserver:23.09-py3
+  #   image: nvcr.io/nvidia/tritonserver:23.01-py3
   #   ports:
   #     - 9000:8000
   #     - 9001:8001
@@ -108,7 +108,7 @@ services:
 
   backend_service:
     container_name: backend_container
-    image: backend_image
+    image: vectornguyen76/backend-search-engine:latest
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -123,7 +123,7 @@ services:
 
   frontend_service:
     container_name: frontend_container
-    image: vectornguyen76/frontend_image
+    image: vectornguyen76/frontend-search-engine
     build:
       context: ./frontend
       dockerfile: Dockerfile

@@ -26,16 +26,16 @@ class Settings(BaseSettings):
     # Database config
     DATABASE_URL: PostgresDsn
 
-    SITE_DOMAIN: str = "myapp.com"
-
-    CORS_ORIGINS: list[str]
-    CORS_ORIGINS_REGEX: str | None = None
-    CORS_HEADERS: list[str]
+    SITE_DOMAIN: str = "vectornguyen.com"
 
     ADMIN_EMAIL: str = "vectornguyen76@gmail.com"
 
-    TEXT_SEARCH_URL: str = os.getenv(key="TEXT_SEARCH_URL")
-    IMAGE_SEARCH_URL: str = os.getenv(key="IMAGE_SEARCH_URL")
+    TEXT_SEARCH_URL: str = os.getenv(
+        key="TEXT_SEARCH_URL", default="http://localhost:8000"
+    )
+    IMAGE_SEARCH_URL: str = os.getenv(
+        key="IMAGE_SEARCH_URL", default="http://localhost:7000"
+    )
 
 
 settings = Settings()

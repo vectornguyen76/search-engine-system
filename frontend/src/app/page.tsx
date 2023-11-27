@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import useAxios from "@/app/libs/useAxios";
+import { AiFillCamera } from "react-icons/ai";
 
 interface DataSearchType {
   item_name: string;
@@ -16,9 +17,17 @@ interface DataSearchType {
   shop_name: string;
 }
 
+interface DataAutoCompleteType {
+  item_name: string;
+  item_path: string;
+}
+
 export default function Home() {
   const [searchValue, setSearchValue] = useState<string>("");
   const [dataSearch, setDataSearch] = useState<DataSearchType[]>([]);
+  const [DataAutoComplete, setDataAutoComplete] = useState<
+    DataAutoCompleteType[]
+  >([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [showUpload, setShowUpload] = useState<boolean>(false);
 
@@ -29,7 +38,7 @@ export default function Home() {
     const fetchData = async () => {
       try {
         const { data } = await useAxios.get(
-          "/text_search/search?query=Áo&size=20"
+          "/text-search/search?query=Áo&size=20"
         );
         // Handle the response data here
         console.log(data); // Log the data for debugging
@@ -45,7 +54,7 @@ export default function Home() {
 
   const handleClickSearch = async () => {
     setLoading(true);
-    const apiUrl = `${NEXT_PUBLIC_API_URL}/text_search/search?query=${searchValue}&size=20`;
+    const apiUrl = `${NEXT_PUBLIC_API_URL}/text-search/search?query=${searchValue}&size=20`;
 
     try {
       const response = await useAxios.get(apiUrl);
@@ -68,6 +77,42 @@ export default function Home() {
     }
   };
 
+  function debounce(
+    func: (...args: any[]) => void,
+    wait: number
+  ): (...args: any[]) => void {
+    let timeout: number;
+
+    return function executedFunction(...args: any[]) {
+      const later = () => {
+        clearTimeout(timeout);
+        func(...args);
+      };
+
+      clearTimeout(timeout);
+      timeout = window.setTimeout(later, wait);
+    };
+  }
+  const debouncedAutoComplete = debounce(async (event) => {
+    const value = event.target.value;
+    setSearchValue(value);
+
+    if (!value) {
+      setDataAutoComplete([]);
+      return;
+    }
+
+    const apiUrl = `${NEXT_PUBLIC_API_URL}/text-search/auto-complete?query=${value}&size=5`;
+    try {
+      const response = await useAxios.get(apiUrl);
+      if (response.status === 200) {
+        setDataAutoComplete(response.data);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }, 250); // 250 ms
+
   const handleClickUpload = async () => {
     setShowUpload(!showUpload);
   };
@@ -85,7 +130,7 @@ export default function Home() {
 
       try {
         const response = await useAxios.post(
-          `${NEXT_PUBLIC_API_URL}/image_search/search`,
+          `${NEXT_PUBLIC_API_URL}/image-search/search`,
           formData
         );
 
@@ -112,23 +157,52 @@ export default function Home() {
       <div className="container mx-auto">
         {/* Search bar */}
         <div className="search m-10">
-          <div className="flex items-center justify-center">
+          <div className="relative flex items-center justify-center">
             <div className="flex border-2 rounded w-6/12">
+              {/* Input search */}
               <input
                 type="text"
                 className="px-4 py-2 w-full"
                 placeholder="Search..."
-                onChange={(e) => setSearchValue(e.target.value)}
                 onKeyUp={(e) => {
                   if (e.key === "Enter") {
                     handleClickSearch();
                   }
                 }}
+                onChange={debouncedAutoComplete}
               />
-              {/* <button className="flex items-center justify-center px-4 border-l" value={searchValue} onClick={handleClickUpload}>
-                <AiFillCamera />
-              </button> */}
+              {/* Continue develop auto complete UI in here*/}
+              <div
+                className="absolute top-12 z-10 w-6/12 border bg-white shadow-xl rounded"
+                style={{
+                  display:
+                    searchValue && DataAutoComplete.length > 0
+                      ? "block"
+                      : "none",
+                }}
+              >
+                <div className="divide-y">
+                  {DataAutoComplete.map((suggestion, index) => (
+                    <a
+                      key={index}
+                      href={suggestion.item_path}
+                      className="p-2 flex block w-full rounded hover:bg-gray-100"
+                    >
+                      <span>{suggestion.item_name}</span>
+                    </a>
+                  ))}
+                </div>
+              </div>
 
+              {/* Button show image search */}
+              <button
+                className="flex items-center justify-center mx-0.5 px-4 border-l"
+                value={searchValue}
+                onClick={handleClickUpload}
+              >
+                <AiFillCamera />
+              </button>
+              {/* Button search */}
               <button
                 className="flex items-center justify-center px-4 border-l"
                 value={searchValue}
@@ -147,47 +221,47 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="flex items-center justify-center w-9/12 mb-12 mx-auto">
-          <label
-            className="flex flex-col items-center justify-center
+        {showUpload ? (
+          <div className="flex items-center justify-center w-9/12 mb-12 mx-auto">
+            <label
+              className="flex flex-col items-center justify-center
           w-full h-64 border-4 border-gray-300 border-dashed rounded-lg
           cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700
           hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500
           dark:hover:bg-gray-600"
-          >
-            <div className="flex flex-col items-center justify-center pt-5 pb-6">
-              <svg
-                className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 20 16"
-              >
-                {/* SVG path here */}
-              </svg>
-              <p className="mb-2 text-lg text-gray-500 dark:text-gray-400">
-                <span className="font-semibold">Click to upload</span> or drag
-                and drop
-              </p>
-              <p className="text-lg text-gray-500 dark:text-gray-400">
-                SVG, PNG, JPG, JPEG
-              </p>
-            </div>
-            {/* Hide the default file input */}
-            <input
-              id="dropzone-file"
-              type="file"
-              className="hidden"
-              onChange={handleFileUpload} // Attach the event handler here
-            />
-          </label>
-        </div>
+            >
+              <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                <svg
+                  className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 20 16"
+                >
+                  {/* SVG path here */}
+                </svg>
+                <p className="mb-2 text-lg text-gray-500 dark:text-gray-400">
+                  <span className="font-semibold">Click to upload</span> or drag
+                  and drop
+                </p>
+                <p className="text-lg text-gray-500 dark:text-gray-400">
+                  SVG, PNG, JPG, JPEG
+                </p>
+              </div>
+              {/* Hide the default file input */}
+              <input
+                id="dropzone-file"
+                type="file"
+                className="hidden"
+                onChange={handleFileUpload} // Attach the event handler here
+              />
+            </label>
+          </div>
+        ) : (
+          <> </>
+        )}
 
-        {/* {showUpload ? (
-        ) : (<> </>)} */}
-        <h3 className="text-3xl text-black pb-8 font-medium">
-          Recommendation results
-        </h3>
+        <h3 className="text-3xl text-black pb-8 font-medium">Top results</h3>
         {/* Data search */}
         {loading ? (
           <>

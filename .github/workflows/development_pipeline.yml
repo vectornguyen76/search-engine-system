@@ -171,7 +171,7 @@ jobs:
         with:
           context: ./backend
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/backend:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/backend-search-engine:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -200,6 +200,6 @@ jobs:
           context: ./frontend
           file: ./frontend/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/frontend_image:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/frontend-search-engine:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max

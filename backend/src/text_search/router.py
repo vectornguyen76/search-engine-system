@@ -12,3 +12,14 @@ async def search(query: str, size: int, jwt_data: JWTData = Depends(parse_jwt_de
     result = await service.text_search(user_id=jwt_data.user_id, query=query, size=size)
 
     return result
+
+
+@router.get("/auto-complete", response_model=list[SearchResponse])
+async def auto_complete(
+    query: str, size: int, jwt_data: JWTData = Depends(parse_jwt_demo)
+):
+    result = await service.auto_complete(
+        user_id=jwt_data.user_id, query=query, size=size
+    )
+
+    return result
