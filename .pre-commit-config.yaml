@@ -1,5 +1,5 @@
 exclude: "^\
-  (third-party/.*)\
+  (kubernetes/helm-charts/.*)
   "
 
 repos:
