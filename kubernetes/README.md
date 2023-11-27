@@ -151,30 +151,30 @@ Instructions to install the AWS EBS CSI driver in the production environment.
 
 1. **Apply Postgres Configuration for Local**
    ```
-   kubectl apply -f postgres-deployment.yaml,postgres-service.yaml,postgres-pvc.yaml,postgres-pv.yaml
+   kubectl apply -f postgres-pvc-local.yaml,postgres-statefulset.yaml,postgres-service.yaml
    ```
-   Set `storageClassName: standard` in `postgres-pvc.yaml` for local deployment.
+   Set `storageClassName: standard` in `postgres-statefulset.yaml` for local deployment.
 
 #### EKS Installation
 
 1. **Apply Postgres Configuration for EKS**
    ```
-   kubectl apply -f postgres-deployment.yaml,postgres-service.yaml,postgres-pvc.yaml
+   kubectl apply -f postgres-pvc-eks.yaml,postgres-statefulset.yaml,postgres-service.yaml
    ```
-   Set `storageClassName: gp3` in `postgres-pvc.yaml` for EKS deployment.
+   Set `storageClassName: "ebs-sc"` in `postgres-statefulset.yaml` for EKS deployment.
 
 #### Local Uninstallation
 
 1. **Remove Postgres in Local**
    ```
-   kubectl delete -f postgres-deployment.yaml,postgres-service.yaml,postgres-pvc.yaml,postgres-pv.yaml
+   kubectl delete -f postgres-pvc-local.yaml,postgres-statefulset.yaml,postgres-service.yaml
    ```
 
 #### EKS Uninstallation
 
 1. **Remove Postgres in EKS**
    ```
-   kubectl delete -f postgres-deployment.yaml,postgres-service.yaml,postgres-pvc.yaml
+   kubectl delete -f postgres-pvc-eks.yaml,postgres-statefulset.yaml,postgres-service.yaml
    ```
 
 ### Deploy Backend

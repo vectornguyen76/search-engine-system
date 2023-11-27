@@ -1,10 +1,9 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
-  name: postgres-deployment
-  labels:
-    app: postgres
+  name: postgres
 spec:
+  serviceName: postgres
   replicas: 1
   selector:
     matchLabels:
@@ -24,17 +23,19 @@ spec:
               value: db_user
             - name: POSTGRES_PASSWORD
               value: db_password
-              # valueFrom:
-              #   secretKeyRef:
-              #     name: postgresql-secret
-              #     key: password
           ports:
             - containerPort: 5432
           volumeMounts:
             - name: postgres-storage
               mountPath: /var/lib/postgresql/data
               subPath: postgres
-      volumes:
-        - name: postgres-storage
-          persistentVolumeClaim:
-            claimName: postgres-pvc
+  volumeClaimTemplates:
+    - metadata:
+        name: postgres-storage
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        # Remove or adjust storageClassName according to your local setup
+        storageClassName: "ebs-sc"
+        resources:
+          requests:
+            storage: 2Gi

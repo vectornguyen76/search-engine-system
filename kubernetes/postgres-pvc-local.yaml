@@ -13,3 +13,15 @@ spec:
   hostPath:
     path: "/mnt/data/postgres-data" # directory on the host node
     type: DirectoryOrCreate
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: standard
+  resources:
+    requests:
+      storage: 1Gi

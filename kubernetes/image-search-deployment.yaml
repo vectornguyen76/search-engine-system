@@ -26,6 +26,6 @@ spec:
             - name: QDRANT_URL
               value: "http://qdrant-db.default:6334"
             - name: TRITON_SERVER_URL
-              value: "search-engine-triton-inference-server.default"
+              value: "search-engine-serving-triton-inference-server.default:8001"
           ports:
             - containerPort: 7000
