@@ -264,11 +264,20 @@ echo -n 'SECRECT_KEY_ID' | base64
 echo -n 'SECRET_ACCESS_KEY' | base64
 ```
 
+## Prometheus Grafana
+
+helm install search-engine-metrics --set prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues=true prometheus-community/kube-prometheus-stack
+
+kubectl port-forward service/search-engine-metrics-grafana 8080:80
+kubectl port-forward service/search-engine-metrics-kube-prometheus 9090:9090
+
 ## Deploy the Inference Server
 
 ```
 cd helm-charts/triton-inference-server
 helm install qai-triton-inference .
+
+helm install search-engine-serving .
 ```
 
 1. **Install Triton Inference Server Service**
