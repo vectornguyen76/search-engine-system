@@ -1,0 +1,59 @@
+replicaCount: 1
+
+image:
+  repository: vectornguyen76/backend-search-engine
+  # Always and latest for dev, IfNotPresent for prod
+  pullPolicy: Always
+  tag: "latest"
+
+service:
+  type: ClusterIP
+  port: 5000
+
+env:
+  - name: POSTGRES_HOST
+    value: postgres-app.default
+  - name: POSTGRES_DB
+    value: db_dev
+  - name: IMAGE_SEARCH_URL
+    value: http://image-search-app.default:7000
+  - name: POSTGRES_USER
+    valueFrom:
+      secretKeyRef:
+        key: POSTGRES_USER
+  - name: PGPASSWORD
+    valueFrom:
+      secretKeyRef:
+        key: PGPASSWORD
+  - name: DATABASE_URL
+    valueFrom:
+      secretKeyRef:
+        key: DATABASE_URL
+  - name: JWT_SECRET
+    valueFrom:
+      secretKeyRef:
+        key: JWT_SECRET
+
+secret:
+  userName: db_user
+  postgresPassword: db_password
+  databaseUrl: postgresql+asyncpg://db_user:db_password@postgres-app.default/db_dev
+  jwtSecret: my-jwt-secret
+
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+affinity: {}
+# affinity:
+#   nodeAffinity:
+#     requiredDuringSchedulingIgnoredDuringExecution:
+#       nodeSelectorTerms:
+#         - matchExpressions:
+#             - key: nodegroup-type
+#               operator: In
+#               values:
+#                 - cpu-nodegroup
