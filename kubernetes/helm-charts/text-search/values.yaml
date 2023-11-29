@@ -1,0 +1,33 @@
+replicaCount: 1
+
+image:
+  repository: vectornguyen76/text-search-engine
+  # Always and latest for dev, IfNotPresent for prod
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+service:
+  type: ClusterIP
+  port: 7000
+
+env:
+  - name: ELASTICSEARCH_HOST
+    value: "elasticsearch.default"
+
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+affinity: {}
+# affinity:
+#   nodeAffinity:
+#     requiredDuringSchedulingIgnoredDuringExecution:
+#       nodeSelectorTerms:
+#         - matchExpressions:
+#             - key: nodegroup-type
+#               operator: In
+#               values:
+#                 - cpu-nodegroup

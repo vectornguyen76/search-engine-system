@@ -47,8 +47,23 @@ helm upgrade backend-app backend
 helm uninstall backend-app backend
 ```
 
-## References
+3. **Image Search**
 
+```bash
+helm install image-search-app image-search
+```
+
+```bash
+helm upgrade image-search-app image-search
+```
+
+```bash
+helm uninstall image-search-app image-search
+```
+
+## References
+- https://github.com/bitnami/charts
+- https://docs.netapp.com/us-en/astra-control-center-2204/solutions/postgres-deploy-from-helm-chart.html#requirements
 - **Helm Installation**: [Helm Official Install Guide](https://helm.sh/docs/intro/install/)
 - **Ingress Nginx**: [GitHub Repository](https://github.com/kubernetes/ingress-nginx) | [Quick Start Guide](https://kubernetes.github.io/ingress-nginx/deploy/#quick-start)
 - **Triton Inference Server on AWS**: [Deployment Guide](https://github.com/triton-inference-server/server/tree/main/deploy/aws)
