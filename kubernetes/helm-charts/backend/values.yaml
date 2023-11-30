@@ -12,11 +12,11 @@ service:
 
 env:
   - name: POSTGRES_HOST
-    value: postgres-app.default
+    value: database-postgresql.default
   - name: POSTGRES_DB
     value: db_dev
   - name: IMAGE_SEARCH_URL
-    value: http://image-search-app.default:7000
+    value: http://image-search-app.database:7000
   - name: POSTGRES_USER
     valueFrom:
       secretKeyRef:
@@ -37,7 +37,7 @@ env:
 secret:
   userName: db_user
   postgresPassword: db_password
-  databaseUrl: postgresql+asyncpg://db_user:db_password@postgres-app.default/db_dev
+  databaseUrl: postgresql+asyncpg://db_user:db_password@database-postgresql.database/db_dev
   jwtSecret: my-jwt-secret
 
 autoscaling:
@@ -47,13 +47,6 @@ autoscaling:
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
 
-affinity: {}
-# affinity:
-#   nodeAffinity:
-#     requiredDuringSchedulingIgnoredDuringExecution:
-#       nodeSelectorTerms:
-#         - matchExpressions:
-#             - key: nodegroup-type
-#               operator: In
-#               values:
-#                 - cpu-nodegroup
+# nodeSelector: {}
+nodeSelector: 
+  nodegroup-type: cpu-nodegroup

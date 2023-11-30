@@ -3,12 +3,12 @@ replicaCount: 1
 image:
   repository: vectornguyen76/text-search-engine
   # Always and latest for dev, IfNotPresent for prod
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   tag: "latest"
 
 service:
   type: ClusterIP
-  port: 7000
+  port: 8000
 
 env:
   - name: ELASTICSEARCH_HOST
@@ -21,13 +21,6 @@ autoscaling:
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
 
-affinity: {}
-# affinity:
-#   nodeAffinity:
-#     requiredDuringSchedulingIgnoredDuringExecution:
-#       nodeSelectorTerms:
-#         - matchExpressions:
-#             - key: nodegroup-type
-#               operator: In
-#               values:
-#                 - cpu-nodegroup
+# nodeSelector: {}
+nodeSelector: 
+  nodegroup-type: cpu-nodegroup

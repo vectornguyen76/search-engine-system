@@ -22,7 +22,7 @@ annotations:
       description: Propagate signals in init script correctly to entrypoint
       links:
           - name: Github Issue
-            url: https://github.com/qdrant/qdrant-helm/pull/91
+            url: https://github.com/qdrant/qdrant-helm/pull/91   
     - kind: added
       description: Make annotations for the ServiceAccount configurable
       links:

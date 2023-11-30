@@ -26,16 +26,16 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "image-search.chart" -}}
+{{- define "text-search.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "image-search.labels" -}}
-helm.sh/chart: {{ include "image-search.chart" . }}
-{{ include "image-search.selectorLabels" . }}
+{{- define "text-search.labels" -}}
+helm.sh/chart: {{ include "text-search.chart" . }}
+{{ include "text-search.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -45,8 +45,8 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "image-search.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "image-search.name" . }}
+{{- define "text-search.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "text-search.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 

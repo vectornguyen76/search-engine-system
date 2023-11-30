@@ -39,7 +39,7 @@ spec:
             httpGet:
               path: /
               port: http
-      {{- with .Values.affinity }}
-      affinity:
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}

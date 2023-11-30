@@ -23,13 +23,6 @@ autoscaling:
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
 
-affinity: {}
-# affinity:
-#   nodeAffinity:
-#     requiredDuringSchedulingIgnoredDuringExecution:
-#       nodeSelectorTerms:
-#         - matchExpressions:
-#             - key: nodegroup-type
-#               operator: In
-#               values:
-#                 - cpu-nodegroup
+# nodeSelector: {}
+nodeSelector: 
+  nodegroup-type: cpu-nodegroup
