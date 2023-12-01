@@ -33,7 +33,7 @@ image:
   numGpus: 1
 
 service:
-  type: LoadBalancer
+  type: ClusterIP
 
 secret:
   region: dXMtZWFzdC0x

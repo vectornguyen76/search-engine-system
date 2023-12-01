@@ -10,7 +10,8 @@ Helm is a package manager for Kubernetes, simplifying the process of defining, i
 4. [Upgrade Charts](#upgrade-charts)
 5. [Uninstall Charts](#uninstall-charts)
 6. [Clean up PVC](#clean-up-pvc)
-7. [References](#references)
+7. [Check-resources](#check-resources)
+8. [References](#references)
 
 ## Model Repository S3
 Instructions to create an S3 bucket and copy a model repository from local to S3.
@@ -183,8 +184,42 @@ Deleting PVCs is irreversible and can lead to data loss. Ensure backups are in p
    kubectl get pvc --all-namespaces
    ```
 
-## Testing
+## Check resources 
+   <p align="center">
+   <img src="./assets/namespace-application.png" alt="Namespace Application" />
+   <br>
+   <em>Fig: Namespace Application</em>
+   </p>
 
+   <p align="center">
+   <img src="./assets/namespace-database.png" alt="Namespace Database" />
+   <br>
+   <em>Fig: Namespace Database</em>
+   </p>
+
+   <p align="center">
+   <img src="./assets/namespace-ingress-nginx.png" alt="Namespace Ingress Nginx" />
+   <br>
+   <em>Fig: Namespace Ingress Nginx</em>
+   </p>
+
+   <p align="center">
+   <img src="./assets/namespace-model-serving.png" alt="Namespace Model Serving" />
+   <br>
+   <em>Fig: Namespace Model Serving</em>
+   </p>
+
+   <p align="center">
+   <img src="./assets/check-pvc.png" alt="Persistent Volume Claim (PVC)" />
+   <br>
+   <em>Fig: Persistent Volume Claim (PVC)</em>
+   </p>
+
+   <p align="center">
+   <img src="./assets/monitoring.png" alt="Prometheus and Grafana" />
+   <br>
+   <em>Fig: Prometheus and Grafana</em>
+   </p>
 
 ## References
 - [Bitnami Charts](https://github.com/bitnami/charts)
