@@ -51,7 +51,7 @@ ingress:
   hosts:
     - host: search.vectornguyen.com
       paths:
-        - path: /api/?(.*)
+        - path: /backend/?(.*)
           pathType: ImplementationSpecific
   tls: []
   #  - secretName: chart-example-tls

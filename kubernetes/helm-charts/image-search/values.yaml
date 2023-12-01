@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: vectornguyen76/image-search-engine
   # Always and latest for dev, IfNotPresent for prod
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   tag: "latest"
 
 service:
@@ -14,7 +14,7 @@ env:
   - name: QDRANT_URL
     value: "http://qdrant.database:6334"
   - name: TRITON_SERVER_URL
-    value: "model-serving-triton-inference-server.default:8001"
+    value: "model-serving-triton-inference-server.model-serving:8001"
 
 autoscaling:
   enabled: true

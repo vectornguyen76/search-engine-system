@@ -90,12 +90,12 @@ Step-by-step instructions to create namespaces and install various Helm charts l
    Install Prometheus and Grafana for monitoring. Assumes availability of Prometheus and Grafana.
    ```bash
    helm dependency build ./kube-prometheus-stack
-   helm install monitoring ./kube-prometheus-stack  --namespace monitoring --set prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues=false
+   helm install monitoring ./kube-prometheus-stack --namespace monitoring --set prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues=false
    ```
    Port-forward to Prometheus and Grafana services for local access.
    ```bash
-   kubectl port-forward service/monitoring-grafana 8080:80
-   kubectl port-forward service/monitoring-kube-prometheus 9090:9090
+   kubectl port-forward service/monitoring-grafana 8080:80 --namespace monitoring
+   kubectl port-forward service/monitoring-kube-prometheus 9090:9090 --namespace monitoring
    ```
 
 6. **Inference Server**
