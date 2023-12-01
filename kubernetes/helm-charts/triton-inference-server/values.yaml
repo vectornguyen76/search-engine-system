@@ -36,8 +36,8 @@ service:
   type: ClusterIP
 
 secret:
-  region: dXMtZWFzdC0x
-  id: QUtJQVgzVEVPTUJINkQzUEdLNEk=
-  key: eWcvR1dURmo3Z2lpOXdOeU8rUGcySWxWRGFwVlNpNmtWT3QvcTkwag==
+  region: AWS_REGION
+  id: AWS_SECRET_KEY_ID
+  key: AWS_SECRET_ACCESS_KEY
 
 nodeSelector: {}
