@@ -199,10 +199,9 @@ jobs:
 
       - name: Add env variable to env file
         run: |
-          torch ./frontend/.env.production
-          echo GOOGLE_CLIENT_ID=${{ env.GOOGLE_CLIENT_ID }} >> .env
-          echo GOOGLE_CLIENT_SECRET=${{ env.GOOGLE_CLIENT_SECRET }} >> .env
-          echo NEXTAUTH_SECRET=${{ env.NEXTAUTH_SECRET }} >> .env
+          echo GOOGLE_CLIENT_ID=${{ env.GOOGLE_CLIENT_ID }} >> .env.production
+          echo GOOGLE_CLIENT_SECRET=${{ env.GOOGLE_CLIENT_SECRET }} >> .env.production
+          echo NEXTAUTH_SECRET=${{ env.NEXTAUTH_SECRET }} >> .env.production
 
       - name: Build and push frontend image
         uses: docker/build-push-action@v4
