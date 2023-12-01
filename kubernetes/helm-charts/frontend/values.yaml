@@ -21,16 +21,6 @@ ingress:
       paths:
         - path: /?(.*)
           pathType: ImplementationSpecific
-          backend:
-            service:
-              name: frontend-app
-              port: 3000
-        - path: /api/?(.*)
-          pathType: ImplementationSpecific
-          backend:
-            service:
-              name: backend-app
-              port: 5000
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:

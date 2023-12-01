@@ -95,7 +95,7 @@ async def search_image_qdrant_triton(file: UploadFile = File(...)):
 
     # Extract features from the uploaded image using the feature extractor
     feature = await feature_extractor.triton_extract_feature(
-        image_path=image_path, model_name=settings.PYTORCH_MODEL_NAME
+        image_path=image_path, model_name=settings.TENSORRT_MODEL_NAME
     )
 
     # Perform a search using the extracted feature vector
