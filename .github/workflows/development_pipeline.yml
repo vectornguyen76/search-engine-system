@@ -197,6 +197,13 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
+      - name: Add env variable to env file
+        run: |
+          torch ./frontend/.env
+          echo GOOGLE_CLIENT_ID=${{ env.GOOGLE_CLIENT_ID }} >> .env
+          echo GOOGLE_CLIENT_SECRET=${{ env.GOOGLE_CLIENT_SECRET }} >> .env
+          echo NEXTAUTH_SECRET=${{ env.NEXTAUTH_SECRET }} >> .env
+
       - name: Build and push frontend image
         uses: docker/build-push-action@v4
         with:
@@ -204,9 +211,5 @@ jobs:
           file: ./frontend/Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/frontend-search-engine:latest
-          build-args: |
-            GOOGLE_CLIENT_ID=${{ env.GOOGLE_CLIENT_ID }}
-            GOOGLE_CLIENT_SECRET=${{ env.GOOGLE_CLIENT_SECRET }}
-            NEXTAUTH_SECRET=${{ env.NEXTAUTH_SECRET }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
