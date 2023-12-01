@@ -15,7 +15,15 @@
 ## Demo
 
   <p align="center">
-  <img src="./assets/images/demo.png" alt="Demo" />
-  <br>
-  <em>Demo</em>
+    <img src="./assets/gifs/image-search-demo.gif" alt="Image Search Demo" />
+    <br>
+    <em>Image Search Demo</em>
+    </p>
+  </p>
+
+  <p align="center">
+    <img src="./assets/gifs/text-search-demo.gif" alt="Text Search Demo" />
+    <br>
+    <em>Text Search Demo</em>
+    </p>
   </p>
