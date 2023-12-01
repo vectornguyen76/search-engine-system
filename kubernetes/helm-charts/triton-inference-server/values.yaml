@@ -27,15 +27,17 @@
 replicaCount: 1
 
 image:
-  imageName: nvcr.io/nvidia/tritonserver:23.10-py3
+  imageName: nvcr.io/nvidia/tritonserver:23.01-py3
   pullPolicy: IfNotPresent
-  modelRepositoryPath: s3://triton-inference-server-repository/model_repository
+  modelRepositoryPath: s3://qai-triton-repository/model_repository
   numGpus: 1
 
 service:
-  type: LoadBalancer
+  type: ClusterIP
 
 secret:
   region: AWS_REGION
   id: AWS_SECRET_KEY_ID
   key: AWS_SECRET_ACCESS_KEY
+
+nodeSelector: {}

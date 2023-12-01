@@ -10,8 +10,7 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 args: ["./config/initialize.sh"]
-env:
-  {}
+env: {}
   # - name: QDRANT_ALLOW_RECOVERY_MODE
   #   value: true
 
@@ -42,8 +41,7 @@ ingress:
   enabled: false
   ingressClassName: ""
   additionalLabels: {}
-  annotations:
-    {}
+  annotations: {}
     # kubernetes.io/ingress.class: alb
   hosts:
     - host: example-domain.com
@@ -51,8 +49,7 @@ ingress:
         - path: /
           pathType: Prefix
           servicePort: 6333
-  tls:
-    []
+  tls: []
     # - hosts:
     #    - example-domain.com
     #   secretName: tls-secret-name
@@ -85,8 +82,7 @@ additionalLabels: {}
 podAnnotations: {}
 podLabels: {}
 
-resources:
-  {}
+resources: {}
   # limits:
   #   cpu: 100m
   #   memory: 128Mi
