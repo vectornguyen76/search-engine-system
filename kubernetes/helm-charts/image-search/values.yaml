@@ -12,9 +12,9 @@ service:
 
 env:
   - name: QDRANT_URL
-    value: "http://qdrant-db.default:6334"
+    value: "http://qdrant.database:6334"
   - name: TRITON_SERVER_URL
-    value: "search-engine-serving-triton-inference-server.default:8001"
+    value: "model-serving-triton-inference-server.default:8001"
 
 autoscaling:
   enabled: true
@@ -23,6 +23,4 @@ autoscaling:
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
 
-# nodeSelector: {}
-nodeSelector: 
-  nodegroup-type: cpu-nodegroup
+nodeSelector: {}

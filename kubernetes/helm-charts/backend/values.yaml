@@ -11,12 +11,14 @@ service:
   port: 5000
 
 env:
+  - name: IMAGE_SEARCH_URL
+    value: http://image-search-app.application:7000
+  - name: TEXT_SEARCH_URL
+    value: http://text-search-app.application:8000
   - name: POSTGRES_HOST
     value: database-postgresql.default
   - name: POSTGRES_DB
     value: db_dev
-  - name: IMAGE_SEARCH_URL
-    value: http://image-search-app.database:7000
   - name: POSTGRES_USER
     valueFrom:
       secretKeyRef:
@@ -47,6 +49,4 @@ autoscaling:
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
 
-# nodeSelector: {}
-nodeSelector: 
-  nodegroup-type: cpu-nodegroup
+nodeSelector: {}

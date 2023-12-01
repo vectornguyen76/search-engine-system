@@ -1,207 +1,176 @@
-# Helm Charts
+# Helm Charts for Kubernetes
 
-Helm is a package manager for Kubernetes, which simplifies the process of defining, installing, and upgrading even the most complex Kubernetes applications. Below are references to Helm Charts and documentation for various Kubernetes services and tools.
+## Overview
+Helm is a package manager for Kubernetes, simplifying the process of defining, installing, and upgrading Kubernetes applications. This document provides guidelines and references for using Helm Charts with various Kubernetes services and tools.
 
-### Install aws-ebs-csi-driver
+## Table of Contents
+1. [Model Repository S3](#model-repository-s3)
+2. [Install aws-ebs-csi-driver](#install-aws-ebs-csi-driver)
+3. [Install the Charts](#install-the-charts)
+4. [Upgrade Charts](#upgrade-charts)
+5. [Uninstall Charts](#uninstall-charts)
+6. [Clean up PVC](#clean-up-pvc)
+7. [References](#references)
 
-```
+## Model Repository S3
+Instructions to create an S3 bucket and copy a model repository from local to S3.
+
+- **Create S3 Bucket**
+  ```bash
+  aws s3api create-bucket --bucket qai-triton-repository --region us-east-1
+  ```
+- **Copy Model Repository**
+  ```bash
+  aws s3 cp ./../image-search-engine/model_repository s3://qai-triton-repository/model_repository --recursive
+  ```
+
+## Install aws-ebs-csi-driver
+Guidelines to install the AWS EBS CSI driver in a Kubernetes environment.
+
+```bash
 kubectl apply -k "github.com/kubernetes-sigs/aws-ebs-csi-driver/deploy/kubernetes/overlays/stable/?ref=release-1.25"
 ```
 
-Instructions to install the AWS EBS CSI driver in the production environment.
+## Install the Charts
+Step-by-step instructions to create namespaces and install various Helm charts like Ingress Nginx Controller, Postgresql, Elastic Search, Qdrant, Prometheus, Grafana, and others.
 
-### Install the Charts
-
-Create namespace
-```
-kubectl create namespace ingress-nginx
-kubectl create namespace application
-kubectl create namespace database
-kubectl create namespace model-serving
-kubectl create namespace monitoring
-```
+- **Create Namespaces**
+  ```bash
+  kubectl create namespace ingress-nginx
+  kubectl create namespace application
+  kubectl create namespace database
+  kubectl create namespace model-serving
+  kubectl create namespace monitoring
+  ```
 
 1. **Ingress Nginx Controller**
-   ```
+   Installs the Ingress Nginx controller using Helm.
+   ```bash
    helm install ingress-nginx ./ingress-nginx --namespace ingress-nginx
    ```
-   This command installs the Ingress Nginx controller using Helm.
 
 2. **Postgresql**
-   ```
+   Build dependencies and then install Postgresql Helm Chart.
+   ```bash
    helm dependency build ./postgresql
-   ```
-   ```
    helm install database ./postgresql --namespace database --set auth.username=db_user,auth.password=db_password,auth.database=db_dev
    ```
 
-3. **Elastic Seach**
-   ```
-   helm dependency build ./postgresql
-   ```
-   ```
+3. **Elastic Search**
+   Build dependencies and then install Elastic Search Helm Chart.
+   ```bash
+   helm dependency build ./elasticsearch
    helm install elasticsearch ./elasticsearch --namespace database --set master.masterOnly=false,master.replicaCount=1,data.replicaCount=0,coordinating.replicaCount=0,ingest.replicaCount=0,master.nodeSelector.nodegroup-type=cpu-nodegroup
    ```
 
 4. **Qdrant**
-   ```
+   Install Qdrant Helm Chart for vector search engine.
+   ```bash
    helm install qdrant ./qdrant --namespace database --set nodeSelector.nodegroup-type=cpu-nodegroup
    ```
 
-2. **Deploy Prometheus and Grafana**
+5. **Prometheus and Grafana**
+   Install Prometheus and Grafana for monitoring. Assumes availability of Prometheus and Grafana.
+   ```bash
+   helm install search-engine-metrics ./kube-prometheus-stack  --namespace monitoring --set prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues=false
    ```
-   helm install search-engine-metrics --set prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues=false prometheus-community/kube-prometheus-stack
-   ```
-
-3. **Deploy the Inference Server**
-   ```
-   helm install search-engine-metrics --set prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues=false prometheus-community/kube-prometheus-stack
-   ```
-
-5. **Image Search**
-   ```
-   helm install image-search-app ./image-search --namespace application
+   Port-forward to Prometheus and Grafana services for local access.
+   ```bash
+   kubectl port-forward service/search-engine-metrics-grafana 8080:80
+   kubectl port-forward service/search-engine-metrics-kube-prometheus 9090:9090
    ```
 
-6. **Text Search**
+6. **Inference Server**
+   Load models from AWS S3 and deploy the inference server using Helm.
+   Convert AWS credentials to base64 and update `values.yaml`.
+   ```bash
+   echo -n 'REGION' | base64
+   echo -n 'SECRECT_KEY_ID' | base64
+   echo -n 'SECRET_ACCESS_KEY' | base64
    ```
-   helm install text-search-app ./text-search --namespace application
+   Update model repository path in `values.yaml`.
+   ```yaml
+   modelRepositoryPath: s3://qai-triton-repository/model_repository
    ```
-
-7. **Backend**
-   ```
-   helm install backend-app ./backend --namespace application
-   ```
-
-8. **Frontend**
-   ```
-   helm install frontend-app ./frontend --namespace application
-   ```
-
-helm install elasticsearch elasticsearch
-
-2. **Frontend**
-   ```
-   helm install frontend-app ./frontend --namespace application
+   Deploy the inference server.
+   ```bash
+   helm install model-serving ./triton-inference-server --namespace model-serving --set nodeSelector.nodegroup-type=gpu-nodegroup
    ```
 
+7. **Image Search Application**
+   Install Image Search Application Helm Chart.
+   ```bash
+   helm install image-search-app ./image-search --namespace application --set nodeSelector.nodegroup-type=cpu-nodegroup
+   ```
 
+8. **Text Search Application**
+   Install Text Search Application Helm Chart.
+   ```bash
+   helm install text-search-app ./text-search --namespace application --set nodeSelector.nodegroup-type=cpu-nodegroup
+   ```
 
-2. **Backend**
+9. **Backend Application**
+   Install Backend Application Helm Chart.
+   ```bash
+   helm install backend-app ./backend --namespace application --set nodeSelector.nodegroup-type=cpu-nodegroup
+   ```
 
-```
-helm install backend-app backend
-```
+10. **Frontend Application**
+    Install Frontend Application Helm Chart.
+    ```bash
+    helm install frontend-app ./frontend --namespace application --set nodeSelector.nodegroup-type=cpu-nodegroup
+    ```
 
-```
-helm upgrade backend-app backend
-```
+## Upgrade Charts
+Instructions on how to upgrade existing Helm Chart releases.
 
-```
-helm uninstall backend-app backend
-```
-
-2. **Backend**
-
-```
-helm install backend-app backend
-```
-
-```
-helm upgrade backend-app backend
-```
-
-```
-helm uninstall backend-app backend
-```
-
-3. **Image Search**
-
-```
-helm install image-search-app image-search
-```
-
-```
-helm upgrade image-search-app image-search
-```
-
-```
-helm uninstall image-search-app image-search
-
-```
-
-```
-helm install text-search-app text-search
-helm upgrade text-search-app text-search
-helm uninstall text-search-app
-```
-kubectl port-forward service/text-search-app 8000:8000
-
-### Postgresql 
-```
-helm install postgres-app --set auth.username=db_user,auth.password=db_password,auth.database=db_dev oci://registry-1.docker.io/bitnamicharts/postgresql
-```
-
-helm uninstall postgres-app 
-
-helm install postgres-app ./postgresql --set auth.username=db_user,auth.password=db_password,auth.database=db_dev 
-
-helm dependency build postgresql
-
-helm install elasticsearch elasticsearch
-helm install elasticsearch oci://registry-1.docker.io/bitnamicharts/elasticsearch
-helm uninstall elasticsearch
-
-kubectl create clusterrolebinding tiller-cluster-admin --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
-
-helm install --name elasticsearch elastic/elasticsearch --set service.type=LoadBalancer
-
-### Upgrade charts
 ```bash
-helm uninstall elasticsearch
+helm upgrade [RELEASE_NAME] [CHART_NAME] --version [NEW_VERSION] -f [VALUES_FILE]
 ```
 
+## Uninstall Charts
+Guidelines to list and uninstall Helm Chart releases.
 
-### Clean up
-To delete all Persistent Volume Claims (PVCs) in a Kubernetes cluster, you can use the `kubectl` command. However, be cautious with this operation, as deleting PVCs can result in data loss if the volumes are not backed up or replicated elsewhere.
+```bash
+helm list
+helm uninstall [RELEASE_NAME]
+```
 
-Here's a step-by-step guide on how to do this:
+## Clean up PVC
+
+Deleting PVCs is irreversible and can lead to data loss. Ensure backups are in place before proceeding.
 
 1. **List All PVCs**
-First, it's a good practice to list all PVCs to review what will be deleted:
+   To view all PVCs across all namespaces:
+   ```bash
+   kubectl get pvc --all-namespaces
+   ```
 
-```bash
-kubectl get pvc --all-namespaces
-```
+2. **Delete All PVCs**
+   To remove all PVCs in the cluster:
+   ```bash
+   kubectl delete pvc --all --all-namespaces
+   ```
 
-2. **Deleting All PVCs**
-To delete all PVCs in the cluster, you can use the following command:
+3. **Delete PVCs in a Specific Namespace**
+   To delete PVCs in a particular namespace:
+   ```bash
+   kubectl delete pvc --all -n <namespace>
+   ```
+   Replace `<namespace>` with the desired namespace name.
 
-```bash
-kubectl delete pvc --all --all-namespaces
-```
+4. **Verify Deletion**
+   To confirm the PVCs have been removed:
+   ```bash
+   kubectl get pvc --all-namespaces
+   ```
 
-- `--all` deletes all resources of the specified type (PVCs in this case).
-- `--all-namespaces` ensures the command runs across every namespace in the cluster.
-
-3. **Specific Namespace**
-If you want to delete PVCs in a specific namespace, omit the `--all-namespaces` flag and specify the namespace:
-
-```bash
-kubectl delete pvc --all -n <namespace>
-```
-
-Replace `<namespace>` with the name of the namespace.
-
-
-Remember, this action cannot be undone, so proceed with caution and ensure that this operation aligns with your data management policies.
 ## References
-- https://github.com/bitnami/charts
-- https://docs.netapp.com/us-en/astra-control-center-2204/solutions/postgres-deploy-from-helm-chart.html#requirements
-- **Helm Installation**: [Helm Official Install Guide](https://helm.sh/docs/intro/install/)
-- **Ingress Nginx**: [GitHub Repository](https://github.com/kubernetes/ingress-nginx) | [Quick Start Guide](https://kubernetes.github.io/ingress-nginx/deploy/#quick-start)
-- **Triton Inference Server on AWS**: [Deployment Guide](https://github.com/triton-inference-server/server/tree/main/deploy/aws)
-- **Prometheus Community Helm Charts**: [GitHub Repository](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack)
-- **Qdrant Helm Charts**: [GitHub Repository](https://github.com/qdrant/qdrant-helm/tree/main/charts/qdrant)
-- **Elastic Cloud on Kubernetes**: [Documentation](https://www.elastic.co/guide/en/cloud-on-k8s/current/k8s-stack-helm-chart.html) | [Kubernetes Deployment](https://github.com/elastic/cloud-on-k8s/tree/main/deploy/eck-stack)
-- **Grafana Dashboards**: [Explore Dashboards](https://grafana.com/grafana/dashboards)
+- [Bitnami Charts](https://github.com/bitnami/charts)
+- [NetApp Postgres Helm Chart](https://docs.netapp.com/us-en/astra-control-center-2204/solutions/postgres-deploy-from-helm-chart.html#requirements)
+- [Helm Official Install Guide](https://helm.sh/docs/intro/install/)
+- [Ingress Nginx GitHub Repository](https://github.com/kubernetes/ingress-nginx)
+- [Triton Inference Server AWS Deployment Guide](https://github.com/triton-inference-server/server/tree/main/deploy/aws)
+- [Prometheus Community Helm Charts](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack)
+- [Qdrant Helm Charts](https://github.com/qdrant/qdrant-helm/tree/main/charts/qdrant)
+- [Elastic Cloud on Kubernetes Documentation](https://www.elastic.co/guide/en/cloud-on-k8s/current/k8s-stack-helm-chart.html)

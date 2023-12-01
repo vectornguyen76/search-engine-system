@@ -43,6 +43,4 @@ autoscaling:
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
 
-# nodeSelector: {}
-nodeSelector: 
-  nodegroup-type: cpu-nodegroup
+nodeSelector: {}

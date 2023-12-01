@@ -18,9 +18,9 @@ nodeGroups:
     instanceName: eks-cpu-node
     minSize: 1
     maxSize: 3
-    volumeSize: 30
+    volumeSize: 50
     volumeType: gp3
-    desiredCapacity: 2
+    desiredCapacity: 1
     iam:
       withAddonPolicies:
         imageBuilder: true

@@ -12,7 +12,7 @@ service:
 
 env:
   - name: ELASTICSEARCH_HOST
-    value: "elasticsearch.default"
+    value: "elasticsearch.database"
 
 autoscaling:
   enabled: true
@@ -21,6 +21,4 @@ autoscaling:
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
 
-# nodeSelector: {}
-nodeSelector: 
-  nodegroup-type: cpu-nodegroup
+nodeSelector: {}

@@ -47,15 +47,6 @@ spec:
         release: {{ .Release.Name }}
 
     spec:
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-              - matchExpressions:
-                  - key: nodegroup-type
-                    operator: In
-                    values:
-                      - gpu-nodegroup
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.imageName }}"
@@ -107,3 +98,7 @@ spec:
       securityContext:
         runAsUser: 1000
         fsGroup: 1000
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
