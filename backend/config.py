@@ -26,7 +26,7 @@ class Settings(BaseSettings):
     # Database config
     DATABASE_URL: PostgresDsn
 
-    SITE_DOMAIN: str = "vectornguyen.com"
+    SITE_DOMAIN: str = "search.vectornguyen.com"
 
     ADMIN_EMAIL: str = "vectornguyen76@gmail.com"
 
