@@ -180,6 +180,9 @@ jobs:
     env:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
       DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+      GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+      GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+      NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
@@ -201,5 +204,9 @@ jobs:
           file: ./frontend/Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/frontend-search-engine:latest
+          build-args: |
+            GOOGLE_CLIENT_ID=${{ env.GOOGLE_CLIENT_ID }}
+            GOOGLE_CLIENT_SECRET=${{ env.GOOGLE_CLIENT_SECRET }}
+            NEXTAUTH_SECRET=${{ env.NEXTAUTH_SECRET }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
