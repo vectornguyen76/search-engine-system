@@ -1,5 +1,8 @@
 # Kubernetes Development
 
+**Note:** This setup is intended for development purposes only. For deploying to EKS (Production Environment), it's recommended to use Helm Charts.
+[Guideline for Deploying using Helm Chart](./../helm-charts/README.md)
+
 ## Table of Contents
 
 1. [Architecture](#architecture)
@@ -7,18 +10,12 @@
 3. [Production Environment Setup](#production-environment-setup)
 4. [Kubernetes Cluster Deployment](#kubernetes-cluster-deployment)
    - [Deploy Ingress Nginx](#deploy-ingress-nginx)
-     - [Installation](#installation)
-     - [Configuration](#configuration)
-     - [Verification](#verification)
-     - [Uninstallation](#uninstallation)
    - [Deploy Postgres](#deploy-postgres)
-     - [Local Installation](#local-installation)
-     - [EKS Installation](#eks-installation)
-     - [Local Uninstallation](#local-uninstallation)
-     - [EKS Uninstallation](#eks-uninstallation)
    - [Deploy Backend](#deploy-backend)
    - [Deploy Frontend](#deploy-frontend)
    - [Deploy Qdrant](#deploy-qdrant)
+   - [Deploy Elastic Search](#deploy-elastic-search)
+   - [Deploy Prometheus and Grafana](#deploy-prometheus-and-grafana)
    - [Deploy Triton Inference Server](#deploy-triton-inference-server)
    - [Deploy Image Search](#deploy-image-search)
    - [Deploy Text Search](#deploy-text-search)
@@ -112,33 +109,31 @@ Instructions to install the AWS EBS CSI driver in the production environment.
 
 ### Deploy Ingress Nginx
 
-#### Installation
-
 1. **Install Ingress Nginx Controller**
+
    ```
    helm upgrade --install ingress-nginx ingress-nginx --repo https://kubernetes.github.io/ingress-nginx
    ```
+
    This command installs the Ingress Nginx controller using Helm.
 
-#### Configuration
+2. **Configure Ingress Nginx Service**
 
-1. **Configure Ingress Nginx Service**
    ```
    kubectl apply -f ingress-nginx-service.yaml
    ```
+
    Apply the configuration defined in `ingress-nginx-service.yaml`.
 
-#### Verification
+3. **Check Ingress Nginx**
 
-1. **Check Ingress Nginx**
    ```
    kubectl get ingress
    ```
+
    Verify the ingress setup by listing all ingress resources.
 
-#### Uninstallation
-
-1. **Remove Ingress Nginx**
+4. **Remove Ingress Nginx**
    ```
    helm uninstall ingress-nginx
    kubectl delete -f ingress-nginx-service.yaml
@@ -147,32 +142,29 @@ Instructions to install the AWS EBS CSI driver in the production environment.
 
 ### Deploy Postgres
 
-#### Local Installation
-
 1. **Apply Postgres Configuration for Local**
+
    ```
    kubectl apply -f postgres-pvc-local.yaml,postgres-statefulset.yaml,postgres-service.yaml
    ```
+
    Set `storageClassName: standard` in `postgres-statefulset.yaml` for local deployment.
 
-#### EKS Installation
+2. **Apply Postgres Configuration for EKS**
 
-1. **Apply Postgres Configuration for EKS**
    ```
    kubectl apply -f postgres-pvc-eks.yaml,postgres-statefulset.yaml,postgres-service.yaml
    ```
+
    Set `storageClassName: "ebs-sc"` in `postgres-statefulset.yaml` for EKS deployment.
 
-#### Local Uninstallation
+3. **Remove Postgres in Local**
 
-1. **Remove Postgres in Local**
    ```
    kubectl delete -f postgres-pvc-local.yaml,postgres-statefulset.yaml,postgres-service.yaml
    ```
 
-#### EKS Uninstallation
-
-1. **Remove Postgres in EKS**
+4. **Remove Postgres in EKS**
    ```
    kubectl delete -f postgres-pvc-eks.yaml,postgres-statefulset.yaml,postgres-service.yaml
    ```
@@ -229,87 +221,28 @@ Instructions to install the AWS EBS CSI driver in the production environment.
    kubectl delete pvc -l app.kubernetes.io/instance=qdrant-db
    ```
 
+### Deploy Elastic Search
+
+[Install Elastic Search with Helm Chart](./../helm-charts/README.md#elastic-search)
+
+### Deploy Prometheus and Grafana
+
+The inference server metrics are collected by Prometheus and viewable by Grafana. The inference server helm chart assumes that Prometheus
+and Grafana are available so this step must be followed even if you don't want to use Grafana.
+
+[Install Prometheus and Grafana with Helm Chart](./../helm-charts/README.md#prometheus-and-grafana)
+
+Then port-forward to the Prometheus and Grafana service so you can access it from
+your local browser.
+
+```
+kubectl port-forward service/search-engine-metrics-grafana 8080:80
+kubectl port-forward service/search-engine-metrics-kube-prometheus 9090:9090
+```
+
 ### Deploy Triton Inference Server
 
-1.  **Model Repository**
-
-- Create s3
-  ```
-  aws s3api create-bucket --bucket qai-triton-repository --region us-east-1
-  ```
-- Copy model repository from local to s3
-  ```
-  aws s3 cp ./../image-search-engine/model_repository s3://qai-triton-repository/model_repository --recursive
-  ```
-- To load the model from the AWS S3, you need to convert the following AWS credentials in the base64 format and add it to the values.yaml
-
-  ```
-  echo -n 'REGION' | base64
-  ```
-
-  ```
-  echo -n 'SECRECT_KEY_ID' | base64
-  ```
-
-  ```
-  echo -n 'SECRET_ACCESS_KEY' | base64
-  ```
-
-- Update path model repository in values.yaml
-  ```
-  modelRepositoryPath: s3://qai-triton-repository/model_repository
-  ```
-
-2. **Deploy Prometheus and Grafana**
-
-   The inference server metrics are collected by Prometheus and viewable by Grafana. The inference server helm chart assumes that Prometheus
-   and Grafana are available so this step must be followed even if you don't want to use Grafana.
-
-   ```
-   helm install search-engine-metrics --set prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues=false prometheus-community/kube-prometheus-stack
-   ```
-
-   Then port-forward to the Prometheus and Grafana service so you can access it from
-   your local browser.
-
-   ```
-   kubectl port-forward service/search-engine-metrics-grafana 8080:80
-   kubectl port-forward service/search-engine-metrics-kube-prometheus 9090:9090
-   ```
-
-3. **Deploy the Inference Server**
-   Deploy the inference server using the default configuration with the
-   following commands.
-
-   ```
-   cd helm-charts/triton-inference-server
-
-   helm install search-engine-serving .
-   ```
-
-4. **Clean up**
-
-   Once you've finished using the inference server you should use helm to
-   delete the deployment.
-
-   ```
-   helm uninstall search-engine-metrics
-   helm uninstall search-engine-serving
-   ```
-
-   For the Prometheus and Grafana services, you should [explicitly delete
-   CRDs](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack#uninstall-helm-chart):
-
-   ```
-   kubectl delete crd alertmanagerconfigs.monitoring.coreos.com alertmanagers.monitoring.coreos.com podmonitors.monitoring.coreos.com probes.monitoring.coreos.com prometheuses.monitoring.coreos.com prometheusrules.monitoring.coreos.com servicemonitors.monitoring.coreos.com thanosrulers.monitoring.coreos.com
-   ```
-
-   You may also want to delete the AWS bucket you created to hold the
-   model repository.
-
-   ```
-   aws s3 rm -r gs://qai-triton-repository
-   ```
+[Install Triton Inference Server with Helm Chart](./../helm-charts/README.md#triton-inference-server)
 
 ### Deploy Image Search
 

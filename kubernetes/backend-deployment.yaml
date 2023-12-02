@@ -16,12 +16,12 @@ spec:
         - name: backend-container
           image: vectornguyen76/backend-search-engine:latest
           imagePullPolicy: Always
-          # livenessProbe:
-          #   httpGet:
-          #     path: /healthz
-          #     port: 5000
-          #   initialDelaySeconds: 3
-          #   periodSeconds: 3
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 5
           env:
             - name: POSTGRES_HOST
               value: postgres-service.default
@@ -39,3 +39,5 @@ spec:
               value: http://image-search-service.default:7000
           ports:
             - containerPort: 5000
+      nodeSelector:
+        nodegroup-type: cpu-nodegroup
