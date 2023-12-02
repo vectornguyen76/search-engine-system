@@ -15,6 +15,11 @@ spec:
       containers:
         - name: text-search-container
           image: vectornguyen76/text-search-engine:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 7000
           env:
             - name: ELASTICSEARCH_HOST
               value: "elasticsearch.default"
+      nodeSelector:
+        nodegroup-type: cpu-nodegroup

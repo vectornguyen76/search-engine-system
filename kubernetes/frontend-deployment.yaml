@@ -12,18 +12,17 @@ spec:
       labels:
         app: frontend
     spec:
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-              - matchExpressions:
-                  - key: nodegroup-type
-                    operator: In
-                    values:
-                      - cpu-nodegroup
       containers:
         - name: frontend-container
           image: vectornguyen76/frontend-search-engine:latest
           imagePullPolicy: Always
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 5
           ports:
             - containerPort: 3000
+      nodeSelector:
+        nodegroup-type: cpu-nodegroup

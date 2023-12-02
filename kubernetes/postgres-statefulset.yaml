@@ -29,6 +29,9 @@ spec:
             - name: postgres-storage
               mountPath: /var/lib/postgresql/data
               subPath: postgres
+      nodeSelector:
+        nodegroup-type: cpu-nodegroup
+
   volumeClaimTemplates:
     - metadata:
         name: postgres-storage
