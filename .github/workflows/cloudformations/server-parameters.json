@@ -1,5 +1,9 @@
 [
   {
+    "ParameterKey": "EnvironmentName",
+    "ParameterValue": "Search-Engine"
+  },
+  {
     "ParameterKey": "VpcCIDR",
     "ParameterValue": "10.0.0.0/16"
   },
