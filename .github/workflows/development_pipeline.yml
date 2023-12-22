@@ -235,7 +235,7 @@ jobs:
       - name: Deploy to AWS CloudFormation
         uses: aws-actions/aws-cloudformation-github-deploy@v1
         with:
-          name: server
+          name: test
           template: ./.github/workflows/cloudformations/server.yml
           parameter-overrides: "file:///${{ github.workspace }}/.github/workflows/cloudformations/server-parameters.json"
           tags: ${{ vars.TAGS }}
@@ -243,7 +243,7 @@ jobs:
       - name: Get Public DNS Server
         run: |
           # Create file
-          backend_public_dns=server-PublicDNS
+          backend_public_dns=test-PublicDNS
           # Pull the export value
           host=$(aws cloudformation list-exports \
           --query "Exports[?Name==\`$backend_public_dns\`].Value" \
@@ -265,11 +265,11 @@ jobs:
           # Optional, SSH private key
           key: ${{secrets.SSH_PRIVATE_KEY}}
           # # Optional, literal inventory file contents
-          # inventory: |
-          #   [all]
-          #   ec2-3-87-235-66.compute-1.amazonaws.com
-          options: |
-            --inventory ./hosts
+          inventory: |
+            [all]
+            54.167.51.226
+          # options: |
+          #   --inventory ./hosts
 
       # - name: Setting up SSH key
       #   run: |
@@ -290,7 +290,7 @@ jobs:
           touch /home/runner/.ssh/id_rsa
           echo -e "${{secrets.SSH_PRIVATE_KEY}}" > /home/runner/.ssh/id_rsa
           chmod 700 /home/runner/.ssh/id_rsa
-          ssh-keyscan -t rsa,dsa,ecdsa,ed25519 ${{secrets.SSH_HOST}} >> /home/runner/.ssh/known_hosts
+          ssh-keyscan -t rsa,dsa,ecdsa,ed25519 54.167.51.226 >> /home/runner/.ssh/known_hosts
       - name: Run ansible script
         shell: bash
         run: |
@@ -298,5 +298,5 @@ jobs:
           sudo apt install -y ansible
           service ssh status
           cd ./.github/workflows/ansible
-          hosts
+          cat hosts
           ansible-playbook -vvv --private-key /home/runner/.ssh/id_rsa -i hosts deploy_applications.yml
