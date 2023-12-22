@@ -235,7 +235,7 @@ jobs:
       - name: Deploy to AWS CloudFormation
         uses: aws-actions/aws-cloudformation-github-deploy@v1
         with:
-          name: test
+          name: server
           template: ./.github/workflows/cloudformations/server.yml
           parameter-overrides: "file:///${{ github.workspace }}/.github/workflows/cloudformations/server-parameters.json"
           tags: ${{ vars.TAGS }}
@@ -243,7 +243,7 @@ jobs:
       - name: Get Public DNS Server
         run: |
           # Create file
-          backend_public_dns=test-PublicDNS
+          backend_public_dns=server-PublicDNS
           # Pull the export value
           host=$(aws cloudformation list-exports \
           --query "Exports[?Name==\`$backend_public_dns\`].Value" \
@@ -251,9 +251,9 @@ jobs:
 
           echo $host
           # Append the DNS to the inventory file
-          echo $host >> $(eval echo "./.github/workflows/ansible/inventory.txt")
+          echo $host >> $(eval echo "./.github/workflows/ansible/hosts")
 
-          cat ./.github/workflows/ansible/inventory.txt
+          cat ./.github/workflows/ansible/hosts
 
       - name: Run playbook
         uses: dawidd6/action-ansible-playbook@v2
@@ -269,7 +269,7 @@ jobs:
           #   [all]
           #   ec2-3-87-235-66.compute-1.amazonaws.com
           options: |
-            --inventory ./.github/workflows/ansible/inventory.txt
+            --inventory ./.github/workflows/ansible/hosts
 
       # - name: Setting up SSH key
       #   run: |
@@ -280,7 +280,7 @@ jobs:
       #     sudo apt update
       #     sudo apt install -y ansible
       #     cd ./.github/workflows/ansible
-      #     ansible-playbook -i inventory.txt deploy_applications.yml --private-key=private_key.pem
+      #     ansible-playbook -i hosts deploy_applications.yml --private-key=private_key.pem
 
       - name: Setup SSH
         shell: bash
@@ -298,5 +298,5 @@ jobs:
           sudo apt install -y ansible
           service ssh status
           cd ./.github/workflows/ansible
-          inventory.txt
-          ansible-playbook -vvv --private-key /home/runner/.ssh/id_rsa -i inventory.txt deploy_applications.yml
+          hosts
+          ansible-playbook -vvv --private-key /home/runner/.ssh/id_rsa -i hosts deploy_applications.yml
