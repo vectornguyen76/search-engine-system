@@ -269,7 +269,7 @@ jobs:
           #   [all]
           #   ec2-3-87-235-66.compute-1.amazonaws.com
           options: |
-            --inventory ./.github/workflows/ansible/hosts
+            --inventory ./hosts
 
       # - name: Setting up SSH key
       #   run: |
