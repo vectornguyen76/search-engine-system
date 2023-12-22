@@ -264,7 +264,9 @@ jobs:
           directory: ./.github/workflows/ansible
           # Optional, SSH private key
           key: ${{secrets.SSH_PRIVATE_KEY}}
-          # Optional, literal inventory file contents
-          inventory: |
-            [all]
-            ec2-3-87-235-66.compute-1.amazonaws.com
+          # # Optional, literal inventory file contents
+          # inventory: |
+          #   [all]
+          #   ec2-3-87-235-66.compute-1.amazonaws.com
+          options: |
+            --inventory ./.github/workflows/ansible/inventory.txt
