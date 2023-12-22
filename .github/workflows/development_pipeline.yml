@@ -236,7 +236,7 @@ jobs:
         uses: aws-actions/aws-cloudformation-github-deploy@v1
         with:
           name: server-stack
-          template: ./.github/workflows/cloudformations/server.yaml
+          template: ./.github/workflows/cloudformations/server.yml
           parameter-overrides: "file:///${{ github.workspace }}/.github/workflows/cloudformations/server-parameters.json"
           tags: ${{ vars.TAGS }}
 
@@ -254,3 +254,15 @@ jobs:
           echo $host >> $(eval echo "./.github/workflows/ansible/inventory.txt")
 
           cat ./.github/workflows/ansible/inventory.txt
+
+      - name: Run playbook
+        uses: dawidd6/action-ansible-playbook@v2
+        with:
+          # Required, playbook filepath
+          playbook: deploy_applications.yml
+          # Optional, directory where playbooks live
+          directory: ./.github/workflows/ansible
+          # Optional, SSH private key
+          key: ${{secrets.SSH_PRIVATE_KEY}}
+          # Optional, literal inventory file contents
+          inventory: "./.github/workflows/ansible/inventory.txt"
