@@ -16,7 +16,7 @@
     "ParameterValue": "t3.medium"
   },
   {
-    "ParameterKey": "KeyPair",
+    "ParameterKey": "KeyPairName",
     "ParameterValue": "my-keypair"
   },
   {
