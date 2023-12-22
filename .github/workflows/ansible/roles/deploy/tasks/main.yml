@@ -10,7 +10,7 @@
     dest: "/home/ubuntu/server/artifact.zip"
 
 - name: "Extract app"
-  unarchive:
+  ansible.builtin.unarchive:
     remote_src: yes
     src: "/home/ubuntu/server/artifact.zip"
     dest: "/home/ubuntu/server"
