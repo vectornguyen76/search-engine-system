@@ -238,4 +238,4 @@ jobs:
           name: server-stack
           template: ./.github/workflows/cloudformations/server.yaml
           parameter-overrides: "file:///${{ github.workspace }}/.github/workflows/cloudformations/server-parameters.json"
-          tags: ${{ env.TAGS }}
+          tags: ${{ vars.TAGS }}
