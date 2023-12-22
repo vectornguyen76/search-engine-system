@@ -271,16 +271,16 @@ jobs:
           options: |
             --inventory ./.github/workflows/ansible/inventory.txt
 
-      - name: Setting up SSH key
-        run: |
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > private_key.pem
-          chmod 600 private_key.pem
-      - name: Run Ansible Playbook
-        run: |
-          sudo apt update
-          sudo apt install -y ansible
-          cd ./.github/workflows/ansible
-          ansible-playbook -i inventory.txt deploy_applications.yml --private-key=private_key.pem
+      # - name: Setting up SSH key
+      #   run: |
+      #     echo "${{ secrets.SSH_PRIVATE_KEY }}" > private_key.pem
+      #     chmod 600 private_key.pem
+      # - name: Run Ansible Playbook
+      #   run: |
+      #     sudo apt update
+      #     sudo apt install -y ansible
+      #     cd ./.github/workflows/ansible
+      #     ansible-playbook -i inventory.txt deploy_applications.yml --private-key=private_key.pem
 
       - name: Setup SSH
         shell: bash
@@ -294,6 +294,8 @@ jobs:
       - name: Run ansible script
         shell: bash
         run: |
+          sudo apt update
+          sudo apt install -y ansible
           service ssh status
           cd ./.github/workflows/ansible
           inventory.txt
