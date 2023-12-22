@@ -235,7 +235,7 @@ jobs:
       - name: Deploy to AWS CloudFormation
         uses: aws-actions/aws-cloudformation-github-deploy@v1
         with:
-          name: server-stack
+          name: test
           template: ./.github/workflows/cloudformations/server.yml
           parameter-overrides: "file:///${{ github.workspace }}/.github/workflows/cloudformations/server-parameters.json"
           tags: ${{ vars.TAGS }}
@@ -243,7 +243,7 @@ jobs:
       - name: Get Public DNS Server
         run: |
           # Create file
-          backend_public_dns=server-stack-PublicDNS
+          backend_public_dns=test-PublicDNS
           # Pull the export value
           host=$(aws cloudformation list-exports \
           --query "Exports[?Name==\`$backend_public_dns\`].Value" \
@@ -266,4 +266,5 @@ jobs:
           key: ${{secrets.SSH_PRIVATE_KEY}}
           # Optional, literal inventory file contents
           inventory: |
-            ./.github/workflows/ansible/inventory.txt
+            [all]
+            ec2-3-87-235-66.compute-1.amazonaws.com
