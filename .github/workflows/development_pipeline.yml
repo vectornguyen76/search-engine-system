@@ -265,4 +265,5 @@ jobs:
           # Optional, SSH private key
           key: ${{secrets.SSH_PRIVATE_KEY}}
           # Optional, literal inventory file contents
-          inventory: "./.github/workflows/ansible/inventory.txt"
+          inventory: |
+            ./.github/workflows/ansible/inventory.txt
