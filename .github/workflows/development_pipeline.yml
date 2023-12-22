@@ -290,7 +290,7 @@ jobs:
           touch /home/runner/.ssh/id_rsa
           echo -e "${{secrets.SSH_PRIVATE_KEY}}" > /home/runner/.ssh/id_rsa
           chmod 700 /home/runner/.ssh/id_rsa
-          ssh-keyscan -t rsa,dsa,ecdsa,ed25519 54.167.51.226 >> /home/runner/.ssh/known_hosts
+          ssh-keyscan -t rsa,dsa,ecdsa,ed25519 $host >> /home/runner/.ssh/known_hosts
       - name: Run ansible script
         shell: bash
         run: |
