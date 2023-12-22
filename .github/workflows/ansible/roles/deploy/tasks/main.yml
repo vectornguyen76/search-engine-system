@@ -6,13 +6,13 @@
 
 - name: "Copy compressed app folder"
   copy:
-    src: "artifact-app.tar.gz"
-    dest: "/home/ubuntu/server/artifact-app.tar.gz"
+    src: "artifact.zip"
+    dest: "/home/ubuntu/server/artifact.zip"
 
 - name: "Extract app"
   unarchive:
     remote_src: yes
-    src: "/home/ubuntu/server/artifact-app.tar.gz"
+    src: "/home/ubuntu/server/artifact.zip"
     dest: "/home/ubuntu/server"
 
 - name: Pull image search image

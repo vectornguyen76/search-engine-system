@@ -255,18 +255,25 @@ jobs:
 
           cat ./.github/workflows/ansible/hosts
 
+      - name: Zip artifact files
+        uses: montudor/action-zip@v1
+        with:
+          args: zip -qq -r artifact.zip .
+
+      - name: Create files forlder in ansible
+        run: mkdir -p ./.github/workflows/ansible/roles/deploy/files
+
+      - name: Copy file
+        uses: canastro/copy-file-action@master
+        with:
+          source: "artifact.zip"
+          target: "./.github/workflows/ansible/roles/deploy/files/artifact.zip"
+
       - name: Run playbook
         uses: dawidd6/action-ansible-playbook@v2
         with:
-          # Required, playbook filepath
           playbook: deploy_applications.yml
-          # Optional, directory where playbooks live
           directory: ./.github/workflows/ansible
-          # Optional, SSH private key
           key: ${{secrets.SSH_PRIVATE_KEY}}
-          # # Optional, literal inventory file contents
-          # inventory: |
-          #   [web]
-          #   54.167.51.226
           options: |
             --inventory ./hosts
