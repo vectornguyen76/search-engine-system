@@ -213,7 +213,7 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-  deploy-infrastructure:
+  create-infrastructure:
     runs-on: ubuntu-latest
     needs:
       - build-push-image-search
@@ -239,3 +239,18 @@ jobs:
           template: ./.github/workflows/cloudformations/server.yaml
           parameter-overrides: "file:///${{ github.workspace }}/.github/workflows/cloudformations/server-parameters.json"
           tags: ${{ vars.TAGS }}
+
+      - name: Get Public DNS Server
+        run: |
+          # Create file
+          backend_public_dns=server-stack-PublicDNS
+          # Pull the export value
+          host=$(aws cloudformation list-exports \
+          --query "Exports[?Name==\`$backend_public_dns\`].Value" \
+          --no-paginate --output text)
+
+          echo $host
+          # Append the DNS to the inventory file
+          echo $host >> $(eval echo "./.github/workflows/ansible/inventory.txt")
+
+          cat ./.github/workflows/ansible/inventory.txt
