@@ -15,26 +15,32 @@
     src: "/home/ubuntu/server/artifact-app.tar.gz"
     dest: "/home/ubuntu/server"
 
-- name: Pull mlflow image
+- name: Pull image search image
   community.docker.docker_image:
-    name: "{{ mlflow_image_name }}"
-    tag: "{{ mlflow_tag_name }}"
+    name: "{{ image_search_image }}"
+    tag: "{{ image_search_tag }}"
     source: pull
 
-- name: Pull model_predictor image
+- name: Pull text search image
   community.docker.docker_image:
-    name: "{{ model_predictor_image_name }}"
-    tag: "{{ model_predictor_tag_name }}"
+    name: "{{ text_search_image }}"
+    tag: "{{ text_search_tag }}"
     source: pull
 
-- name: Run mlflow container
+- name: Pull backend image
+  community.docker.docker_image:
+    name: "{{ backend_image }}"
+    tag: "{{ backend_tag }}"
+    source: pull
+
+- name: Pull frontend image
+  community.docker.docker_image:
+    name: "{{ frontend_image }}"
+    tag: "{{ frontend_tag }}"
+    source: pull
+
+- name: Run docker compose
   become: True
   shell:
     chdir: /home/ubuntu/server
-    cmd: "docker compose -f deployment/mlflow/docker-compose.yml up -d"
-
-- name: Run model_predictor container
-  become: True
-  shell:
-    chdir: /home/ubuntu/server
-    cmd: "bash deployment/deploy.sh deploy_run_predictor data/model_config/phase-1/prob-1/model-1.yml data/model_config/phase-1/prob-2/model-1.yml 5040"
+    cmd: "docker compose up -d"
