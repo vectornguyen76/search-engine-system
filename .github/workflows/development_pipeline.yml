@@ -270,3 +270,31 @@ jobs:
           #   ec2-3-87-235-66.compute-1.amazonaws.com
           options: |
             --inventory ./.github/workflows/ansible/inventory.txt
+
+      - name: Setting up SSH key
+        run: |
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > private_key.pem
+          chmod 600 private_key.pem
+      - name: Run Ansible Playbook
+        run: |
+          sudo apt update
+          sudo apt install -y ansible
+          cd ./.github/workflows/ansible
+          ansible-playbook -i inventory.txt deploy_applications.yml --private-key=private_key.pem
+
+      - name: Setup SSH
+        shell: bash
+        run: |
+          eval `ssh-agent -s`
+          mkdir -p /home/runner/.ssh/
+          touch /home/runner/.ssh/id_rsa
+          echo -e "${{secrets.SSH_PRIVATE_KEY}}" > /home/runner/.ssh/id_rsa
+          chmod 700 /home/runner/.ssh/id_rsa
+          ssh-keyscan -t rsa,dsa,ecdsa,ed25519 ${{secrets.SSH_HOST}} >> /home/runner/.ssh/known_hosts
+      - name: Run ansible script
+        shell: bash
+        run: |
+          service ssh status
+          cd ./.github/workflows/ansible
+          inventory.txt
+          ansible-playbook -vvv --private-key /home/runner/.ssh/id_rsa -i inventory.txt deploy_applications.yml
