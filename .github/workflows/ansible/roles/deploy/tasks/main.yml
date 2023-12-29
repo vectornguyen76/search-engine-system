@@ -43,4 +43,4 @@
   become: True
   shell:
     chdir: /home/ubuntu/server
-    cmd: "docker compose up -d"
+    cmd: "docker compose --profile dev up -d"
