@@ -4,8 +4,9 @@ kind: ClusterConfig
 metadata:
   name: test-cluster
   region: us-east-1
+  version: "1.27"
   tags:
-    ApplicationName: "QAI-Monitoring"
+    ApplicationName: "QAI_Monitoring"
     Purpose: "Training"
     Project: "QAI_Monitoring"
     ProjectID: "QAI_Monitoring"

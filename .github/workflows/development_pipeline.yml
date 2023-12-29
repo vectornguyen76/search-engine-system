@@ -1,17 +1,12 @@
 name: development
 on:
   pull_request:
-    branches: develop
-
-  push:
     branches:
       - develop
+
 jobs:
   build-push-image-search:
     runs-on: ubuntu-latest
-    env:
-      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-      DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
@@ -65,9 +60,6 @@ jobs:
 
   build-push-text-search:
     runs-on: ubuntu-latest
-    env:
-      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-      DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
@@ -121,9 +113,6 @@ jobs:
 
   build-push-backend:
     runs-on: ubuntu-latest
-    env:
-      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-      DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
@@ -177,12 +166,6 @@ jobs:
 
   build-push-frontend:
     runs-on: ubuntu-latest
-    env:
-      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-      DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
-      GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
-      GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-      NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
@@ -199,9 +182,9 @@ jobs:
 
       - name: Add env variable to env file
         run: |
-          echo GOOGLE_CLIENT_ID=${{ env.GOOGLE_CLIENT_ID }} >> ./frontend/.env
-          echo GOOGLE_CLIENT_SECRET=${{ env.GOOGLE_CLIENT_SECRET }} >> ./frontend/.env
-          echo NEXTAUTH_SECRET=${{ env.NEXTAUTH_SECRET }} >> ./frontend/.env
+          echo GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} >> ./frontend/.env
+          echo GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} >> ./frontend/.env
+          echo NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }} >> ./frontend/.env
 
       - name: Build and push frontend image
         uses: docker/build-push-action@v4

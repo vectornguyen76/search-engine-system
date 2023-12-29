@@ -50,7 +50,7 @@ Helm is a package manager for Kubernetes, simplifying the process of defining, i
 - **Deleting a Cluster and Node Group**
 
   ```
-  eksctl delete cluster -f cluster-config-eksctl.yaml --disable-nodegroup-eviction
+  eksctl delete cluster -f cluster-config-eksctl.yaml --disable-nodegroup-eviction --wait
   ```
 
    <p align="center">

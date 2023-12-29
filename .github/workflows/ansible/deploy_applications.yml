@@ -1,5 +1,5 @@
 ---
-- name: "configuration play."
+- name: "Deploy applications"
   hosts: web
   user: ubuntu
   become: true
@@ -9,11 +9,18 @@
     - ansible_host_key_checking: false
     - ansible_stdout_callback: yaml
 
-    - mlflow_image_name: vectornguyen76/mlflow
-    - mlflow_tag_name: latest
+    - image_search_image: vectornguyen76/image-search-engine
+    - image_search_tag: latest
 
-    - model_predictor_image_name: vectornguyen76/model_predictor
-    - model_predictor_tag_name: latest
+    - text_search_image: vectornguyen76/text-search-engine
+    - text_search_tag: latest
+
+    - backend_image: vectornguyen76/backend-search-engine
+    - backend_tag: latest
+
+    - frontend_image: vectornguyen76/frontend-search-engine
+    - frontend_tag: latest
+
   pre_tasks:
     - name: "wait 600 seconds for target connection to become reachable/usable."
       wait_for_connection:
@@ -34,6 +41,7 @@
           - python3-pip
           - virtualenv
           - python3-setuptools
+          - unzip
         state: latest
         update_cache: true
 
