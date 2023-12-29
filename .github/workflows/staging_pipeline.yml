@@ -321,14 +321,21 @@ jobs:
             )
           )
           for stack in "${STACKS[@]}"; do
-            if [[ ! "$stack" =~ "${{ env.SHA_SHORT }}" ]] && [[ "$stack" =~ "search-engine" ]]; then
+            if [[ ! "$stack" =~ "${{ env.SHA_SHORT }}" ]] && [[ "$stack" =~ "search-engine-staging" ]]; then
               echo "DESTROY_STACK=$stack" >> "$GITHUB_ENV"
             fi
           done
 
       - name: Remove the search engine infrastructure
         run: |
-          echo ${{ env.DESTROY_STACK }}
+          # Check if DESTROY_STACK is not set
+          if [ -z "${{ env.DESTROY_STACK }}" ]; then
+            echo "DESTROY_STACK is not set"
+            exit 0
+          else
+            echo "DESTROY_STACK is set to ${{ env.DESTROY_STACK }}"
+          fi
+
           # Get stack id for the delete_stack waiter
           stack_info=$(aws cloudformation describe-stacks --stack-name ${{ env.DESTROY_STACK }} --query "Stacks[*] | [0].StackId" 2>&1)
           if echo $stack_info | grep 'does not exist' > /dev/null
