@@ -21,7 +21,7 @@ app.add_middleware(
 searcher = ElasticSearcher()
 
 
-@app.get("/")
+@app.get("/healthz")
 async def healthcheck() -> bool:
     """Check the server's status."""
     return await searcher.elasticsearch.cluster.health()

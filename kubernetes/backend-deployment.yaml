@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend-container
+          image: vectornguyen76/backend-search-engine:latest
+          imagePullPolicy: Always
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          env:
+            - name: POSTGRES_HOST
+              value: postgres-service.default
+            - name: POSTGRES_DB
+              value: db_dev
+            - name: POSTGRES_USER
+              value: db_user
+            - name: PGPASSWORD
+              value: db_password
+            - name: DATABASE_URL
+              value: postgresql+asyncpg://db_user:db_password@postgres-service.default/db_dev
+            - name: JWT_SECRET
+              value: JWT_SECRET
+            - name: IMAGE_SEARCH_URL
+              value: http://image-search-service.default:7000
+          ports:
+            - containerPort: 5000
+      nodeSelector:
+        nodegroup-type: cpu-nodegroup

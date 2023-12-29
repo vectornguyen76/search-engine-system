@@ -14,7 +14,7 @@ image-search-engine/assets/uploaded_images/*
 !image-search-engine/assets/uploaded_images/.gitkeep
 
 # Logs
-image-search-engine/logs/*
+# image-search-engine/logs/*
 
 # Model
 *.pth

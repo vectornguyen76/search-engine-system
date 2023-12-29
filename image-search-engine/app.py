@@ -28,7 +28,7 @@ app.add_middleware(
 )
 
 
-@app.get("/")
+@app.get("/healthz")
 def healthcheck() -> bool:
     """Check the server's status."""
     return True
@@ -95,7 +95,7 @@ async def search_image_qdrant_triton(file: UploadFile = File(...)):
 
     # Extract features from the uploaded image using the feature extractor
     feature = await feature_extractor.triton_extract_feature(
-        image_path=image_path, model_name=settings.PYTORCH_MODEL_NAME
+        image_path=image_path, model_name=settings.TENSORRT_MODEL_NAME
     )
 
     # Perform a search using the extracted feature vector
@@ -119,3 +119,15 @@ async def search_image_base64(data: ImageBase64Request):
     result = [Product.from_point(point) for point in search_results.result]
 
     return result
+
+
+@app.post("/search-image-test")
+async def test(file: UploadFile = File(...)):
+    image_path = await save_image_file(file=file)
+
+    # Extract features from the uploaded image using the feature extractor
+    await feature_extractor.triton_extract_feature(
+        image_path=image_path, model_name=settings.TENSORRT_MODEL_NAME
+    )
+
+    return "done"

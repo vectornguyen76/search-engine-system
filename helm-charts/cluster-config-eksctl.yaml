@@ -1,0 +1,61 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: test-cluster
+  region: us-east-1
+  version: "1.27"
+  tags:
+    ApplicationName: "QAI_Monitoring"
+    Purpose: "Training"
+    Project: "QAI_Monitoring"
+    ProjectID: "QAI_Monitoring"
+    Creator: "PhuocNV9"
+    OwnerService: "PhuocNV9"
+
+nodeGroups:
+  - name: cpu-nodegroup
+    instanceType: t3.medium
+    instanceName: eks-cpu-node
+    minSize: 1
+    maxSize: 3
+    volumeSize: 50
+    volumeType: gp3
+    desiredCapacity: 1
+    iam:
+      withAddonPolicies:
+        imageBuilder: true
+        autoScaler: true
+        externalDNS: true
+        certManager: true
+        appMesh: true
+        appMeshPreview: true
+        ebs: true
+        fsx: true
+        efs: true
+    labels:
+      nodegroup-type: cpu-nodegroup
+
+  - name: gpu-nodegroup
+    instanceType: g4dn.xlarge
+    instanceName: eks-gpu-node
+    minSize: 1
+    maxSize: 3
+    volumeSize: 60
+    volumeType: gp3
+    desiredCapacity: 1
+    iam:
+      withAddonPolicies:
+        imageBuilder: true
+        autoScaler: true
+        externalDNS: true
+        certManager: true
+        appMesh: true
+        appMeshPreview: true
+        ebs: true
+        fsx: true
+        efs: true
+    labels:
+      nodegroup-type: gpu-nodegroup
+
+availabilityZones: ["us-east-1a", "us-east-1b", "us-east-1c", "us-east-1d"]
