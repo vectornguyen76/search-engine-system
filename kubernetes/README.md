@@ -75,7 +75,7 @@ Guidelines for setting up a Kubernetes environment suitable for production.
 - **Deleting a Cluster and Node Group**
 
   ```
-  eksctl delete cluster -f cluster-config-eksctl.yaml --disable-nodegroup-eviction
+  eksctl delete cluster -f cluster-config-eksctl.yaml --disable-nodegroup-eviction --wait
   ```
 
    <p align="center">
