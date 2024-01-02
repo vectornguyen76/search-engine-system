@@ -4,6 +4,10 @@ on:
     branches:
       - develop
 
+  push:
+    branches:
+      - develop
+
 jobs:
   build-push-image-search:
     runs-on: ubuntu-latest
@@ -11,18 +15,19 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: Cache Python dependencies
-        uses: actions/cache@v2
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('./image-search-engine/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-image-search
+      # - name: Cache Python dependencies
+      #   uses: actions/cache@v2
+      #   with:
+      #     path: ~/.cache/pip
+      #     key: ${{ runner.os }}-pip-${{ hashFiles('./image-search-engine/requirements.txt') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-pip-image-search
 
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
           python-version: 3.9
+          cache: "pip"
 
       - name: Install Dependencies
         run: pip install -r ./image-search-engine/requirements.txt
@@ -64,18 +69,19 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: Cache Python dependencies
-        uses: actions/cache@v2
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('./text-search-engine/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-text-search
+      # - name: Cache Python dependencies
+      #   uses: actions/cache@v2
+      #   with:
+      #     path: ~/.cache/pip
+      #     key: ${{ runner.os }}-pip-${{ hashFiles('./text-search-engine/requirements.txt') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-pip-text-search
 
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
           python-version: 3.9
+          cache: "pip"
 
       - name: Install Dependencies
         run: pip install -r ./text-search-engine/requirements.txt
