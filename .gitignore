@@ -16,6 +16,10 @@ image-search-engine/assets/uploaded_images/*
 # Logs
 # image-search-engine/logs/*
 
+# Jenkins
+*/run_env
+jenkins/assets/*.mp4
+
 # Model
 *.pth
 *.pt

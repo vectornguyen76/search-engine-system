@@ -1,4 +1,4 @@
-# Official Jenkins Docker image
+# Official Jenkins Docker Image
 
 [![Docker Stars](https://img.shields.io/docker/stars/jenkins/jenkins.svg)](https://hub.docker.com/r/jenkins/jenkins/)
 [![Docker Pulls](https://img.shields.io/docker/pulls/jenkins/jenkins.svg)](https://hub.docker.com/r/jenkins/jenkins/)
@@ -6,35 +6,148 @@
 
 The Jenkins Continuous Integration and Delivery server [available on Docker Hub](https://hub.docker.com/r/jenkins/jenkins).
 
-This is a fully functional Jenkins server.
-[https://jenkins.io/](https://jenkins.io/).
+This is a fully functional Jenkins server. For more information, visit [https://jenkins.io/](https://jenkins.io/).
 
 <img src="https://jenkins.io/sites/default/files/jenkins_logo.png"/>
 
-# Usage
+## Table of Contents
 
-```
-docker run -p 8080:8080 -p 50000:50000 --restart=on-failure jenkins/jenkins:lts-jdk17
-```
+- [Setup Jenkins](#setup-jenkins)
+  1. [Run Jenkins using Docker Compose](#1-run-jenkins-using-docker-compose)
+  2. [Access Jenkins and Login](#2-access-jenkins-and-login)
+  3. [Read Container Logs to Get Password](#3-read-container-logs-to-get-password)
+  4. [Install Suggested Plugins](#4-install-suggested-plugins)
+  5. [Skip User Registration and Continue as Admin](#5-skip-user-registration-and-continue-as-admin)
+  6. [Configure URL Instance](#6-configure-url-instance)
+  7. [Explore Jenkins UI](#7-explore-jenkins-ui)
+- [Create CI/CD Pipeline](#create-cicd-pipeline)
+  1. [Get Access Token to Login to GitHub in Jenkins](#1-get-access-token-to-login-to-github-in-jenkins)
+  2. [Set Up Pipeline](#2-set-up-pipeline)
+  3. [Update Script Path](#3-update-script-path)
+  4. [Build CI/CD](#4-build-cicd)
 
-NOTE: read the section [_Connecting agents_](#connecting-agents) below for the role of the `50000` port mapping.
+## Setup Jenkins
 
-This will store the workspace in `/var/jenkins_home`.
-All Jenkins data lives in there - including plugins and configuration.
-You will probably want to make that an explicit volume so you can manage it and attach to another container for upgrades :
+### 1. Run Jenkins using Docker Compose
 
-```
-docker run -p 8080:8080 -p 50000:50000 --restart=on-failure -v jenkins_home:/var/jenkins_home jenkins/jenkins:lts-jdk17
-```
-
-This will automatically create a 'jenkins_home' [docker volume](https://docs.docker.com/storage/volumes/) on the host machine.
-Docker volumes retain their content even when the container is stopped, started, or deleted.
-
-NOTE: Avoid using a [bind mount](https://docs.docker.com/storage/bind-mounts/) from a folder on the host machine into `/var/jenkins_home`, as this might result in file permission issues (the user used inside the container might not have rights to the folder on the host machine).
-If you _really_ need to bind mount jenkins_home, ensure that the directory on the host is accessible by the jenkins user inside the container (jenkins user - uid 1000) or use `-u some_other_user` parameter with `docker run`.
-
-```
-docker run -d -v jenkins_home:/var/jenkins_home -p 8080:8080 -p 50000:50000 --restart=on-failure jenkins/jenkins:lts-jdk17
+```bash
+docker compose up -d
 ```
 
-This will run Jenkins in detached mode with port forwarding and volume added. You can access logs with command 'docker logs CONTAINER_ID' in order to check first login token. ID of container will be returned from output of command above.
+### 2. Access Jenkins and Login
+
+Visit [http://localhost:8080](http://localhost:8080) and log in.
+
+<p align="center">
+  <img src="./assets/login.png" alt="Login Jenkins" />
+  <br>
+  <em>Login Jenkins</em>
+</p>
+
+### 3. Read Container Logs to Get Password
+
+```bash
+docker logs jenkins
+```
+
+Alternatively,
+
+```bash
+docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword
+```
+
+<p align="center">
+  <img src="./assets/check-password.png" alt="Get password in logs" />
+  <br>
+  <em>Get password in logs</em>
+</p>
+
+### 4. Install Suggested Plugins
+
+Select "Install suggested plugins" and wait for Jenkins to install the required plugins.
+
+<p align="center">
+  <img src="./assets/step1.png" alt="Install suggested plugins" />
+  <br>
+  <em>Install suggested plugins</em>
+</p>
+
+<p align="center">
+  <img src="./assets/step2.png" alt="Waiting for setup" />
+  <br>
+  <em>Waiting for setup</em>
+</p>
+
+### 5. Skip User Registration and Continue as Admin
+
+Choose "Skip and continue as admin" when prompted during user registration.
+
+<p align="center">
+  <img src="./assets/step3.png" alt="Skip and continue as admin" />
+  <br>
+  <em>Skip and continue as admin</em>
+</p>
+
+### 6. Configure URL Instance
+
+Set up the URL for the Jenkins instance.
+
+<p align="center">
+  <img src="./assets/step4.png" alt="Instance Configuration" />
+  <br>
+  <em>Instance Configuration</em>
+</p>
+
+### 7. Explore Jenkins UI
+
+Explore the Jenkins UI at [http://localhost:8080](http://localhost:8080).
+
+<p align="center">
+  <img src="./assets/jenkins-ui.png" alt="Jenkins UI" />
+  <br>
+  <em>Jenkins UI</em>
+</p>
+
+## Create CI/CD Pipeline
+
+### 1. Get Access Token to Login to GitHub in Jenkins
+
+Follow the GIF to obtain an access token in GitHub for Jenkins integration.
+
+<p align="center">
+  <img src="./assets/get-token-github.gif" alt="Get access token in Github" />
+  <br>
+  <em>Get access token in Github</em>
+</p>
+
+_Remember to save the access token for the next step._
+
+### 2. Set Up Pipeline
+
+Add the saved access token in the password box when setting up the pipeline.
+
+<p align="center">
+  <img src="./assets/setup-pipeline.gif" alt="Set up pipeline" />
+  <br>
+  <em>Set up pipeline</em>
+</p>
+
+### 3. Update Script Path
+
+Update the script path as per your project configuration.
+
+<p align="center">
+  <img src="./assets/script-path.png" alt="Script Path" />
+  <br>
+  <em>Script Path</em>
+</p>
+
+### 4. Build CI/CD
+
+Initiate the CI/CD build process.
+
+<p align="center">
+  <img src="./assets/build-cicd.png" alt="Build CI/CD" />
+  <br>
+  <em>Build CI/CD</em>
+</p>
