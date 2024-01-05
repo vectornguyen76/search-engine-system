@@ -14,7 +14,7 @@ env:
   - name: IMAGE_SEARCH_URL
     value: http://image-search-app.application:7000
   - name: TEXT_SEARCH_URL
-    value: http://text-search-app.application:8000
+    value: http://text-search-app.application:6000
   - name: POSTGRES_HOST
     value: database-postgresql.database
   - name: POSTGRES_DB
