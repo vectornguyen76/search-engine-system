@@ -57,6 +57,9 @@ spec:
               port: http
             initialDelaySeconds: 5
             periodSeconds: 5
+          # Only limit resources for test hpa
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

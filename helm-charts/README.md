@@ -8,7 +8,8 @@ Helm is a package manager for Kubernetes, simplifying the process of defining, i
 2. [Create Cluster and NodeGroup](#create-cluster-and-nodegroup)
 3. [Model Repository S3](#model-repository-s3)
 4. [Install aws-ebs-csi-driver](#install-aws-ebs-csi-driver)
-5. [Install Charts](#install-charts)
+5. [Install Metric Server](#install-metric-server)
+6. [Install Charts](#install-charts)
    - [Ingress Nginx Controller](#ingress-nginx-controller)
    - [Postgresql](#postgresql)
    - [Elastic Search](#elastic-search)
@@ -19,11 +20,13 @@ Helm is a package manager for Kubernetes, simplifying the process of defining, i
    - [Text Search Application](#text-search-application)
    - [Backend Application](#backend-application)
    - [Frontend Application](#frontend-application)
-6. [Upgrade Charts](#upgrade-charts)
-7. [Uninstall Charts](#uninstall-charts)
-8. [Clean up PVC](#clean-up-pvc)
-9. [Check Resources](#check-resources)
-10. [References](#references)
+7. [Load Test Horizontal Pod Autoscaling](#load-test-horizontal-pod-autoscaling)
+   - [Test Backend Horizontal Pod Autoscaling](#test-backend-horizontal-pod-autoscaling)
+8. [Upgrade Charts](#upgrade-charts)
+9. [Uninstall Charts](#uninstall-charts)
+10. [Clean up PVC](#clean-up-pvc)
+11. [Check Resources](#check-resources)
+12. [References](#references)
 
 ## Architecture
 
@@ -94,6 +97,32 @@ kubectl apply -k "github.com/kubernetes-sigs/aws-ebs-csi-driver/deploy/kubernete
    ```
 
    Review the [configuration values](https://github.com/kubernetes-sigs/aws-ebs-csi-driver/blob/master/charts/aws-ebs-csi-driver/values.yaml) for the Helm chart.
+
+## Install Metric Server
+Metrics Server collects resource metrics from Kubelets and exposes them in Kubernetes apiserver through [Metrics API]
+for use by [Horizontal Pod Autoscaler] and [Vertical Pod Autoscaler]. Metrics API can also be accessed by `kubectl top`,
+making it easier to debug autoscaling pipelines.
+
+[Metrics API]: https://github.com/kubernetes/metrics
+[Horizontal Pod Autoscaler]: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
+[Vertical Pod Autoscaler]: https://github.com/kubernetes/autoscaler/tree/master/vertical-pod-autoscaler/
+
+1. **Kustomize**
+```sh
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+```
+
+2. **Helm**
+- Add the `metrics-server` Helm repository.
+   ```sh
+   helm repo add metrics-server https://kubernetes-sigs.github.io/metrics-server/
+   
+   ```
+
+- Install the latest release.
+   ```sh
+   helm upgrade --install metrics-server metrics-server/metrics-server
+   ```
 
 ## Install Charts
 Step-by-step instructions to create namespaces and install various Helm charts like Ingress Nginx Controller, Postgresql, Elastic Search, Qdrant, Prometheus, Grafana, and others.
@@ -186,6 +215,65 @@ Step-by-step instructions to create namespaces and install various Helm charts l
    helm install frontend-app ./frontend --namespace application --set nodeSelector.nodegroup-type=cpu-nodegroup
    ```
 
+## Load Test Horizontal Pod Autoscaling
+
+### Test Backend Horizontal Pod Autoscaling
+
+1. **Use Locust for Load Test**
+
+   Navigate to the `locust` directory within the backend application and run Locust.
+
+   ```bash
+   cd ../backend/locust
+   locust
+   ```
+
+2. **Access Locust Web Interface**
+   Visit `http://localhost:8089` in your web browser to access the Locust web interface.
+
+   <p align="center">
+   <img src="./assets/start-locust.png" alt="Start Locust" />
+   <br>
+   <em>Fig: Start Locust</em>
+   </p>
+
+3. **Track Backend Application Scaling**
+   Run the following command to monitor the Horizontal Pod Autoscaler (HPA) for the backend application.
+
+   ```bash
+   kubectl get hpa backend-app --namespace application --watch
+   ```
+
+   - **Scale Up on Increased Load:**
+
+      As the number of users increases in the Locust test, observe the backend-app pod scaling up.
+
+      <p align="center">
+      <img src="./assets/test-hpa-scale-up.png" alt="Test HPA Scale Up" />
+      <br>
+      <em>Fig: Test HPA Scale Up</em>
+      </p>
+
+   - **Scale Down after Load Stops:**
+
+      When the Locust test is stopped, monitor the backend-app pod scaling down.
+
+      <p align="center">
+      <img src="./assets/test-hpa-scale-down.png" alt="Test HPA Scale Down" />
+      <br>
+      <em>Fig: Test HPA Scale Down</em>
+      </p>
+
+   - **Locust Test in Progress:**
+
+      View the Locust test results on the web interface.
+
+      <p align="center">
+      <img src="./assets/locust-test.png" alt="Locust Test" />
+      <br>
+      <em>Fig: Locust Test</em>
+      </p>
+
 ## Upgrade Charts
 Instructions on how to upgrade existing Helm Chart releases.
 
@@ -277,3 +365,4 @@ Deleting PVCs is irreversible and can lead to data loss. Ensure backups are in p
 - [Qdrant Helm Charts](https://github.com/qdrant/qdrant-helm/tree/main/charts/qdrant)
 - [Elastic Cloud on Kubernetes Documentation](https://www.elastic.co/guide/en/cloud-on-k8s/current/k8s-stack-helm-chart.html)
 - [CSI driver for Amazon EBS](https://github.com/kubernetes-sigs/aws-ebs-csi-driver)
+- [Kubernetes Metrics Server](https://github.com/kubernetes-sigs/metrics-server)

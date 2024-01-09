@@ -1,7 +1,7 @@
 .env
 *.npz
 index.faiss
-test*
+# test*
 # *.ipynb
 NOTE.md
 elastic_search_data

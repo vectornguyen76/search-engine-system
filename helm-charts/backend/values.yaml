@@ -36,6 +36,16 @@ env:
       secretKeyRef:
         key: JWT_SECRET
 
+
+# Only limit resources for test hpa
+resources: 
+  limits:
+    cpu: 500m
+    memory: 256Mi
+  requests:
+    cpu: 500m
+    memory: 256Mi
+
 secret:
   userName: db_user
   postgresPassword: db_password
