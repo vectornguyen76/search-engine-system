@@ -9,7 +9,8 @@ Helm is a package manager for Kubernetes, simplifying the process of defining, i
 3. [Model Repository S3](#model-repository-s3)
 4. [Install aws-ebs-csi-driver](#install-aws-ebs-csi-driver)
 5. [Install Metric Server](#install-metric-server)
-6. [Install Charts](#install-charts)
+6. [Install Cluster Autoscaler](#install-cluster-autoscaler)
+7. [Install Charts](#install-charts)
    - [Ingress Nginx Controller](#ingress-nginx-controller)
    - [Postgresql](#postgresql)
    - [Elastic Search](#elastic-search)
@@ -20,13 +21,14 @@ Helm is a package manager for Kubernetes, simplifying the process of defining, i
    - [Text Search Application](#text-search-application)
    - [Backend Application](#backend-application)
    - [Frontend Application](#frontend-application)
-7. [Load Test Horizontal Pod Autoscaling](#load-test-horizontal-pod-autoscaling)
+8. [Load Test Autoscaling](#load-test-autoscaling)
    - [Test Backend Horizontal Pod Autoscaling](#test-backend-horizontal-pod-autoscaling)
-8. [Upgrade Charts](#upgrade-charts)
-9. [Uninstall Charts](#uninstall-charts)
-10. [Clean up PVC](#clean-up-pvc)
-11. [Check Resources](#check-resources)
-12. [References](#references)
+   - [Test Cluster Autoscaler ](#test-cluster-autoscaler)
+9. [Upgrade Charts](#upgrade-charts)
+10. [Uninstall Charts](#uninstall-charts)
+11. [Clean up PVC](#clean-up-pvc)
+12. [Check Resources](#check-resources)
+13. [References](#references)
 
 ## Architecture
 
@@ -124,6 +126,14 @@ kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/late
    helm upgrade --install metrics-server metrics-server/metrics-server
    ```
 
+## Install Cluster Autoscaler
+On AWS, Cluster Autoscaler utilizes Amazon EC2 Auto Scaling Groups to manage node groups. Cluster Autoscaler typically runs as a Deployment in your cluster.
+
+Create a Cluster Autoscaler deployment and service account:
+   ```bash
+   kubectl apply -f https://raw.githubusercontent.com/kubernetes/autoscaler/master/cluster-autoscaler/cloudprovider/aws/examples/cluster-autoscaler-autodiscover.yaml
+   ```
+
 ## Install Charts
 Step-by-step instructions to create namespaces and install various Helm charts like Ingress Nginx Controller, Postgresql, Elastic Search, Qdrant, Prometheus, Grafana, and others.
 
@@ -215,7 +225,7 @@ Step-by-step instructions to create namespaces and install various Helm charts l
    helm install frontend-app ./frontend --namespace application --set nodeSelector.nodegroup-type=cpu-nodegroup
    ```
 
-## Load Test Horizontal Pod Autoscaling
+## Load Test Autoscaling
 
 ### Test Backend Horizontal Pod Autoscaling
 
@@ -273,6 +283,15 @@ Step-by-step instructions to create namespaces and install various Helm charts l
       <br>
       <em>Fig: Locust Test</em>
       </p>
+
+### Test Cluster Autoscaler 
+
+   <p align="center">
+   <img src="./assets/cluster-autoscaler.png" alt="Cluster Autoscaler" />
+   <br>
+   <em>Fig: Cluster Autoscaler</em>
+   </p>
+
 
 ## Upgrade Charts
 Instructions on how to upgrade existing Helm Chart releases.
@@ -366,3 +385,5 @@ Deleting PVCs is irreversible and can lead to data loss. Ensure backups are in p
 - [Elastic Cloud on Kubernetes Documentation](https://www.elastic.co/guide/en/cloud-on-k8s/current/k8s-stack-helm-chart.html)
 - [CSI driver for Amazon EBS](https://github.com/kubernetes-sigs/aws-ebs-csi-driver)
 - [Kubernetes Metrics Server](https://github.com/kubernetes-sigs/metrics-server)
+- [Autoscaling in Kubernetes](https://kubernetes.io/blog/2016/07/autoscaling-in-kubernetes/)
+- [Cluster Autoscaler on AWS](https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/cloudprovider/aws/README.md)
