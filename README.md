@@ -13,7 +13,7 @@
   </p>
 
 ## Demo
-```
+
   <p align="center">
     <img src="./assets/gifs/image-search-demo.gif" alt="Image Search Demo" />
     <br>
@@ -27,4 +27,3 @@
     <em>Text Search Demo</em>
     </p>
   </p>
-```
