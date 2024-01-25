@@ -4,9 +4,9 @@ services:
     container_name: triton_server
     image: nvcr.io/nvidia/tritonserver:23.01-py3
     ports:
-      - 9000:8000
-      - 9001:8001
-      - 9002:8002
+      - 8000:8000
+      - 8001:8001
+      - 8002:8002
     command: tritonserver --model-repository=/models
     volumes:
       - ./image-search-engine/model_repository:/models
@@ -86,7 +86,7 @@ services:
       context: ./text-search-engine
       dockerfile: Dockerfile
     ports:
-      - 8000:8000
+      - 6000:6000
     environment:
       ELASTICSEARCH_HOST: http://elasticsearch:9200
     volumes:

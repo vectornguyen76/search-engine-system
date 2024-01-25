@@ -14,7 +14,7 @@ env:
   - name: IMAGE_SEARCH_URL
     value: http://image-search-app.application:7000
   - name: TEXT_SEARCH_URL
-    value: http://text-search-app.application:8000
+    value: http://text-search-app.application:6000
   - name: POSTGRES_HOST
     value: database-postgresql.database
   - name: POSTGRES_DB
@@ -35,6 +35,19 @@ env:
     valueFrom:
       secretKeyRef:
         key: JWT_SECRET
+
+
+resources: 
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  limits:
+    cpu: 500m
+    memory: 256Mi
+  requests:
+    cpu: 500m
+    memory: 256Mi
 
 secret:
   userName: db_user

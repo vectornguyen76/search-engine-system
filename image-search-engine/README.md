@@ -525,7 +525,140 @@ This project implements an image search engine for Shopee using qdrant as the ve
    <em>Concurrent Model Execution</em>
    </p>
 
-4. **Pytorch Model Testing Report**
+4. **Measuring Triton Performance with Performance Analyzer**
+
+   Having made some improvements to the model's serving capabilities by enabling `dynamic batching` and the use of `multiple model instances`, the next step is to measure the impact of these features. To that end, the Triton Inference Server comes packaged with the [Performance Analyzer](https://github.com/triton-inference-server/client/blob/main/src/c++/perf_analyzer/README.md) which is a tool specifically designed to measure performance for Triton Inference Servers.
+
+   - On a first terminal, run Triton Container
+
+     ```
+     docker compose --profile prod up triton_server
+     ```
+
+   - On a second terminal, run Triton SDK Container
+
+     ```
+     docker pull nvcr.io/nvidia/tritonserver:23.01-py3-sdk
+
+     docker run -it --net=host -v ${PWD}:/workspace/ nvcr.io/nvidia/tritonserver:23.01-py3-sdk bash
+     ```
+
+   - On a third terminal, it is advisable to monitor the GPU Utilization to see if the deployment is saturating GPU resources.
+     ```
+     watch -n0.1 nvidia-smi
+     ```
+
+   To measure the performance gain, let's run performance analyzer on the following configurations:
+
+   ```shell
+   perf_analyzer -m <model name> -b <batch size> --shape <input layer>:<input shape> --concurrency-range <lower number of request>:<higher number of request>:<step>
+   ```
+
+   - **No Dynamic Batching, single model instance**: This configuration will be the baseline measurement. To set up the Triton Server in this configuration, do not add `instance_group` or `dynamic_batching` in `config.pbtxt` and make sure to include `--gpus=1` in the `docker run` command to set up the server.
+
+     ```shell
+     # Query
+     perf_analyzer -m efficientnet_b3_trt -b 2 --shape input:3,300,300 --concurrency-range 2:16:2 --percentile=95
+
+     # Summarized Inference Result
+     Inferences/Second vs. Client p95 Batch Latency
+     Concurrency: 2, throughput: 579.911 infer/sec, latency 7159 usec
+     Concurrency: 4, throughput: 613.242 infer/sec, latency 17064 usec
+     Concurrency: 6, throughput: 647.959 infer/sec, latency 26696 usec
+     Concurrency: 8, throughput: 660.103 infer/sec, latency 30016 usec
+     Concurrency: 10, throughput: 640.003 infer/sec, latency 39883 usec
+     Concurrency: 12, throughput: 664.315 infer/sec, latency 46405 usec
+     Concurrency: 14, throughput: 591.206 infer/sec, latency 57214 usec
+     Concurrency: 16, throughput: 585.562 infer/sec, latency 65926 usec
+
+     # Perf for 16 concurrent requests
+     Request concurrency: 16
+     Client:
+        Request count: 5273
+        Throughput: 585.562 infer/sec
+        p50 latency: 58041 usec
+        p90 latency: 64255 usec
+        p95 latency: 65926 usec
+        p99 latency: 69645 usec
+        Avg HTTP time: 54594 usec (send/recv 2792 usec + response wait 51802 usec)
+     Server:
+        Inference count: 10544
+        Execution count: 1200
+        Successful request count: 5272
+        Avg request latency: 38647 usec (overhead 120 usec + queue 9176 usec + compute input 4285 usec + compute infer 18019 usec + compute output 7047 usec)
+     ```
+
+   - **Just Dynamic Batching**: To set up the Triton Server in this configuration, add `dynamic_batching` in `config.pbtxt`.
+
+     ```shell
+     # Query
+     perf_analyzer -m efficientnet_b3_trt -b 2 --shape input:3,300,300 --concurrency-range 2:16:2 --percentile=95
+
+     # Inference Result
+     Inferences/Second vs. Client p95 Batch Latency
+     Concurrency: 2, throughput: 575.35 infer/sec, latency 7228 usec
+     Concurrency: 4, throughput: 591.983 infer/sec, latency 16285 usec
+     Concurrency: 6, throughput: 655.545 infer/sec, latency 21486 usec
+     Concurrency: 8, throughput: 648.158 infer/sec, latency 30080 usec
+     Concurrency: 10, throughput: 658.363 infer/sec, latency 35557 usec
+     Concurrency: 12, throughput: 678.189 infer/sec, latency 37481 usec
+     Concurrency: 14, throughput: 677.299 infer/sec, latency 47840 usec
+     Concurrency: 16, throughput: 676.165 infer/sec, latency 49272 usec
+
+     # Perf for 16 concurrent requests
+     Request concurrency: 16
+     Client:
+        Request count: 6087
+        Throughput: 676.165 infer/sec
+        p50 latency: 47349 usec
+        p90 latency: 48491 usec
+        p95 latency: 49272 usec
+        p99 latency: 50612 usec
+        Avg HTTP time: 47298 usec (send/recv 2369 usec + response wait 44929 usec)
+     Server:
+        Inference count: 12176
+        Execution count: 1522
+        Successful request count: 6088
+        Avg request latency: 39544 usec (overhead 72 usec + queue 16273 usec + compute input 2 usec + compute infer 11828 usec + compute output 11369 usec)
+     ```
+
+     As each of the requests had a batch size (of 2), while the maximum batch size of the model was 8, dynamically batching these requests resulted in considerably improved throughput. Another consequence is a reduction in the latency. This reduction can be primarily attributed to reduced wait time in queue wait time. As the requests are batched together, multiple requests can be processed in parallel.
+
+   - **Dynamic Batching with multiple model instances**: To set up the Triton Server in this configuration, add `instance_group` with `count: 2` in `config.pbtxt` and make sure to include `--gpus=1` and make sure to include `--gpus=1` in the `docker run` command to set up the server. Include `dynamic_batching` per instructions of the previous section in the model configuration.
+
+     ```shell
+     # Query
+     perf_analyzer -m efficientnet_b3_trt -b 2 --shape input:3,300,300 --concurrency-range 2:16:2 --percentile=95
+
+     # Inference Result
+     Inferences/Second vs. Client p95 Batch Latency
+     Concurrency: 2, throughput: 432.983 infer/sec, latency 10019 usec
+     Concurrency: 4, throughput: 509.38 infer/sec, latency 21272 usec
+     Concurrency: 6, throughput: 621.19 infer/sec, latency 26593 usec
+     Concurrency: 8, throughput: 642.087 infer/sec, latency 32329 usec
+     Concurrency: 10, throughput: 653.192 infer/sec, latency 39368 usec
+     Concurrency: 12, throughput: 659.101 infer/sec, latency 45811 usec
+     Concurrency: 14, throughput: 665.102 infer/sec, latency 51499 usec
+     Concurrency: 16, throughput: 668.254 infer/sec, latency 58111 usec
+
+     # Perf for 16 concurrent requests
+     Request concurrency: 16
+     Client:
+        Request count: 6019
+        Throughput: 668.254 infer/sec
+        p50 latency: 50748 usec
+        p90 latency: 56465 usec
+        p95 latency: 58111 usec
+        p99 latency: 61444 usec
+        Avg HTTP time: 47858 usec (send/recv 2190 usec + response wait 45668 usec)
+     Server:
+        Inference count: 12030
+        Execution count: 2045
+        Successful request count: 6015
+        Avg request latency: 38563 usec (overhead 83 usec + queue 7360 usec + compute input 218 usec + compute infer 18151 usec + compute output 12750 usec)
+     ```
+
+5. **Pytorch Model Testing Report use Locust**
 
    - Test diffence configurations
    - Only triton inference step
@@ -563,7 +696,7 @@ This project implements an image search engine for Shopee using qdrant as the ve
    <em>Pytorch model - 32 Request Concurrency - Max Batch Size 32 - Dynamic Batching - 3:GPU</em>
    </p>
 
-5. **ONNX Model Testing Report**
+6. **ONNX Model Testing Report use Locust**
 
    - Test diffence configurations
    - Only triton inference step
@@ -579,7 +712,7 @@ This project implements an image search engine for Shopee using qdrant as the ve
    <em>ONNX model - 32 Request Concurrency - Max Batch Size 32 - Disabled Dynamic Batching - 2:GPU</em>
    </p>
 
-6. **TensorRT Model Testing Report**
+7. **TensorRT Model Testing Report use Locust**
 
    - Test diffence configurations
    - Only triton inference step
@@ -603,7 +736,7 @@ This project implements an image search engine for Shopee using qdrant as the ve
    <em>TensorRT model - 32 Request Concurrency - Max Batch Size 32 - Dynamic Batching - 2:GPU</em>
    </p>
 
-7. **References**
+8. **References**
 
 - [Triton Conceptual Guides](https://github.com/triton-inference-server/tutorials/tree/main/Conceptual_Guide)
 

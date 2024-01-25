@@ -1,7 +1,7 @@
 .env
 *.npz
 index.faiss
-test*
+# test*
 # *.ipynb
 NOTE.md
 elastic_search_data
@@ -15,6 +15,10 @@ image-search-engine/assets/uploaded_images/*
 
 # Logs
 # image-search-engine/logs/*
+
+# Jenkins
+*/run_env
+jenkins/assets/*.mp4
 
 # Model
 *.pth
