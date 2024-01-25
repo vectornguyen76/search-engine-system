@@ -14,7 +14,7 @@ faiss-cpu==1.7.4
 fastapi==0.101.1
 filelock==3.12.2
 flake8==6.1.0
-gdown==4.7.1
+gdown==5.0.0
 grpcio==1.58.0
 grpcio-tools==1.58.0
 h11==0.14.0
