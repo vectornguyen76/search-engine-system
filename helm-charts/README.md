@@ -73,7 +73,7 @@ Instructions to create an S3 bucket and copy a model repository from local to S3
   ```
 - **Copy Model Repository**
   ```bash
-  aws s3 cp ./../image-search-engine/model_repository s3://qai-triton-repository/model_repository --recursive
+  aws s3 cp ./../triton-server/model_repository s3://qai-triton-repository/model_repository --recursive
   ```
 
 ## Install aws-ebs-csi-driver

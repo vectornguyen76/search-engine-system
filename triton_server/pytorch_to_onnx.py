@@ -30,7 +30,7 @@ def parse_args():
     parser.add_argument(
         "--output_path",
         help="onnx model path",
-        default="./efficientnet_b3_onnx/1/model.onnx",
+        default="./model_repository/efficientnet_b3_onnx/1/model.onnx",
     )
 
     # ONNX params

@@ -34,13 +34,13 @@ def parse_args():
     parser.add_argument(
         "--onnx_model_path",
         help="onnx model path",
-        default="./efficientnet_b3_onnx/1/model.onnx",
+        default="./model_repository/efficientnet_b3_onnx/1/model.onnx",
     )
     parser.add_argument(
         "--tensorrt_engine_path",
         help="tensorrt engine path",
         # default="./tensorrt_engine.engine",
-        default="./efficientnet_b3_trt/1/model.plan",
+        default="./model_repository/efficientnet_b3_trt/1/model.plan",
     )
 
     # TensorRT engine params

@@ -14,4 +14,4 @@ model = model.to(device)
 
 # Save the entire model to a file
 traced_model = torch.jit.trace(model, torch.randn(1, 3, 300, 300).to(device))
-torch.jit.save(traced_model, "./efficientnet_b3/1/model.pt")
+torch.jit.save(traced_model, "./model_repository/efficientnet_b3/1/model.pt")
