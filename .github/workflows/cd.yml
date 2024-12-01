@@ -53,7 +53,7 @@ jobs:
         run: |
           # Get current active environment (blue or green)
           ACTIVE_ENV=$(aws ec2 describe-instances \
-            --filters "Name=tag:ApplicationName,Values=Omni Assistant" "Name=instance-state-name,Values=running" \
+            --filters "Name=tag:ApplicationName,Values=Search Engine" "Name=instance-state-name,Values=running" \
             --query 'Reservations[].Instances[].Tags[?Key==`Environment`].Value' \
             --output text || echo "none")
 

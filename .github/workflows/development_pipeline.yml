@@ -6,14 +6,3 @@ on:
 jobs:
   ci:
     uses: ./.github/workflows/ci.yml
-    secrets:
-      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-      AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }}
-      AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_OPENAI_API_KEY }}
-      OPENAI_API_VERSION: ${{ secrets.OPENAI_API_VERSION }}
-      FAQ_EMBEDDING_DEPLOYMENT_NAME: ${{ secrets.FAQ_EMBEDDING_DEPLOYMENT_NAME }}
-      DOCUMENT_EMBEDDING_DEPLOYMENT_NAME: ${{ secrets.DOCUMENT_EMBEDDING_DEPLOYMENT_NAME }}
-      CHAT_DEPLOYMENT_NAME: ${{ secrets.CHAT_DEPLOYMENT_NAME }}
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      SECRET_KEY: ${{ secrets.SECRET_KEY }}
