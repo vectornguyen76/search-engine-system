@@ -2,7 +2,7 @@ import base64
 from typing import Any
 
 import cv2
-from locust import FastHttpUser, constant, constant_throughput, task
+from locust import FastHttpUser, task
 
 
 def encode_img_base64(image_path):
@@ -40,8 +40,8 @@ class SearchImageUser(FastHttpUser):
 
     @task
     def search_image(self):
-        image_file = open(self.image_path, "rb")
-        self.client.post("/search-image-test", files={"file": image_file})
+        with open(self.image_path, "rb") as image_file:
+            self.client.post("/search-image-test", files={"file": image_file})
 
     # @task
     # def search_image_base64(self):

@@ -1,7 +1,7 @@
 import torch
 import tritonclient.grpc.aio as grpcclient
 from config import settings
-from src.utils import LOGGER, decode_img, py_profiling, time_profiling
+from src.utils import LOGGER, decode_img
 from torchvision.io import read_image
 from torchvision.models import EfficientNet_B3_Weights, efficientnet_b3
 

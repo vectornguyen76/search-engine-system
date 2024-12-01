@@ -3,7 +3,6 @@ import asyncio
 import numpy as np
 from config import settings
 from qdrant_client import QdrantClient, grpc
-from src.utils import async_time_profiling
 
 
 class QdrantSearch:
