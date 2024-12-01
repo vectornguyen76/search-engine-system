@@ -64,7 +64,7 @@ services:
         condition: service_healthy
 
   image_search:
-    container_name: image-search-container
+    container_name: image_search
     image: vectornguyen76/image_search
     build:
       context: ./image_search
@@ -80,7 +80,7 @@ services:
       - qdrant_db
 
   text_search:
-    container_name: text-search-container
+    container_name: text_search
     image: vectornguyen76/text_search
     build:
       context: ./text_search
