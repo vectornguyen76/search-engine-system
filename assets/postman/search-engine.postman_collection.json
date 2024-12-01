@@ -8,7 +8,7 @@
   },
   "item": [
     {
-      "name": "image-search-engine",
+      "name": "image_search",
       "item": [
         {
           "name": "search-image-faiss",
@@ -21,7 +21,7 @@
                 {
                   "key": "file",
                   "type": "file",
-                  "src": "/C:/Users/DELL/Desktop/search-engine-shopee/image-search-engine/assets/test_images/53.jpg"
+                  "src": "/C:/Users/DELL/Desktop/search-engine-shopee/image_search/assets/test_images/53.jpg"
                 }
               ]
             },
@@ -67,7 +67,7 @@
                 {
                   "key": "file",
                   "type": "file",
-                  "src": "/C:/Users/DELL/Desktop/search-engine-shopee/image-search-engine/assets/test_images/53.jpg"
+                  "src": "/C:/Users/DELL/Desktop/search-engine-shopee/image_search/assets/test_images/53.jpg"
                 }
               ]
             },
@@ -104,7 +104,7 @@
       ]
     },
     {
-      "name": "text-search-engine",
+      "name": "text_search",
       "item": [
         {
           "name": "full-text-search",
@@ -457,7 +457,7 @@
                     {
                       "key": "file",
                       "type": "file",
-                      "src": "/C:/Users/DELL/Desktop/search-engine-shopee/image-search-engine/assets/test_images/53.jpg"
+                      "src": "/C:/Users/DELL/Desktop/search-engine-shopee/image_search/assets/test_images/53.jpg"
                     }
                   ]
                 },

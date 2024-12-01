@@ -27,7 +27,7 @@ class Settings(BaseSettings):
 
     # Qdrant configuration
     QDRANT_URL: str = os.environ.get("QDRANT_URL", "http://localhost:6334")
-    QDRANT_COLLECTION: str = "image-search-engine"
+    QDRANT_COLLECTION: str = "image_search"
 
     # Triton configuration
     TRITON_SERVER_URL: str = os.environ.get("TRITON_SERVER_URL", "localhost:9001")

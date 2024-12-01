@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: vectornguyen76/text-search-engine
+  repository: vectornguyen76/image_search
   # Always and latest for dev, IfNotPresent for prod
   pullPolicy: Always
   tag: "latest"
@@ -16,11 +16,13 @@ resources: {}
 
 service:
   type: ClusterIP
-  port: 6000
+  port: 7000
 
 env:
-  - name: ELASTICSEARCH_HOST
-    value: "elasticsearch.database"
+  - name: QDRANT_URL
+    value: "http://qdrant.database:6334"
+  - name: TRITON_SERVER_URL
+    value: "model-serving-triton-inference-server.model-serving:8001"
 
 autoscaling:
   enabled: true

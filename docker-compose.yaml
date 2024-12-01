@@ -63,11 +63,11 @@ services:
       elasticsearch:
         condition: service_healthy
 
-  image-search-engine:
+  image_search:
     container_name: image-search-container
-    image: vectornguyen76/image-search-engine
+    image: vectornguyen76/image_search
     build:
-      context: ./image-search-engine
+      context: ./image_search
       dockerfile: Dockerfile
     environment:
       - QDRANT_URL=http://qdrant_db:6334
@@ -75,22 +75,22 @@ services:
     ports:
       - 7000:7000
     volumes:
-      - ./image-search-engine/logs:/app/logs
+      - ./image_search/logs:/app/logs
     depends_on:
       - qdrant_db
 
-  text-search-engine:
+  text_search:
     container_name: text-search-container
-    image: vectornguyen76/text-search-engine
+    image: vectornguyen76/text_search
     build:
-      context: ./text-search-engine
+      context: ./text_search
       dockerfile: Dockerfile
     ports:
       - 6000:6000
     environment:
       ELASTICSEARCH_HOST: http://elasticsearch:9200
     volumes:
-      - ./text-search-engine/logs:/app/logs
+      - ./text_search/logs:/app/logs
     depends_on:
       elasticsearch:
         condition: service_healthy

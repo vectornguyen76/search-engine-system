@@ -30,14 +30,14 @@ A scalable search engine system supporting both image and text search capabiliti
 
 - **Image Search Engine**: Search for similar images using deep learning embeddings
 
-  - [Detailed Documentation](./image-search-engine/README.md)
+  - [Detailed Documentation](./image_search/README.md)
   - Vector similarity search using Qdrant
   - Support for multiple image formats
   - Real-time image processing and embedding generation
   - Based on ResNet/EfficientNet architecture for feature extraction
 
 - **Text Search Engine**: Advanced text search with Elasticsearch
-  - [Detailed Documentation](./text-search-engine/README.md)
+  - [Detailed Documentation](./text_search/README.md)
   - Dual search capabilities:
     - Autocomplete (Search-as-you-type) using Edge NGram Tokenizer
     - Full-text search with fuzzy matching
@@ -136,7 +136,7 @@ A scalable search engine system supporting both image and text search capabiliti
 - **Orchestration**:
 
   - Kubernetes deployment
-  - [Helm Charts](./helm-charts/README.md) for package management
+  - [Helm Charts](./helm_charts/README.md) for package management
   - Horizontal Pod Autoscaling
   - Resource management and scaling
 

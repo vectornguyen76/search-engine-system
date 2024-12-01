@@ -17,19 +17,19 @@ jobs:
           cache: "pip"
 
       - name: Install Dependencies
-        run: pip install -r ./image-search-engine/requirements.txt
+        run: pip install -r ./image_search/requirements.txt
 
       - name: Run isort
-        run: isort --check-only --profile=black ./image-search-engine/.
+        run: isort --check-only --profile=black ./image_search/.
 
       - name: Run black
-        run: black --check ./image-search-engine/.
+        run: black --check ./image_search/.
 
       - name: Run flake8
-        run: flake8 --ignore=E501,W503,F401 ./image-search-engine
+        run: flake8 --ignore=E501,W503,F401 ./image_search
 
       # - name: Run Pylint
-      #   run: pylint ./image-search-engine/*.py
+      #   run: pylint ./image_search/*.py
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -44,9 +44,9 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v4
         with:
-          context: ./image-search-engine
+          context: ./image_search
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/image-search-engine:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/image_search:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -63,19 +63,19 @@ jobs:
           cache: "pip"
 
       - name: Install Dependencies
-        run: pip install -r ./text-search-engine/requirements.txt
+        run: pip install -r ./text_search/requirements.txt
 
       - name: Run isort
-        run: isort --check-only ./text-search-engine/.
+        run: isort --check-only ./text_search/.
 
       - name: Run black
-        run: black --check ./text-search-engine/.
+        run: black --check ./text_search/.
 
       - name: Run flake8
-        run: flake8 --ignore=E501,W503,F401 ./text-search-engine
+        run: flake8 --ignore=E501,W503,F401 ./text_search
 
       # - name: Run Pylint
-      #   run: pylint ./image-search-engine/*.py
+      #   run: pylint ./image_search/*.py
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -90,9 +90,9 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v4
         with:
-          context: ./text-search-engine
+          context: ./text_search
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/text-search-engine:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/text_search:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
