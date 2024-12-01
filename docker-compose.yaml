@@ -95,8 +95,8 @@ services:
       elasticsearch:
         condition: service_healthy
 
-  db_service:
-    container_name: db_container
+  postgres_db:
+    container_name: postgres_db
     image: postgres:14.1
     env_file:
       - ./backend/.env.local
@@ -109,7 +109,7 @@ services:
 
   backend_service:
     container_name: backend_container
-    image: vectornguyen76/backend-search-engine:latest
+    image: vectornguyen76/backend_search_engine
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -120,11 +120,11 @@ services:
     volumes:
       - ./backend/logs:/app/logs
     depends_on:
-      - db_service
+      - postgres_db
 
   frontend_service:
     container_name: frontend_container
-    image: vectornguyen76/frontend-search-engine
+    image: vectornguyen76/frontend_search_engine
     build:
       context: ./frontend
       dockerfile: Dockerfile

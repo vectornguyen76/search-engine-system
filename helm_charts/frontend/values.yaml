@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: vectornguyen76/frontend-search-engine
+  repository: vectornguyen76/frontend_search_engine
   # Always and latest for dev, IfNotPresent for prod
   pullPolicy: Always
   tag: "latest"

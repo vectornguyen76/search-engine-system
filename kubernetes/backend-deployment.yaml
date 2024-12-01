@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: backend-container
-          image: vectornguyen76/backend-search-engine:latest
+          image: vectornguyen76/backend_search_engine:latest
           imagePullPolicy: Always
           livenessProbe:
             httpGet:

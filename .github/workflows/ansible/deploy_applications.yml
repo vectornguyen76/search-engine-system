@@ -15,10 +15,10 @@
     - text_search_image: vectornguyen76/text_search
     - text_search_tag: latest
 
-    - backend_image: vectornguyen76/backend-search-engine
+    - backend_image: vectornguyen76/backend_search_engine
     - backend_tag: latest
 
-    - frontend_image: vectornguyen76/frontend-search-engine
+    - frontend_image: vectornguyen76/frontend_search_engine
     - frontend_tag: latest
 
   pre_tasks:
