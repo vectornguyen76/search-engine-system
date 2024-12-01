@@ -80,13 +80,10 @@ jobs:
         with:
           node-version: "18"
 
-      - name: Install Pnpm
-        run: npm i -g pnpm
-
       - name: Install dependencies
         working-directory: frontend
-        run: pnpm install
+        run: npm install
 
       - name: Build frontend
         working-directory: frontend
-        run: pnpm run build
+        run: npm run build
