@@ -225,7 +225,7 @@ jobs:
           echo NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }} >> .env
 
           # Add env variable to .env.production
-          echo NEXT_PUBLIC_API_URL=http://${{ env.DNS_SERVER }}/backend >> .env.production
+          echo NEXT_PUBLIC_API_URL=https://${{ inputs.domain_name }}/backend >> .env.production
 
       - name: Build and push frontend image
         uses: docker/build-push-action@v4
