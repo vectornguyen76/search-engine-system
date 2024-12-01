@@ -77,7 +77,7 @@ jobs:
             VpcCIDR=10.0.0.0/16,
             PublicSubnetCIDR1=10.0.1.0/24,
             PublicSubnetCIDR2=10.0.2.0/24,
-            InstanceType=t3.medium,
+            InstanceType=t3.large,
             VolumeSize=60,
             KeyPairName=vector,
             AMItoUse=ami-053b0d53c279acc90,
