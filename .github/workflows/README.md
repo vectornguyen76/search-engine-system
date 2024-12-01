@@ -1,161 +1,129 @@
-# CI/CD Deploy
+# CI/CD Pipeline Documentation
 
-## Set up
+This document describes the Continuous Integration and Continuous Deployment (CI/CD) pipeline setup for the project.
 
-### Create Secrets on Github
+## Overview
 
-1. **AWS**
+The project uses GitHub Actions for automated testing, building, and deployment with a blue-green deployment strategy. There are three main environments:
 
-   - AWS_ACCESS_KEY_ID: access token
-   - AWS_SECRET_ACCESS_KEY: secret access
-   - SSH_PRIVATE_KEY: ssh key pair
+- Development (develop branch)
+- Staging (staging branch)
+- Production (master branch)
 
-2. **Dockerhub**
+## Required Secrets and Variables
 
-   - DOCKERHUB_USERNAME: username
-   - DOCKERHUB_PASSWORD: password
+### GitHub Secrets
 
-3. **Chat Service**
+1. **AWS Credentials**
 
-   - OPENAI_API_KEY: your openai api key
+   - `AWS_ACCESS_KEY_ID`: AWS access key
+   - `AWS_SECRET_ACCESS_KEY`: AWS secret key
+   - `SSH_PRIVATE_KEY`: SSH key pair for EC2 access
 
-4. **Frontend**
+2. **Docker Hub**
 
-   - GOOGLE_CLIENT_ID: google client id
-   - GOOGLE_CLIENT_SECRET: google client password
-   - NEXTAUTH_SECRET: nextauth secret
+   - `DOCKERHUB_USERNAME`: Docker Hub username
+   - `DOCKERHUB_PASSWORD`: Docker Hub password
 
-5. **Backend**
-   _Config env email_
+3. **Frontend Authentication**
+   - `GOOGLE_CLIENT_ID`: Google OAuth client ID
+   - `GOOGLE_CLIENT_SECRET`: Google OAuth client secret
+   - `NEXTAUTH_SECRET`: NextAuth secret key
 
-   - MAIL_HOST
-   - MAIL_PORT
-   - MAIL_USER
-   - MAIL_PASS
-   - MAIL_SENDER
+### GitHub Variables
 
-   _Config env JWT_
-
-   - AT_SECRET
-   - RT_SECRET
-
-   _Database url_
-
-   - DATABASE_URL
-
-6. **Database**
-   - POSTGRES_USER: user name
-   - POSTGRES_PASSWORD: password
-   - POSTGRES_DB: database name
-
-### Create Variables on Github
-
-1. **AWS**
-
-   - TAGS: Tag for resources
-
-   Example:
-
-   ```sh
-   [{ "Key": "ApplicationName", "Value": "Omni Assistant" },
-   { "Key": "Purpose", "Value": "Learning" },
-   { "Key": "Project", "Value": "Omni Assistant" },
-   { "Key": "ProjectID", "Value": "Omni Assistant" },
-   { "Key": "Creator", "Value": "VectorNguyen" },
-   { "Key": "OwnerService", "Value": "VectorNguyen" }
+1. **AWS Resource Tags**
+   - `TAGS`: JSON array of AWS resource tags
+   ```json
+   [
+     { "Key": "ApplicationName", "Value": "Search Engine" },
+     { "Key": "Purpose", "Value": "Learning" },
+     { "Key": "Project", "Value": "Search Engine" },
+     { "Key": "Creator", "Value": "VectorNguyen" }
    ]
    ```
 
-2. **Backend**
-   _Config env Rate Limitting_
+## Pipeline Workflows
 
-   - RL_TTL
-   - RL_LIMIT
+### 1. Development Pipeline
 
-   _Config refresh token, token time_
+**File:** [development_pipeline.yml](development_pipeline.yml)
 
-   - EXP_AT
-   - EXP_RT
+- **Trigger:** Push to `develop` branch
+- **Jobs:**
+  - Run code quality checks (ruff)
+  - Run unit tests
+  - Build Docker images
 
-   _Config env API for AI_
+### 2. Staging Pipeline
 
-   - ENDPOINT_AI
+**File:** [staging_pipeline.yml](staging_pipeline.yml)
 
-   _Config CORS Socket_
+- **Trigger:** Push to `staging` branch
+- **Jobs:**
+  - Run CI checks
+  - Deploy to staging environment
+  - Automatic rollback on failure
 
-   - FRONTEND_URL
+### 3. Production Pipeline
 
-   _Redis_
+**File:** [production_pipeline.yml](production_pipeline.yml)
 
-   - REDIS_HOST
-   - REDIST_PORT
+- **Trigger:** Pull request to `master` branch
+- **Jobs:**
+  - Run CI checks
+  - Deploy to production environment
+  - Automatic rollback on failure
 
-   _Config port backend_
+## Deployment Process (CD Pipeline)
 
-   - PORT
+The CD pipeline implements blue-green deployment using AWS infrastructure:
 
-## Workflows
+1. **Infrastructure Creation**
 
-### Development - Build and Unittest
+   - Creates VPC, subnets, security groups
+   - Launches EC2 instance
+   - Sets up Application Load Balancer
+   - Configures SSL certificate
 
-#### File: [development_pipeline.yml](development_pipeline.yml)
+2. **Application Deployment**
 
-**Event:** On Commit or Pull Request → any branch into develop
+   - Builds and pushes Docker images
+   - Configures EC2 instance using Ansible
+   - Deploys applications using Docker Compose
 
-**Jobs:**
+3. **Traffic Switch**
 
-- Install dependencies (caches)
-- Run isort
-- Run black
-- Run flake8
+   - Performs health checks
+   - Updates Route53 DNS records
+   - Switches traffic to new environment
 
-**Description:**
-This workflow is triggered on Pull Requests into the develop branch. It ensures a clean and standardized codebase by installing dependencies, checking code formatting with isort, black, and flake8, and finally building and pushing Docker images to Docker Hub.
+4. **Cleanup**
+   - Removes old infrastructure after successful deployment
 
-### Staging - CI/CD Pipeline
+## Rollback Process
 
-#### File: [staging_pipeline.yml](staging_pipeline.yml)
+The rollback workflow ([rollback.yml](rollback.yml)) is triggered automatically if deployment fails:
 
-**Event:** On Pull Request → any branch into staging
+1. Identifies failed deployment stack
+2. Removes newly created infrastructure
+3. Traffic remains routed to previous stable environment
 
-**Jobs:**
+## Infrastructure as Code
 
-- Install dependencies (caches)
-- Run isort
-- Run black
-- Run flake8
-- Build images (caches)
-- Push images to Docker Hub
-- Create infrastructure
-- Configure infrastructure
-- Deploy application using Docker Compose
-- Clean up following the concept of A/B deploy
+The infrastructure is defined using AWS CloudFormation:
 
-**Description:**
-This pipeline is designed for the staging environment and is triggered on Pull Requests into the staging branch. It includes steps to ensure code quality, build and push Docker images, create and configure necessary infrastructure, and deploy the application using Docker Compose. The cleanup process follows the A/B deployment concept.
-
-### Production - CI/CD Pipeline
-
-#### File: [production_pipeline.yml](production_pipeline.yml)
-
-**Event:** On Pull Request → any branch into master
-
-**Jobs:**
-
-- Install dependencies (caches)
-- Run isort
-- Run black
-- Run flake8
-- Build images (caches)
-- Push images to Docker Hub
-- Create infrastructure
-- Configure infrastructure
-- Deploy application using Docker Compose
-- Clean up following the concept of A/B deploy
-
-**Description:**
-The production pipeline is triggered on Pull Requests into the master branch, indicating changes are ready for deployment to the production environment. It follows a similar process to the staging pipeline but is specifically tailored for the production environment. The cleanup process adheres to the A/B deployment concept, ensuring a smooth transition between versions.
+- **Template:** [server.yml](cloudformations/server.yml)
+- **Parameters:** Configurable via pipeline inputs
+- **Resources:**
+  - VPC and networking components
+  - EC2 instances
+  - Load balancer
+  - SSL certificate
+  - DNS configuration
 
 ## References
 
-- [Reusing workflows](https://docs.github.com/en/actions/sharing-automations/reusing-workflows)
+- [GitHub Actions Documentation](https://docs.github.com/en/actions)
+- [AWS CloudFormation Documentation](https://docs.aws.amazon.com/cloudformation/)
+- [Blue-Green Deployment](https://martinfowler.com/bliki/BlueGreenDeployment.html)
