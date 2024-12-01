@@ -1,12 +1,12 @@
 # Exclude a variety of commonly ignored directories.
 exclude = [
+    "*.ipynb",
     ".bzr",
     ".direnv",
     ".eggs",
     ".git",
     ".git-rewrite",
     ".hg",
-    ".ipynb",
     ".ipynb_checkpoints",
     ".mypy_cache",
     ".nox",
@@ -51,7 +51,7 @@ select = [
     # isort
     "I",
 ]
-ignore = ["E402", "E501", "UP008", "B008", "B904"]
+ignore = ["E402", "E501", "UP008", "B008", "B904", "F811", "I001"]
 
 # Allow fix for all enabled rules (when `--fix`) is provided.
 fixable = ["ALL"]
