@@ -146,11 +146,28 @@ Resources:
       GatewayId: !Ref InternetGateway
 
   # Security Resources
-  SecurityGroup:
+  SSHSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupName: !Sub ${AWS::StackName}-sg
-      GroupDescription: Security group for web server
+      GroupName: !Sub ${AWS::StackName}-ssh-sg
+      GroupDescription: Security group for SSH access
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-ssh-sg
+        - Key: Environment
+          Value: !Ref Environment
+
+  WebSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub ${AWS::StackName}-web-sg
+      GroupDescription: Security group for web traffic
       VpcId: !Ref VPC
       SecurityGroupIngress:
         - IpProtocol: tcp
@@ -161,18 +178,6 @@ Resources:
           FromPort: 443
           ToPort: 443
           CidrIp: 0.0.0.0/0
-        - IpProtocol: tcp
-          FromPort: 22
-          ToPort: 22
-          CidrIp: 0.0.0.0/0
-        - IpProtocol: tcp
-          FromPort: 5000
-          ToPort: 5000
-          CidrIp: 0.0.0.0/0
-        - IpProtocol: tcp
-          FromPort: 3000
-          ToPort: 3000
-          CidrIp: 0.0.0.0/0
       SecurityGroupEgress:
         - IpProtocol: "-1"
           FromPort: -1
@@ -180,7 +185,7 @@ Resources:
           CidrIp: 0.0.0.0/0
       Tags:
         - Key: Name
-          Value: !Sub ${AWS::StackName}-sg
+          Value: !Sub ${AWS::StackName}-web-sg
         - Key: Environment
           Value: !Ref Environment
 
@@ -195,7 +200,8 @@ Resources:
         - AssociatePublicIpAddress: true
           DeviceIndex: "0"
           GroupSet:
-            - !Ref SecurityGroup
+            - !Ref SSHSecurityGroup
+            - !Ref WebSecurityGroup
           SubnetId: !Ref PublicSubnet1
       BlockDeviceMappings:
         - DeviceName: "/dev/sda1"
@@ -216,7 +222,7 @@ Resources:
         - !Ref PublicSubnet1
         - !Ref PublicSubnet2
       SecurityGroups:
-        - !Ref SecurityGroup
+        - !Ref WebSecurityGroup
       Scheme: internet-facing
       LoadBalancerAttributes:
         - Key: idle_timeout.timeout_seconds

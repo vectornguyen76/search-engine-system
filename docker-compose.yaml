@@ -106,6 +106,13 @@ services:
       - postgresql_data:/var/lib/postgresql/data/
       - postgresql_data_backups:/backups
       - ./backend/scripts/postgres:/scripts
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U db_user -d db_dev"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
 
   backend_service:
     container_name: backend_container
@@ -120,7 +127,9 @@ services:
     volumes:
       - ./backend/logs:/app/logs
     depends_on:
-      - postgres_db
+      postgres_db:
+        condition: service_healthy
+        restart: true
 
   frontend_service:
     container_name: frontend_container

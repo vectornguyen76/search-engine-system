@@ -1,28 +1,42 @@
-FROM python:3.10.9-slim-buster
+# Use a base image for building the dependencies
+FROM python:3.10-slim AS builder
 
+WORKDIR /app
+
+# Update the package lists and install dependencies in a single RUN command to reduce the number of layers
 RUN apt-get update && \
-    apt-get install -y gcc libpq-dev && \
-    apt clean && \
-    rm -rf /var/cache/apt/* && \
-    apt-get install -y postgresql-client
+    apt-get install -y curl gcc python3-dev && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /var/cache/apt/*
+
+# Upgrade pip to the latest version and install certifi to handle SSL certificates
+RUN pip install --upgrade pip certifi
+
+COPY requirements.txt ./
+
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Use a minimal base image for the final stage
+FROM python:3.10-slim
+
+WORKDIR /app
+
+# Copy the installed dependencies from the builder stage
+COPY --from=builder /usr/local/lib/python3.10 /usr/local/lib/python3.10
+COPY --from=builder /usr/local/bin /usr/local/bin
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PYTHONIOENCODING=utf-8
 
-COPY requirements.txt /tmp
-
-RUN pip install -U pip && \
-    pip install --no-cache-dir -r /tmp/requirements.txt
-
 COPY . /app
-ENV PATH "$PATH:/app/scripts"
 
-RUN useradd -m -d /app -s /bin/bash app \
-    && chown -R app:app /app/* && chmod +x /app/scripts/* \
-    && chmod +x /app/entrypoint.sh
+# Chmod to entrypoint.sh
+RUN chmod +x /app/scripts/*
+RUN chmod +x ./entrypoint.sh
 
-WORKDIR /app
-USER app
+# Set SSL_CERT_FILE environment variable to use certifi's certificate bundle
+ENV SSL_CERT_FILE=/usr/local/lib/python3.11/site-packages/certifi/cacert.pem
 
+# Run entrypoint.sh
 ENTRYPOINT ["/app/entrypoint.sh"]
