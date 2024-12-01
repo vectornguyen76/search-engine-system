@@ -1,7 +1,7 @@
 .env
 *.npz
 index.faiss
-test*
+# test*
 # *.ipynb
 NOTE.md
 elastic_search_data
@@ -10,11 +10,15 @@ architectures
 *.csv
 data.csv
 
-image-search-engine/assets/uploaded_images/*
-!image-search-engine/assets/uploaded_images/.gitkeep
+image_search/assets/uploaded_images/*
+!image_search/assets/uploaded_images/.gitkeep
 
 # Logs
-# image-search-engine/logs/*
+# image_search/logs/*
+
+# Jenkins
+*/run_env
+jenkins/assets/*.mp4
 
 # Model
 *.pth
