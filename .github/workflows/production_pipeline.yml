@@ -6,15 +6,8 @@ on:
       - master
 
 jobs:
-  ci:
-    uses: ./.github/workflows/ci.yml
-
   build:
-    needs: ci
-    uses: ./.github/workflows/build-images.yml
-    secrets:
-      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-      DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+    uses: ./.github/workflows/ci.yml
 
   deploy:
     needs: build
