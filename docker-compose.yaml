@@ -9,7 +9,7 @@ services:
       - 8002:8002
     command: tritonserver --model-repository=/models
     volumes:
-      - ./image-search-engine/model_repository:/models
+      - ./triton-server/model_repository:/models
     deploy:
       resources:
         reservations:
@@ -63,11 +63,11 @@ services:
       elasticsearch:
         condition: service_healthy
 
-  image-search-engine:
-    container_name: image-search-container
-    image: vectornguyen76/image-search-engine
+  image_search:
+    container_name: image_search
+    image: vectornguyen76/image_search
     build:
-      context: ./image-search-engine
+      context: ./image_search
       dockerfile: Dockerfile
     environment:
       - QDRANT_URL=http://qdrant_db:6334
@@ -75,28 +75,28 @@ services:
     ports:
       - 7000:7000
     volumes:
-      - ./image-search-engine/logs:/app/logs
+      - ./image_search/logs:/app/logs
     depends_on:
       - qdrant_db
 
-  text-search-engine:
-    container_name: text-search-container
-    image: vectornguyen76/text-search-engine
+  text_search:
+    container_name: text_search
+    image: vectornguyen76/text_search
     build:
-      context: ./text-search-engine
+      context: ./text_search
       dockerfile: Dockerfile
     ports:
       - 6000:6000
     environment:
       ELASTICSEARCH_HOST: http://elasticsearch:9200
     volumes:
-      - ./text-search-engine/logs:/app/logs
+      - ./text_search/logs:/app/logs
     depends_on:
       elasticsearch:
         condition: service_healthy
 
-  db_service:
-    container_name: db_container
+  postgres_db:
+    container_name: postgres_db
     image: postgres:14.1
     env_file:
       - ./backend/.env.local
@@ -106,10 +106,17 @@ services:
       - postgresql_data:/var/lib/postgresql/data/
       - postgresql_data_backups:/backups
       - ./backend/scripts/postgres:/scripts
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U db_user -d db_dev"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
 
   backend_service:
     container_name: backend_container
-    image: vectornguyen76/backend-search-engine:latest
+    image: vectornguyen76/backend_search_engine
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -120,11 +127,13 @@ services:
     volumes:
       - ./backend/logs:/app/logs
     depends_on:
-      - db_service
+      postgres_db:
+        condition: service_healthy
+        restart: true
 
   frontend_service:
     container_name: frontend_container
-    image: vectornguyen76/frontend-search-engine
+    image: vectornguyen76/frontend_search_engine
     build:
       context: ./frontend
       dockerfile: Dockerfile

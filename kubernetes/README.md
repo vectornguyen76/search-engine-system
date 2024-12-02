@@ -1,7 +1,7 @@
 # Kubernetes Development
 
 **Note:** This setup is intended for development purposes only. For deploying to EKS (Production Environment), it's recommended to use Helm Charts.
-[Guideline for Deploying using Helm Chart](./../helm-charts/README.md)
+[Guideline for Deploying using Helm Chart](./../helm_charts/README.md)
 
 ## Table of Contents
 
@@ -223,14 +223,14 @@ Instructions to install the AWS EBS CSI driver in the production environment.
 
 ### Deploy Elastic Search
 
-[Install Elastic Search with Helm Chart](./../helm-charts/README.md#elastic-search)
+[Install Elastic Search with Helm Chart](./../helm_charts/README.md#elastic-search)
 
 ### Deploy Prometheus and Grafana
 
 The inference server metrics are collected by Prometheus and viewable by Grafana. The inference server helm chart assumes that Prometheus
 and Grafana are available so this step must be followed even if you don't want to use Grafana.
 
-[Install Prometheus and Grafana with Helm Chart](./../helm-charts/README.md#prometheus-and-grafana)
+[Install Prometheus and Grafana with Helm Chart](./../helm_charts/README.md#prometheus-and-grafana)
 
 Then port-forward to the Prometheus and Grafana service so you can access it from
 your local browser.
@@ -242,7 +242,7 @@ kubectl port-forward service/search-engine-metrics-kube-prometheus 9090:9090
 
 ### Deploy Triton Inference Server
 
-[Install Triton Inference Server with Helm Chart](./../helm-charts/README.md#triton-inference-server)
+[Install Triton Inference Server with Helm Chart](./../helm_charts/README.md#triton-inference-server)
 
 ### Deploy Image Search
 

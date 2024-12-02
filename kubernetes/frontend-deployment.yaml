@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: frontend-container
-          image: vectornguyen76/frontend-search-engine:latest
+          image: vectornguyen76/frontend_search_engine:latest
           imagePullPolicy: Always
           livenessProbe:
             httpGet:

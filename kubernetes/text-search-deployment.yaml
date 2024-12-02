@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: text-search-container
-          image: vectornguyen76/text-search-engine:latest
+          image: vectornguyen76/text_search:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 7000

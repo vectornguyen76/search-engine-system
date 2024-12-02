@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: image-search-container
-          image: vectornguyen76/image-search-engine:latest
+          image: vectornguyen76/image_search:latest
           imagePullPolicy: Always
           # livenessProbe:
           #   httpGet:
